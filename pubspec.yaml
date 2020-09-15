@@ -1,0 +1,121 @@
+name: teacher_antoree
+description: A new Flutter application.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  flutter_bloc: ^6.0.0
+  http: ^0.12.0
+  equatable: ^1.0.0
+  rxdart: ^0.23.1
+  formz: ^0.2.0
+  shared_preferences: ^0.5.6
+  connectivity: ^0.4.9
+  jitsi_meet: ^0.3.0
+  loading_overlay: ^0.2.1
+  camera:
+  path_provider:
+  path:
+  image_picker: ^0.6.7+4
+  file_picker: ^1.13.3
+  data_connection_checker: ^0.3.4
+  bloc: ^6.0.0
+  adaptive_dialog: ^0.7.5+3
+  firebase_analytics: any
+  firebase_messaging: ^7.0.0
+  get_it:
+  package_info: ^0.4.3
+  in_app_update: ^1.1.11
+  flutter_countdown_timer: ^1.1.0
+  flutter_rating_bar: ^3.0.1+1
+  flutter_calendar_carousel: ^1.4.12
+  flutter_datetime_picker: ^1.4.0
+  url_launcher: ^5.5.3
+  connect_api:
+    path: ../connect_api/
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^4.1.1
+  bloc_test: ^7.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/0.logo/st-white-logo.png
+    - assets/images/1.login/login_topimg.png
+    - assets/images/1.login/login_account.png
+    - assets/images/1.login/login_pass.png
+    - assets/images/1.login/login_checkbox.png
+    - assets/images/1.login/login_button.png
+    - assets/images/1.login/login_uncheckbox.png
+    - assets/images/2.home/call_gray.png
+    - assets/images/2.home/call_green.png
+    - assets/images/2.home/home_cancel.png
+    - assets/images/2.home/home_logo.png
+    - assets/images/2.home/home_logout.png
+    - assets/images/2.home/home_noti.png
+    - assets/images/2.home/home_noti_off.png
+    - assets/images/2.home/home_pencil.png
+    - assets/images/2.home/home_avatar.png
+    - assets/images/8.notification/notification_cancel.png
+    - assets/images/6.rating/rating_topimage.png
+    - assets/images/6.rating/rating_star_gray.png
+    - assets/images/6.rating/rating_star_green.png
+    - assets/images/4.calendar/calendar_back_active.png
+    - assets/images/4.calendar/calendar_back_unactive.png
+    - assets/images/4.calendar/calendar_next_active.png
+    - assets/images/4.calendar/calendar_next_unactive.png
+    - assets/images/4.calendar/calendar_cancel_green.png
+    - assets/images/4.calendar/calendar_cancel_grey.png
+    - assets/images/4.calendar/calendar_call_white.png
+    - assets/images/4.calendar/calendar_call_grey.png
+    - assets/images/9.teacher/arrowdown.png
+    - assets/images/9.teacher/arrowup.png
+    - assets/images/9.teacher/iconsquare.png
+
+    - assets/images/ic_launcher.png
+    - assets/images/login/ic_white_logo.png
+    - assets/images/login/bg_input_email.png
+    - assets/images/login/bg_input_password.png
+    - assets/images/login/bg_lock_pass.png
+    - assets/images/login/bg_unlock_pass.png
+    - assets/images/login/ic_button_login.png
+    - assets/images/profile/ic_cake.png
+    - assets/images/profile/ic_camera.png
+    - assets/images/profile/ic_contact.png
+    - assets/images/profile/ic_edit_image_profile.png
+    - assets/images/profile/ic_email.png
+    - assets/images/profile/ic_galary.png
+    - assets/images/profile/ic_gender.png
+    - assets/images/profile/ic_lock.png
+    - assets/images/profile/ic_phone.png
+    - assets/images/profile/ic_skype.png
+    - assets/images/profile/ic_world.png
+    - assets/images/profile/img_default_avatar.png
+    - assets/images/profile/ic_logout.png
+    - assets/images/course/ic_setting_courses_schedule.png
+    - assets/images/course/ic_star_rate_and_review.png
+    - assets/images/course/ic_id_skype.png
+    - assets/images/course/ic_id_phone_number.png
+    - assets/images/course/ic_id_email.png
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/montserrat_black.ttf
+        - asset: fonts/montserrat_bold.ttf
+        - asset: fonts/montserrat_extrabold.ttf
+        - asset: fonts/montserrat_extralight.ttf
+        - asset: fonts/montserrat_light.ttf
+        - asset: fonts/montserrat_medium.ttf
+        - asset: fonts/montserrat_regular.ttf
+        - asset: fonts/montserrat_semibold.ttf
+        - asset: fonts/montserrat_thin.ttf
