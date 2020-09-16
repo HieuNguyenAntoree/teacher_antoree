@@ -13,6 +13,7 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:teacher_antoree/src/customViews/route_names.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CalendarView extends StatelessWidget {
 
@@ -95,7 +96,7 @@ class Item {
   const Item(this.name,this.des, this.time);
   final String name;
   final String des;
-  final DateTime time;
+  final String time;
 }
 
 class CalendarUIState extends State<CalendarUI> {
@@ -112,6 +113,7 @@ class CalendarUIState extends State<CalendarUI> {
     _scrollController.addListener(_onScroll);
     _apiConnect.init();
     listenConnectionResponse();
+    timeSlots = timeSheets;
   }
 
   void listenConnectionResponse() {
@@ -142,103 +144,125 @@ class CalendarUIState extends State<CalendarUI> {
   String _currentMonth = DateFormat.yMMM().format(DateTime.now());
   DateTime _targetDateTime = DateTime.now();
   bool _isCancel = false;
+  bool isScrollEventList = false;
+
+  double maxHeight = 0;
+  double heightCalendar = 300;
+
+  int currentDay = DateTime.now().day;
+  List<Item> timeSlots;
+  List<Item> timeSheets = <Item>[
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 083020'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 150000'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 153012'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 160000'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 174500'),
+  ];
+
+  List<Item> oldSheets = <Item>[
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
+    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
+  ];
 
   @override
   Widget build(BuildContext context) {
     /// Example Calendar Carousel without header and custom prev & next button
-
-    return  _isCancel ? _cancelPopupView() : Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          color: const Color(0xfff8f8f8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.only(
-                  top: 15.0,
-                  bottom: 15.0,
-                  left: 15.0,
-                ),
-                child: new Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Text(
-                            _currentMonth,
-                            style: const TextStyle(
-                                color: const Color(0xff4B5B53),
-                                fontWeight: FontWeight.w700,
-                                fontFamily: "Montserrat",
-                                fontStyle: FontStyle.normal,
-                                fontSize: 18.0
-                            )
-                        )),
-                    GestureDetector(onTap: () =>
-                    {
-                      setState(() {
-                        _targetDateTime = DateTime(
-                            _targetDateTime.year, _targetDateTime.month - 1);
-                        _currentMonth =
-                            DateFormat.yMMM().format(_targetDateTime);
-                        nextButton = IMAGES.CALENDAR_NEXT;
-                        Timer(Duration(seconds: 1), () {
-                          nextButton = IMAGES.CALENDAR_NEXT_UN;
-                        }
-                        );
-                      }),
-                    },
-                      child: Container(
-                        width: 52,
-                        height: 50,
-                        child: Image.asset(
-                          nextButton, width: 52.0, height: 50.0,),
-                      ),
+    return  Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              color: const Color(0xfff8f8f8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 15.0,
+                      bottom: 15.0,
+                      left: 15.0,
                     ),
-                    SizedBox(width: 10,),
-                    GestureDetector(onTap: () =>
-                    {
-                      setState(() {
-                        _targetDateTime = DateTime(
-                            _targetDateTime.year, _targetDateTime.month + 1);
-                        _currentMonth =
-                            DateFormat.yMMM().format(_targetDateTime);
-                        backButton = IMAGES.CALENDAR_BACK;
-                        Timer(Duration(seconds: 1), () {
-                          backButton = IMAGES.CALENDAR_BACK_UN;
-                        }
-                        );
-                      }),
-                    },
-                      child: Container(
-                        width: 52,
-                        height: 50,
-                        child: Image.asset(
-                          backButton, width: 52.0, height: 50.0,),
-                      ),
+                    child: new Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Text(
+                                _currentMonth,
+                                style: const TextStyle(
+                                    color: const Color(0xff4B5B53),
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: "Montserrat",
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 18.0
+                                )
+                            )),
+                        GestureDetector(onTap: () =>
+                        {
+                          setState(() {
+                            _targetDateTime = DateTime(
+                                _targetDateTime.year, _targetDateTime.month - 1);
+                            _currentMonth =
+                                DateFormat.yMMM().format(_targetDateTime);
+                            nextButton = IMAGES.CALENDAR_NEXT;
+                            Timer(Duration(seconds: 1), () {
+                              nextButton = IMAGES.CALENDAR_NEXT_UN;
+                            }
+                            );
+                          }),
+                        },
+                          child: Container(
+                            width: 52,
+                            height: 50,
+                            child: Image.asset(
+                              nextButton, width: 52.0, height: 50.0,),
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                        GestureDetector(onTap: () =>
+                        {
+                          setState(() {
+                            _targetDateTime = DateTime(
+                                _targetDateTime.year, _targetDateTime.month + 1);
+                            _currentMonth =
+                                DateFormat.yMMM().format(_targetDateTime);
+                            backButton = IMAGES.CALENDAR_BACK;
+                            Timer(Duration(seconds: 1), () {
+                              backButton = IMAGES.CALENDAR_BACK_UN;
+                            }
+                            );
+                          }),
+                        },
+                          child: Container(
+                            width: 52,
+                            height: 50,
+                            child: Image.asset(
+                              backButton, width: 52.0, height: 50.0,),
+                          ),
+                        ),
+                        SizedBox(width: 15,),
+                      ],
                     ),
-                    SizedBox(width: 15,),
-                  ],
-                ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: _calendarField(),
+                  ),
+                ],
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 15.0),
-                child: _calendarField(),
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 20,),
+            _timeSheet(context), //
+          ],
         ),
-        SizedBox(height: 20,),
-        _timeSheet(context), //
+        _isCancel ? _cancelPopupView() : _space()
       ],
-    );
+    ) ;
   }
-
-  int currentDay = DateTime
-      .now()
-      .day;
 
   EventList<Event> _markedDateMap = new EventList<Event>(
     events: {
@@ -270,22 +294,12 @@ class CalendarUIState extends State<CalendarUI> {
     },
   );
 
-  bool isScrollEventList = false;
-
   _calendarField() {
     return CalendarCarousel<Event>(
       onDayPressed: (DateTime date, List<Event> events) {
-        if (date
-            .difference(DateTime.now())
-            .inDays >= 0) {
-          getTimeSheets(date);
-          this.setState(() => _selectDate = date);
-          events.forEach((event) => print(event.title));
-        } else {
-          SnackBar(
-            content: Text('Can not select previous day'),
-          );
-        }
+        getTimeSheets(date);
+        this.setState(() => _selectDate = date);
+        events.forEach((event) => print(event.title));
       },
       weekFormat: isScrollEventList,
       markedDatesMap: _markedDateMap,
@@ -367,17 +381,6 @@ class CalendarUIState extends State<CalendarUI> {
       },
     );
   }
-
-  List<Item> timeSheets = <Item>[
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', DateTime.now()),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', DateTime.now()),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', DateTime.now()),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', DateTime.now()),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', DateTime.now()),
-  ];
-
-  double maxHeight = 0;
-  double heightCalendar = 300;
   _timeSheet(BuildContext context){
     maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - 300 - 40 - 30 - kBottomNavigationBarHeight;
 
@@ -386,9 +389,9 @@ class CalendarUIState extends State<CalendarUI> {
       child: ListView.builder(
         itemBuilder: (context, int index) {
           //page = page + 1;
-          return new TimeSheetItem(item: timeSheets[index],);
+          return new TimeSheetItem(item: timeSlots[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
         },
-        itemCount: timeSheets.length,
+        itemCount: timeSlots.length,
 //        controller: _scrollController,
       ),
     );
@@ -428,14 +431,6 @@ class CalendarUIState extends State<CalendarUI> {
     );
   }
 
-  getTimeSheets(DateTime date){
-    Future.delayed(Duration.zero, () {
-      setState(() {
-
-      });
-    });
-  }
-
   _cancelPopupView(){
     return GestureDetector(
         onTap: ()=>
@@ -447,79 +442,110 @@ class CalendarUIState extends State<CalendarUI> {
         child: Container(
           color: const Color(0xffd8d8d8).withOpacity(0.9),
 //          height:  MediaQuery.of(context).size.height - kToolbarHeight - 25 - kBottomNavigationBarHeight,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(5),
-                bottomRight: Radius.circular(30),
-                bottomLeft: Radius.circular(5),
-              ),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                new GestureDetector(
-                  onTap: ()=> {},
-                  child: Container(
-                    width: 150,
-                    alignment: Alignment.center,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(5),
-                        bottomRight: Radius.circular(30),
-                        bottomLeft: Radius.circular(5),
-                      ),
-                      color: COLOR.COLOR_00C081,
-                    ),
-                    child: Text('Call center',
-                      style: TextStyle(
-                          color: const Color(0xffffffff),
-                          fontSize: 18,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.bold
-                      ),),
-                  ),
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(30),
+                  bottomLeft: Radius.circular(5),
                 ),
-                SizedBox(height: 15,),
-                new GestureDetector(
-                  onTap: ()=> {},
-                  child: Container(
-                    width: 150,
-                    alignment: Alignment.center,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(5),
-                        bottomRight: Radius.circular(30),
-                        bottomLeft: Radius.circular(5),
+                color: Colors.white,
+              ),
+              width: MediaQuery.of(context).size.width - 40,
+              height: (48 * 2 + 20 + 80).toDouble(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 40,),
+                  new GestureDetector(
+                    onTap: ()=> {launch("tel://21213123123"),},
+                    child: Container(
+                      width: 150,
+                      alignment: Alignment.center,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(5),
+                        ),
+                        color: COLOR.COLOR_00C081,
                       ),
-                      color: Colors.white,
-                      border: Border.all(
-                          color: COLOR.COLOR_00C081,
-                          width: 4
-                      ),
+                      child: Text('Call center',
+                        style: TextStyle(
+                            color: const Color(0xffffffff),
+                            fontSize: 18,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold
+                        ),),
                     ),
-                    child: Text('back',
-                      style: TextStyle(
-                          color: COLOR.COLOR_00C081,
-                          fontSize: 18,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.bold
-                      ),),
                   ),
-                )
-              ],
-            ),
+                  SizedBox(height: 20,),
+                  new GestureDetector(
+                    onTap: ()=> {cancelAction(false)},
+                    child: Container(
+                      width: 150,
+                      alignment: Alignment.center,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(5),
+                        ),
+                        color: Colors.white,
+                        border: Border.all(
+                            color: COLOR.COLOR_00C081,
+                            width: 4
+                        ),
+                      ),
+                      child: Text('back',
+                        style: TextStyle(
+                            color: COLOR.COLOR_00C081,
+                            fontSize: 18,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold
+                        ),),
+                    ),
+                  )
+                ],
+              ),
+            )
           )
         )
     );
   }
+
+  //Function
+  getTimeSheets(DateTime date){
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        if(date.difference(DateTime.now()).inDays == 0){
+            timeSlots = timeSheets;
+        }else if(date.difference(DateTime.now()).inDays > 0){
+            timeSlots = List<Item>();
+        } else{
+           timeSlots = oldSheets;
+        }
+      });
+    });
+  }
+
+  int checkCurrentDay(){
+    if(_selectDate.difference(DateTime.now()).inDays == 0){
+      return 0;
+    }else if(_selectDate.difference(DateTime.now()).inDays > 0){
+      return 1;
+    } else{
+      return -1;
+    }
+  }
+  cancelAction(value) => setState(() => _isCancel = value);
 }
 
 class BottomLoader extends StatelessWidget {
@@ -540,20 +566,69 @@ class BottomLoader extends StatelessWidget {
   }
 }
 
-class TimeSheetItem extends StatelessWidget {
+class TimeSheetItem extends StatefulWidget {
 
-  TimeSheetItem({Key key, this.item}) : super(key: key);
+  final Item item;
+  final Function cancelAction;
+  final isCurrentDay;
+
+  TimeSheetItem({Key key, this.item, this.cancelAction, this.isCurrentDay})
+      : super(key: key);
+
+  @override
+  TimeSheetItemState createState() => TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay);
+
+}
+
+class TimeSheetItemState extends State<TimeSheetItem> {
+
+  TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay);
 
 //  double heightCell = (25 + 78 + 10 + 180).toDouble();
   double widthCell = 0;
   final Item item;
+  final Function cancelAction;
+  final isCurrentDay;
+  Timer timer;
+  int isOnTime = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnTime();
+    if(isCurrentDay == 0) {
+      timer = Timer.periodic(Duration(minutes: 15), (Timer t) => _checkOnTime());
+    }
+  }
+
+  //Function
+  _checkOnTime(){
+    DateTime date = DateTime.parse(item.time);
+    int a = date.difference(DateTime.now()).inMinutes;
+    if(date.difference(DateTime.now()).inMinutes >= -15 && date.difference(DateTime.now()).inMinutes <= 15){
+      setState(() {
+          isOnTime = 0;
+      });
+    }else  if(date.difference(DateTime.now()).inMinutes < -15){
+      setState(() {
+        isOnTime = -1;
+      });
+    }else{
+      isOnTime = 1;
+    }
+  }
+
+  String _getHourAndMinutes(){
+    int start = 9;
+    return item.time.substring(start,start + 2) + ':' + item.time.substring(start + 2, start + 4);
+  }
 
   @override
   Widget build(BuildContext context) {
     widthCell = MediaQuery
         .of(context)
         .size
-        .width - 80;
+        .width - 90;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -561,8 +636,18 @@ class TimeSheetItem extends StatelessWidget {
         Container(
           padding: EdgeInsets.only(left: 15, right: 15),
 //            height: heightCell,
-            child: Text(
-                "13:00",
+            child: isOnTime == 0 ? Text(
+                _getHourAndMinutes(),
+                style: const TextStyle(
+                    color:  Colors.red,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "Montserrat",
+                    fontStyle:  FontStyle.normal,
+                    fontSize: 18.0
+                )
+            ) :
+            Text(
+                _getHourAndMinutes(),
                 style: const TextStyle(
                     color:  const Color(0xff4B5B53),
                     fontWeight: FontWeight.w400,
@@ -612,7 +697,7 @@ class TimeSheetItem extends StatelessWidget {
                   )
                 ),
                 SizedBox(height: 10,),
-                _bottomButton(context, widthCell)
+                (isCurrentDay >= 0 && isOnTime >= 0) ? _bottomButton(context, widthCell) : SizedBox(height: 0,),
               ],
             ),
         )
@@ -634,75 +719,163 @@ class TimeSheetItem extends StatelessWidget {
           children: [
             new GestureDetector(
               onTap: () {
-
+                if(isOnTime > 0) {
+                  cancelAction(true);
+                }
               },
-              child: Container(
-                  width: widthButton,
-                  alignment: Alignment.center,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(5),
-                      bottomRight: Radius.circular(30),
-                      bottomLeft: Radius.circular(5),
-                    ),
-                    border: Border.all(width: 4.0, color: COLOR.COLOR_D8D8D8),
-                    color: Colors.white,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        IMAGES.CALENDAR_CANCEL_UNACTIVE,
-                        width: 24.0,
-                        height: 24.0,
-                      ),
-                      SizedBox(width: 5,),
-                      Text(
-                          "Cancel",
-                          style: const TextStyle(
-                              color:  const Color(0xffd8d8d8),
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "Montserrat",
-                              fontStyle:  FontStyle.normal,
-                              fontSize: 18.0
-                          )
-                      )
-                    ],
-                  ),
-              ),
+              child: isCurrentDay > 0 ? _cancelGreenButton(widthButton) : (isOnTime == 0  ? _cancelGreyButton(widthButton) : _cancelGreenButton(widthButton)),
             ),
             SizedBox(width: 10,),
             new GestureDetector(
               onTap: () {
-                Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
+                if (isOnTime == 0) {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName(HomeViewRoute));
+                }
               },
-              child: Container(
-                width: widthButton,
-                alignment: Alignment.center,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(5),
-                    bottomRight: Radius.circular(30),
-                    bottomLeft: Radius.circular(5),
-                  ),
-                  color: COLOR.COLOR_00C081,
-                ),
-                child: Image.asset(
-                  IMAGES.CALENDAR_CALL_ACTIVE,
-                  width: 24.0,
-                  height: 24.0,
-                )
-              ),
+              child: isOnTime > 0 ? _callGreyButton(widthButton) : _callGreenButton(widthButton),
             ),
           ],
         ),
+        SizedBox(height: 15,),
       ],
     );
   }
 
+  _cancelGreenButton(double widthButton){
+    return Container(
+      width: widthButton,
+      alignment: Alignment.center,
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(5),
+          bottomRight: Radius.circular(30),
+          bottomLeft: Radius.circular(5),
+        ),
+        border: Border.all(width: 4.0, color: COLOR.COLOR_00C081),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            IMAGES.CALENDAR_CANCEL_ACTIVE,
+            width: 24.0,
+            height: 24.0,
+          ),
+          SizedBox(width: 5,),
+          Text(
+              "Cancel",
+              style: const TextStyle(
+                  color:  COLOR.COLOR_00C081,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 18.0
+              )
+          )
+        ],
+      ),
+    );
+  }
+
+  _cancelGreyButton(double widthButton){
+    return Container(
+      width: widthButton,
+      alignment: Alignment.center,
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(5),
+          bottomRight: Radius.circular(30),
+          bottomLeft: Radius.circular(5),
+        ),
+        border:  Border.all(width: 4.0, color: COLOR.COLOR_D8D8D8),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            IMAGES.CALENDAR_CANCEL_UNACTIVE,
+            width: 24.0,
+            height: 24.0,
+          ),
+          SizedBox(width: 5,),
+          Text(
+              "Cancel",
+              style: const TextStyle(
+                  color:  const Color(0xffd8d8d8),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 18.0
+              )
+          )
+        ],
+      ),
+    );
+  }
+
+  _callGreyButton(double widthButton){
+    return Container(
+      width: widthButton,
+      alignment: Alignment.center,
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(5),
+          bottomRight: Radius.circular(30),
+          bottomLeft: Radius.circular(5),
+        ),
+        border: Border.all(width: 4.0, color: COLOR.COLOR_D8D8D8),
+        color:  Colors.white,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            IMAGES.CALENDAR_CALL_UNACTIVE,
+            width: 24.0,
+            height: 24.0,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _callGreenButton(double widthButton){
+    return Container(
+      width: widthButton,
+      alignment: Alignment.center,
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(5),
+          bottomRight: Radius.circular(30),
+          bottomLeft: Radius.circular(5),
+        ),
+        color:  COLOR.COLOR_00C081,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            IMAGES.CALENDAR_CALL_ACTIVE,
+            width: 24.0,
+            height: 24.0,
+          ),
+        ],
+      ),
+    );
+  }
 }
