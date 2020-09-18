@@ -110,8 +110,8 @@ class HomeUIState extends State<HomeUI> {
       '-'
       + (now.day > 9 ? now.day.toString() : '0' + now.day.toString()) + ' '
       + (now.hour > 9 ? now.hour.toString() : '0' + now.hour.toString()) + ':'
-      + ((now.minute + 2 > 9) ? (now.minute + 2).toString() : '0' +
-          (now.minute + 2).toString()) + ':'
+      + ((now.minute + 0 > 9) ? (now.minute + 0).toString() : '0' +
+          (now.minute + 0).toString()) + ':'
       + (now.second > 9 ? now.second.toString() : '0' + now.second.toString());
   final interval = const Duration(seconds: 1);
 

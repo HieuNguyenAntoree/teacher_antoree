@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
@@ -104,16 +104,17 @@ class CalendarUIState extends State<CalendarUI> {
   bool _isLoading = false;
   APIConnect _apiConnect = APIConnect();
   int indexSelected = 0;
-  final _scrollController = ScrollController();
+//  final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
+  List<Item> timeSlots = List<Item>();
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
+//    _scrollController.addListener(_onScroll);
     _apiConnect.init();
     listenConnectionResponse();
-    timeSlots = timeSheets;
+    timeSlots = aSheets;
   }
 
   void listenConnectionResponse() {
@@ -150,118 +151,134 @@ class CalendarUIState extends State<CalendarUI> {
   double heightCalendar = 300;
 
   int currentDay = DateTime.now().day;
-  List<Item> timeSlots;
-  List<Item> timeSheets = <Item>[
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 083020'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 150000'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 153012'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 160000'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20200916 174500'),
+  List<Item> aSheets = <Item>[
+    Item('Bé Hieu Map1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
+    Item('Bé Hang1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
+    Item('Bé Danh1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
+    Item('Bé Phong1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
+    Item('Bé Toan1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
   ];
 
   List<Item> oldSheets = <Item>[
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
-    Item('Bé Trang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
+    Item('Bé Hieu Map', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
+    Item('Bé Hang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
+    Item('Bé Danh', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
+    Item('Bé Phong', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
+    Item('Bé Toan', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
+  ];
+
+  List<Item> nextSheets = <Item>[
+    Item('Bé Map', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
+    Item('Bé To', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
+    Item('Bé nho', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
+    Item('Bé Xiu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
+    Item('Bé Bu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
+  ];
+
+  List<Item> next1Sheets = <Item>[
+    Item('Bé Map2222', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
+    Item('Bé To', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
+    Item('Bé nho', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
+    Item('Bé Xiu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
+    Item('Bé Bu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
   ];
 
   @override
   Widget build(BuildContext context) {
     /// Example Calendar Carousel without header and custom prev & next button
-    return  Stack(
-      children: [
-        Column(
+//    return  Stack(
+//      children: [
+//        ,
+//        _isCancel ? _cancelPopupView() : _space()
+//      ],
+//    ) ;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: <Widget>[
+      Container(
+        color: const Color(0xfff8f8f8),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Container(
-              color: const Color(0xfff8f8f8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 15.0,
-                      bottom: 15.0,
-                      left: 15.0,
-                    ),
-                    child: new Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: Text(
-                                _currentMonth,
-                                style: const TextStyle(
-                                    color: const Color(0xff4B5B53),
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: "Montserrat",
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 18.0
-                                )
-                            )),
-                        GestureDetector(onTap: () =>
-                        {
-                          setState(() {
-                            _targetDateTime = DateTime(
-                                _targetDateTime.year, _targetDateTime.month - 1);
-                            _currentMonth =
-                                DateFormat.yMMM().format(_targetDateTime);
-                            nextButton = IMAGES.CALENDAR_NEXT;
-                            Timer(Duration(seconds: 1), () {
-                              nextButton = IMAGES.CALENDAR_NEXT_UN;
-                            }
-                            );
-                          }),
-                        },
-                          child: Container(
-                            width: 52,
-                            height: 50,
-                            child: Image.asset(
-                              nextButton, width: 52.0, height: 50.0,),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        GestureDetector(onTap: () =>
-                        {
-                          setState(() {
-                            _targetDateTime = DateTime(
-                                _targetDateTime.year, _targetDateTime.month + 1);
-                            _currentMonth =
-                                DateFormat.yMMM().format(_targetDateTime);
-                            backButton = IMAGES.CALENDAR_BACK;
-                            Timer(Duration(seconds: 1), () {
-                              backButton = IMAGES.CALENDAR_BACK_UN;
-                            }
-                            );
-                          }),
-                        },
-                          child: Container(
-                            width: 52,
-                            height: 50,
-                            child: Image.asset(
-                              backButton, width: 52.0, height: 50.0,),
-                          ),
-                        ),
-                        SizedBox(width: 15,),
-                      ],
+              margin: EdgeInsets.only(
+                top: 15.0,
+                bottom: 15.0,
+                left: 15.0,
+              ),
+              child: new Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Text(
+                          _currentMonth,
+                          style: const TextStyle(
+                              color: const Color(0xff4B5B53),
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Montserrat",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 18.0
+                          )
+                      )),
+                  GestureDetector(onTap: () =>
+                  {
+                    setState(() {
+                      _targetDateTime = DateTime(
+                          _targetDateTime.year, _targetDateTime.month - 1);
+                      _currentMonth =
+                          DateFormat.yMMM().format(_targetDateTime);
+                      nextButton = IMAGES.CALENDAR_NEXT;
+                      Timer(Duration(seconds: 1), () {
+                        nextButton = IMAGES.CALENDAR_NEXT_UN;
+                      }
+                      );
+                    }),
+                  },
+                    child: Container(
+                      width: 52,
+                      height: 50,
+                      child: Image.asset(
+                        nextButton, width: 52.0, height: 50.0,),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: _calendarField(),
+                  SizedBox(width: 10,),
+                  GestureDetector(onTap: () =>
+                  {
+                    setState(() {
+                      _targetDateTime = DateTime(
+                          _targetDateTime.year, _targetDateTime.month + 1);
+                      _currentMonth =
+                          DateFormat.yMMM().format(_targetDateTime);
+                      backButton = IMAGES.CALENDAR_BACK;
+                      Timer(Duration(seconds: 1), () {
+                        backButton = IMAGES.CALENDAR_BACK_UN;
+                      }
+                      );
+                    }),
+                  },
+                    child: Container(
+                      width: 52,
+                      height: 50,
+                      child: Image.asset(
+                        backButton, width: 52.0, height: 50.0,),
+                    ),
                   ),
+                  SizedBox(width: 15,),
                 ],
               ),
             ),
-            SizedBox(height: 20,),
-            _timeSheet(context), //
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 15.0),
+              child: _calendarField(),
+            ),
           ],
         ),
-        _isCancel ? _cancelPopupView() : _space()
-      ],
-    ) ;
+      ),
+      SizedBox(height: 20,),
+      _timeSheet(context), //
+    ],
+  );
   }
 
   EventList<Event> _markedDateMap = new EventList<Event>(
@@ -297,6 +314,7 @@ class CalendarUIState extends State<CalendarUI> {
   _calendarField() {
     return CalendarCarousel<Event>(
       onDayPressed: (DateTime date, List<Event> events) {
+        _selectDate = date;
         getTimeSheets(date);
         this.setState(() => _selectDate = date);
         events.forEach((event) => print(event.title));
@@ -383,14 +401,15 @@ class CalendarUIState extends State<CalendarUI> {
   }
   _timeSheet(BuildContext context){
     maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - 300 - 40 - 30 - kBottomNavigationBarHeight;
-
-    return Container(
-      height: maxHeight,
+    return timeSlots.length == 0 ? SizedBox(height: 0,) : Container(
+      height:timeSlots.length == 0 ?  0: maxHeight,
       child: ListView.builder(
         itemBuilder: (context, int index) {
           //page = page + 1;
-          return new TimeSheetItem(item: timeSlots[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
+          return  TimeSheetItem(item: timeSlots[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
         },
+        scrollDirection: Axis.vertical,
+        shrinkWrap: false,
         itemCount: timeSlots.length,
 //        controller: _scrollController,
       ),
@@ -399,28 +418,28 @@ class CalendarUIState extends State<CalendarUI> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+//    _scrollController.dispose();
     super.dispose();
   }
 
-  void _onScroll() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      setState(() {
-        isScrollEventList = true;
-        heightCalendar = 200;
-        maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - heightCalendar - 40 - 30 - kBottomNavigationBarHeight;
-      });
-    }
-    if (_scrollController.offset <= _scrollController.position.minScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      setState(() {
-        isScrollEventList = false;
-        heightCalendar = 300;
-        maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - heightCalendar - 40 - 30 - kBottomNavigationBarHeight;
-      });
-    }
-  }
+//  void _onScroll() {
+//    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+//        !_scrollController.position.outOfRange) {
+//      setState(() {
+//        isScrollEventList = true;
+//        heightCalendar = 200;
+//        maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - heightCalendar - 40 - 30 - kBottomNavigationBarHeight;
+//      });
+//    }
+//    if (_scrollController.offset <= _scrollController.position.minScrollExtent &&
+//        !_scrollController.position.outOfRange) {
+//      setState(() {
+//        isScrollEventList = false;
+//        heightCalendar = 300;
+//        maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - heightCalendar - 40 - 30 - kBottomNavigationBarHeight;
+//      });
+//    }
+//  }
 
   _space(){
     return Container(
@@ -522,24 +541,43 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   //Function
-  getTimeSheets(DateTime date){
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        if(date.difference(DateTime.now()).inDays == 0){
-            timeSlots = timeSheets;
-        }else if(date.difference(DateTime.now()).inDays > 0){
-            timeSlots = List<Item>();
-        } else{
-           timeSlots = oldSheets;
+
+  _getData(DateTime date)  {
+    setState(() {
+      int days =  date.difference(DateTime.now()).inDays;
+      if(days == 0){
+        if(date.day - DateTime.now().day == 0) {
+          timeSlots.addAll(next1Sheets);
+        }else{
+          timeSlots = List<Item>();
+          maxHeight = 0;
         }
-      });
+      }else if(days > 0){
+        timeSlots.addAll(nextSheets);
+      } else{
+        timeSlots.addAll(oldSheets);
+      }
     });
   }
 
+  Future<void> getTimeSheets(DateTime date) async {
+    // Clear hết data cũ đi
+    timeSlots.clear();
+
+//    Future.delayed(Duration(seconds: 1), () {
+      _getData(date);
+//    });
+  }
+
   int checkCurrentDay(){
-    if(_selectDate.difference(DateTime.now()).inDays == 0){
-      return 0;
-    }else if(_selectDate.difference(DateTime.now()).inDays > 0){
+    int days =  _selectDate.difference(DateTime.now()).inDays;
+    if(days == 0){
+      if(_selectDate.day - DateTime.now().day == 0) {
+        return 0;
+      }else{
+        return 1;
+      }
+    }else if(days > 0){
       return 1;
     } else{
       return -1;
@@ -586,32 +624,36 @@ class TimeSheetItemState extends State<TimeSheetItem> {
 
 //  double heightCell = (25 + 78 + 10 + 180).toDouble();
   double widthCell = 0;
-  final Item item;
-  final Function cancelAction;
-  final isCurrentDay;
+  Item item;
+  Function cancelAction;
+  int isCurrentDay;
   Timer timer;
   int isOnTime = 1;
+  int delayTime = 14;
 
   @override
   void initState() {
     super.initState();
     _checkOnTime();
-    if(isCurrentDay == 0) {
-      timer = Timer.periodic(Duration(minutes: 15), (Timer t) => _checkOnTime());
+    if(isCurrentDay == 0 && isOnTime >= 0) {
+      timer = Timer.periodic(Duration(minutes: delayTime), (Timer t) => _checkOnTime());
     }
   }
 
   //Function
   _checkOnTime(){
     DateTime date = DateTime.parse(item.time);
-    int a = date.difference(DateTime.now()).inMinutes;
-    if(date.difference(DateTime.now()).inMinutes >= -15 && date.difference(DateTime.now()).inMinutes <= 15){
+    int ms = date.difference(DateTime.now()).inMinutes;
+    if(ms >= -delayTime && ms <= delayTime){
       setState(() {
           isOnTime = 0;
       });
-    }else  if(date.difference(DateTime.now()).inMinutes < -15){
+    }else  if(ms < -delayTime){
       setState(() {
         isOnTime = -1;
+        if (timer != null){
+         timer.cancel();
+        }
       });
     }else{
       isOnTime = 1;
@@ -636,7 +678,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
         Container(
           padding: EdgeInsets.only(left: 15, right: 15),
 //            height: heightCell,
-            child: isOnTime == 0 ? Text(
+            child: isOnTime == 0 ? new Text(
                 _getHourAndMinutes(),
                 style: const TextStyle(
                     color:  Colors.red,
@@ -646,7 +688,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                     fontSize: 18.0
                 )
             ) :
-            Text(
+            new Text(
                 _getHourAndMinutes(),
                 style: const TextStyle(
                     color:  const Color(0xff4B5B53),
@@ -672,7 +714,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                     )
                 ),
                 SizedBox(height: 10,),
-                Text(
+                new Text(
                     item.name,
                     style: const TextStyle(
                         color:  const Color(0xff00c081),
@@ -685,7 +727,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 SizedBox(height: 13,),
                 Container(
                   width: widthCell - 15,
-                  child: Text(
+                  child: new Text(
                       item.des,
                       style: const TextStyle(
                           color:  const Color(0xff4B5B53),
@@ -721,6 +763,12 @@ class TimeSheetItemState extends State<TimeSheetItem> {
               onTap: () {
                 if(isOnTime > 0) {
                   cancelAction(true);
+                }else {
+                  showAlertDialog(context: context,
+                      title: '',
+                      message: "Can't cancel this time",
+                      actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
+                      actionsOverflowDirection: VerticalDirection.up);
                 }
               },
               child: isCurrentDay > 0 ? _cancelGreenButton(widthButton) : (isOnTime == 0  ? _cancelGreyButton(widthButton) : _cancelGreenButton(widthButton)),
@@ -731,6 +779,12 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 if (isOnTime == 0) {
                   Navigator.popUntil(
                       context, ModalRoute.withName(HomeViewRoute));
+                }else {
+                  showAlertDialog(context: context,
+                      title: '',
+                      message: "Can't call this time",
+                      actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
+                      actionsOverflowDirection: VerticalDirection.up);
                 }
               },
               child: isOnTime > 0 ? _callGreyButton(widthButton) : _callGreenButton(widthButton),
@@ -877,5 +931,15 @@ class TimeSheetItemState extends State<TimeSheetItem> {
         ],
       ),
     );
+  }
+}
+
+class TimeSheetBloc extends Bloc<List<Item>, List<Item>> {
+  /// {@macro counter_bloc}
+  TimeSheetBloc() : super(List<Item>());
+
+  @override
+  Stream<List<Item>> mapEventToState(List<Item> list) async* {
+    yield list;
   }
 }
