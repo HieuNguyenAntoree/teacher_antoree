@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
@@ -14,12 +17,17 @@ import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:teacher_antoree/src/customViews/route_names.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:table_calendar/table_calendar.dart';
+import 'package:calendar_widget/calendar_widget.dart';
+import 'dart:math';
 class CalendarView extends StatelessWidget {
-
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => CalendarView());
+  final String idSchedule;
+  const CalendarView(this.idSchedule);
+  static Route route(String idSchedule) {
+    return MaterialPageRoute<void>(builder: (_) => CalendarView(idSchedule));
   }
+
+  static final DateFormat formatterAPI = DateFormat('yyyy-MM-dd');
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,10 @@ class CalendarView extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
-          child: CalendarUI(),
+          child: BlocProvider(
+            create: (context) => APIConnect()..add(ScheduleFetched(0,formatterAPI.format(DateTime.now()), formatterAPI.format(DateTime.now().add(new Duration(days: 7))))),
+            child: CalendarUI(this.idSchedule),
+          ),
         ),
       ),
       onWillPop: () async {
@@ -88,54 +99,36 @@ class CalendarView extends StatelessWidget {
 }
 
 class CalendarUI extends StatefulWidget {
+  final String idSchedule;
+  const CalendarUI(this.idSchedule);
   @override
-  CalendarUIState createState() => CalendarUIState();
-}
-
-class Item {
-  const Item(this.name,this.des, this.time);
-  final String name;
-  final String des;
-  final String time;
+  CalendarUIState createState() => CalendarUIState(this.idSchedule);
 }
 
 class CalendarUIState extends State<CalendarUI> {
 
-  bool _isLoading = false;
-  APIConnect _apiConnect = APIConnect();
   int indexSelected = 0;
-//  final _scrollController = ScrollController();
-  final _scrollThreshold = 200.0;
-  List<Item> timeSlots = List<Item>();
+  ScheduleModel scheduleList;
+  String idSchedule;
+  CalendarUIState(this.idSchedule);
 
   @override
   void initState() {
     super.initState();
-//    _scrollController.addListener(_onScroll);
-    _apiConnect.init();
-    listenConnectionResponse();
-    timeSlots = aSheets;
+    _calendarController = CalendarController();
+    loadDataFromLocal();
   }
 
-  void listenConnectionResponse() {
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,
-            title: STRINGS.ERROR_TITLE,
-            message: result.msg,
-            actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-            actionsOverflowDirection: VerticalDirection.up);
-      } else if (result is SuccessState) {
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-        ErrorState error = result;
-        showAlertDialog(context: context,
-            title: STRINGS.ERROR_TITLE,
-            message: error.msg,
-            actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-            actionsOverflowDirection: VerticalDirection.up);
-      }
+  void loadDataFromLocal(){
+    scheduleList = StorageUtil.getScheduleList();
+    users = getScheduleDependToDate();
+  }
+  static final DateFormat formatterAPI = DateFormat('yyyy-MM-dd');
+  void getUsers(){
+    setState(() {
+      users = getScheduleDependToDate();
     });
+    context.bloc<APIConnect>().add(ScheduleFetched(0,formatterAPI.format(DateTime.now()), formatterAPI.format(DateTime.now().add(new Duration(days: 7)))));
   }
 
   String nextButton = IMAGES.CALENDAR_NEXT_UN;
@@ -149,136 +142,116 @@ class CalendarUIState extends State<CalendarUI> {
 
   double maxHeight = 0;
   double heightCalendar = 300;
-
   int currentDay = DateTime.now().day;
-  List<Item> aSheets = <Item>[
-    Item('Bé Hieu Map1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
-    Item('Bé Hang1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
-    Item('Bé Danh1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
-    Item('Bé Phong1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
-    Item('Bé Toan1', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
-  ];
-
-  List<Item> oldSheets = <Item>[
-    Item('Bé Hieu Map', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
-    Item('Bé Hang', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
-    Item('Bé Danh', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
-    Item('Bé Phong', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
-    Item('Bé Toan', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
-  ];
-
-  List<Item> nextSheets = <Item>[
-    Item('Bé Map', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
-    Item('Bé To', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
-    Item('Bé nho', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
-    Item('Bé Xiu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
-    Item('Bé Bu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
-  ];
-
-  List<Item> next1Sheets = <Item>[
-    Item('Bé Map2222', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 083020'),
-    Item('Bé To', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 150000'),
-    Item('Bé nho', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 153012'),
-    Item('Bé Xiu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 160000'),
-    Item('Bé Bu', 'bé 9t, đã học tiếng Anh tầm 3 năm rồi. học cả trên trường và trung tâm. nhưng không thấy khá lên, muốn con cải thiện kỹ năng giao tiếp, vững ngữ pháp hơn.', '20190916 161500'),
-  ];
+  List<Attendee> users = List<Attendee>();
+  CalendarController _calendarController;
 
   @override
   Widget build(BuildContext context) {
-    /// Example Calendar Carousel without header and custom prev & next button
-//    return  Stack(
-//      children: [
-//        ,
-//        _isCancel ? _cancelPopupView() : _space()
-//      ],
-//    ) ;
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: <Widget>[
-      Container(
-        color: const Color(0xfff8f8f8),
+    return BlocListener<APIConnect, ApiState>(
+        listener: (context, state){
+          if (state.result is StateInit) {
+
+          }else if (state.result is LoadingState) {
+
+          }else if (state.result is ParseJsonToObject) {
+            setState(() {
+              loadDataFromLocal();
+            });
+          }else {
+
+            ErrorState error = state.result;
+            showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+          }
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Container(
-              margin: EdgeInsets.only(
-                top: 15.0,
-                bottom: 15.0,
-                left: 15.0,
-              ),
-              child: new Row(
-                children: <Widget>[
-                  Expanded(
-                      child: Text(
-                          _currentMonth,
-                          style: const TextStyle(
-                              color: const Color(0xff4B5B53),
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "Montserrat",
-                              fontStyle: FontStyle.normal,
-                              fontSize: 18.0
-                          )
-                      )),
-                  GestureDetector(onTap: () =>
-                  {
-                    setState(() {
-                      _targetDateTime = DateTime(
-                          _targetDateTime.year, _targetDateTime.month - 1);
-                      _currentMonth =
-                          DateFormat.yMMM().format(_targetDateTime);
-                      nextButton = IMAGES.CALENDAR_NEXT;
-                      Timer(Duration(seconds: 1), () {
-                        nextButton = IMAGES.CALENDAR_NEXT_UN;
-                      }
-                      );
-                    }),
-                  },
-                    child: Container(
-                      width: 52,
-                      height: 50,
-                      child: Image.asset(
-                        nextButton, width: 52.0, height: 50.0,),
+              color: const Color(0xfff8f8f8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 15.0,
+                      bottom: 15.0,
+                      left: 15.0,
+                    ),
+                    child: new Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Text(
+                                _currentMonth,
+                                style: const TextStyle(
+                                    color: const Color(0xff4B5B53),
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: "Montserrat",
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 18.0
+                                )
+                            )),
+                        GestureDetector(onTap: () =>
+                        {
+                          setState(() {
+                            _targetDateTime = DateTime(
+                                _targetDateTime.year, _targetDateTime.month - 1);
+                            _currentMonth =
+                                DateFormat.yMMM().format(_targetDateTime);
+                            nextButton = IMAGES.CALENDAR_NEXT;
+                            Timer(Duration(seconds: 1), () {
+                              nextButton = IMAGES.CALENDAR_NEXT_UN;
+                            }
+                            );
+                          }),
+                        },
+                          child: Container(
+                            width: 52,
+                            height: 50,
+                            child: Image.asset(
+                              nextButton, width: 52.0, height: 50.0,),
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                        GestureDetector(onTap: () =>
+                        {
+                          setState(() {
+                            _targetDateTime = DateTime(
+                                _targetDateTime.year, _targetDateTime.month + 1);
+                            _currentMonth =
+                                DateFormat.yMMM().format(_targetDateTime);
+                            backButton = IMAGES.CALENDAR_BACK;
+                            Timer(Duration(seconds: 1), () {
+                              backButton = IMAGES.CALENDAR_BACK_UN;
+                            }
+                            );
+                          }),
+                        },
+                          child: Container(
+                            width: 52,
+                            height: 50,
+                            child: Image.asset(
+                              backButton, width: 52.0, height: 50.0,),
+                          ),
+                        ),
+                        SizedBox(width: 15,),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 10,),
-                  GestureDetector(onTap: () =>
-                  {
-                    setState(() {
-                      _targetDateTime = DateTime(
-                          _targetDateTime.year, _targetDateTime.month + 1);
-                      _currentMonth =
-                          DateFormat.yMMM().format(_targetDateTime);
-                      backButton = IMAGES.CALENDAR_BACK;
-                      Timer(Duration(seconds: 1), () {
-                        backButton = IMAGES.CALENDAR_BACK_UN;
-                      }
-                      );
-                    }),
-                  },
-                    child: Container(
-                      width: 52,
-                      height: 50,
-                      child: Image.asset(
-                        backButton, width: 52.0, height: 50.0,),
-                    ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: _calendarView(),
                   ),
-                  SizedBox(width: 15,),
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 15.0),
-              child: _calendarField(),
-            ),
+            SizedBox(height: 20,),
+            _timeSheet(context), //
           ],
-        ),
-      ),
-      SizedBox(height: 20,),
-      _timeSheet(context), //
-    ],
-  );
+        )
+    );
   }
 
   EventList<Event> _markedDateMap = new EventList<Event>(
@@ -311,11 +284,29 @@ class CalendarUIState extends State<CalendarUI> {
     },
   );
 
+  CalendarHighlighter highlighter = (DateTime dt) {
+    // randomly generate a boolean list of length monthLength + 1 (because months start at 1)
+    return List.generate(Calendar.monthLength(dt) + 1, (index) {
+      return (Random().nextDouble() < 0.3);
+    });
+  };
+
+  _calendarView()
+  {
+    return Calendar(
+      width: MediaQuery.of(context).size.width - 32,
+      onTapListener: (DateTime dt) {
+        final snackbar = SnackBar(content: Text('Clicked ${dt.month}/${dt.day}/${dt.year}!'),);
+        Scaffold.of(context).showSnackBar(snackbar);
+      },
+      highlighter: highlighter,
+    );
+  }
   _calendarField() {
     return CalendarCarousel<Event>(
       onDayPressed: (DateTime date, List<Event> events) {
         _selectDate = date;
-        getTimeSheets(date);
+        getUsers();
         this.setState(() => _selectDate = date);
         events.forEach((event) => print(event.title));
       },
@@ -365,8 +356,8 @@ class CalendarUIState extends State<CalendarUI> {
           fontStyle: FontStyle.normal,
           fontSize: 14.0
       ),
-      minSelectedDate: _currentDate.subtract(Duration(days: 360)),
-      maxSelectedDate: _currentDate.add(Duration(days: 360)),
+      minSelectedDate: _currentDate.subtract(Duration(days: 3600)),
+      maxSelectedDate: _currentDate.add(Duration(days: 3600)),
       prevDaysTextStyle: TextStyle(
           color: Colors.grey,
           fontWeight: FontWeight.w400,
@@ -400,54 +391,45 @@ class CalendarUIState extends State<CalendarUI> {
     );
   }
   _timeSheet(BuildContext context){
+
     maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - 300 - 40 - 30 - kBottomNavigationBarHeight;
-    return timeSlots.length == 0 ? SizedBox(height: 0,) : Container(
-      height:timeSlots.length == 0 ?  0: maxHeight,
+    return users.length == 0 ? SizedBox(height: 0,) : Container(
+      height:users.length == 0 ?  0: maxHeight,
       child: ListView.builder(
         itemBuilder: (context, int index) {
           //page = page + 1;
-          return  TimeSheetItem(item: timeSlots[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
+          return  TimeSheetItem(item: users[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(), selectDate: _selectDate,);
         },
         scrollDirection: Axis.vertical,
         shrinkWrap: false,
-        itemCount: timeSlots.length,
+        itemCount: users.length,
 //        controller: _scrollController,
       ),
     );
   }
 
-  @override
-  void dispose() {
-//    _scrollController.dispose();
-    super.dispose();
+  List<Attendee> getScheduleDependToDate(){
+    List<Attendee> users = List<Attendee>();
+    for (var i = 0; i < scheduleList.objects.length; i++) {
+      DateTime dateSchedule = scheduleList.objects[i].dateTime;
+      int days =  _selectDate.difference(dateSchedule).inDays;
+      if(days == 0 && _selectDate.day - dateSchedule.day == 0) {
+        for (var j = 0; i < scheduleList.objects[i].attendees.length; j++) {
+          Attendee user = scheduleList.objects[i].attendees[j];
+          if(user.role == RoleEnum.STUDENT){
+              users.add(user);
+          }
+        }
+        return users;
+      }
+    }
+    return users;
   }
 
-//  void _onScroll() {
-//    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
-//        !_scrollController.position.outOfRange) {
-//      setState(() {
-//        isScrollEventList = true;
-//        heightCalendar = 200;
-//        maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - heightCalendar - 40 - 30 - kBottomNavigationBarHeight;
-//      });
-//    }
-//    if (_scrollController.offset <= _scrollController.position.minScrollExtent &&
-//        !_scrollController.position.outOfRange) {
-//      setState(() {
-//        isScrollEventList = false;
-//        heightCalendar = 300;
-//        maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - heightCalendar - 40 - 30 - kBottomNavigationBarHeight;
-//      });
-//    }
-//  }
-
-  _space(){
-    return Container(
-      alignment: Alignment.center,
-      child: Center(
-
-      ),
-    );
+  @override
+  void dispose() {
+    _calendarController.dispose();
+    super.dispose();
   }
 
   _cancelPopupView(){
@@ -540,35 +522,6 @@ class CalendarUIState extends State<CalendarUI> {
     );
   }
 
-  //Function
-
-  _getData(DateTime date)  {
-    setState(() {
-      int days =  date.difference(DateTime.now()).inDays;
-      if(days == 0){
-        if(date.day - DateTime.now().day == 0) {
-          timeSlots.addAll(next1Sheets);
-        }else{
-          timeSlots = List<Item>();
-          maxHeight = 0;
-        }
-      }else if(days > 0){
-        timeSlots.addAll(nextSheets);
-      } else{
-        timeSlots.addAll(oldSheets);
-      }
-    });
-  }
-
-  Future<void> getTimeSheets(DateTime date) async {
-    // Clear hết data cũ đi
-    timeSlots.clear();
-
-//    Future.delayed(Duration(seconds: 1), () {
-      _getData(date);
-//    });
-  }
-
   int checkCurrentDay(){
     int days =  _selectDate.difference(DateTime.now()).inDays;
     if(days == 0){
@@ -583,7 +536,12 @@ class CalendarUIState extends State<CalendarUI> {
       return -1;
     }
   }
-  cancelAction(value) => setState(() => _isCancel = value);
+  cancelAction(value){
+    setState(() {
+      _isCancel = value;
+    });
+    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, 'change_plan', ''));
+  }
 }
 
 class BottomLoader extends StatelessWidget {
@@ -605,31 +563,32 @@ class BottomLoader extends StatelessWidget {
 }
 
 class TimeSheetItem extends StatefulWidget {
-
-  final Item item;
+  final DateTime selectDate;
+  final Attendee item;
   final Function cancelAction;
   final isCurrentDay;
 
-  TimeSheetItem({Key key, this.item, this.cancelAction, this.isCurrentDay})
+  TimeSheetItem({Key key, this.item, this.cancelAction, this.isCurrentDay, this.selectDate})
       : super(key: key);
 
   @override
-  TimeSheetItemState createState() => TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay);
+  TimeSheetItemState createState() => TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay, this.selectDate);
 
 }
 
 class TimeSheetItemState extends State<TimeSheetItem> {
 
-  TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay);
+  TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay, this.selectDate);
 
 //  double heightCell = (25 + 78 + 10 + 180).toDouble();
   double widthCell = 0;
-  Item item;
+  Attendee item;
   Function cancelAction;
   int isCurrentDay;
   Timer timer;
   int isOnTime = 1;
   int delayTime = 14;
+  final DateTime selectDate;
 
   @override
   void initState() {
@@ -642,7 +601,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
 
   //Function
   _checkOnTime(){
-    DateTime date = DateTime.parse(item.time);
+    DateTime date = selectDate;
     int ms = date.difference(DateTime.now()).inMinutes;
     if(ms >= -delayTime && ms <= delayTime){
       setState(() {
@@ -662,11 +621,14 @@ class TimeSheetItemState extends State<TimeSheetItem> {
 
   String _getHourAndMinutes(){
     int start = 9;
-    return item.time.substring(start,start + 2) + ':' + item.time.substring(start + 2, start + 4);
+    String hours = selectDate.hour > 9 ? selectDate.hour.toString() : "0" + selectDate.hour.toString();
+    String minutes = selectDate.minute > 9 ? selectDate.minute.toString() : "0" + selectDate.minute.toString();
+    return hours + ':' + minutes;
   }
 
   @override
   Widget build(BuildContext context) {
+
     widthCell = MediaQuery
         .of(context)
         .size
@@ -715,7 +677,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 ),
                 SizedBox(height: 10,),
                 new Text(
-                    item.name,
+                    item.user.lastName,
                     style: const TextStyle(
                         color:  const Color(0xff00c081),
                         fontWeight: FontWeight.w700,
@@ -728,7 +690,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 Container(
                   width: widthCell - 15,
                   child: new Text(
-                      item.des,
+                      item.user.firstName,
                       style: const TextStyle(
                           color:  const Color(0xff4B5B53),
                           fontWeight: FontWeight.w400,
@@ -931,15 +893,5 @@ class TimeSheetItemState extends State<TimeSheetItem> {
         ],
       ),
     );
-  }
-}
-
-class TimeSheetBloc extends Bloc<List<Item>, List<Item>> {
-  /// {@macro counter_bloc}
-  TimeSheetBloc() : super(List<Item>());
-
-  @override
-  Stream<List<Item>> mapEventToState(List<Item> list) async* {
-    yield list;
   }
 }

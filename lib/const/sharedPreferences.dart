@@ -1,5 +1,8 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teacher_antoree/models/schedule.dart';
+import 'package:teacher_antoree/models/teacher.dart';
+import 'package:teacher_antoree/models/token.dart';
 import 'dart:convert';
 
 import 'key.dart';
@@ -54,9 +57,9 @@ class StorageUtil {
     }
   }
 
- static String getStringValuesSF(String key){
-   if (_preferences != null) return _preferences.getString(key);
-   return "";
+  static String getStringValuesSF(String key){
+    if (_preferences != null) return _preferences.getString(key);
+    return "";
   }
 
   static bool getBoolValuesSF(String key) {
@@ -78,50 +81,41 @@ class StorageUtil {
     if (_preferences != null) return _preferences.remove(key);
   }
 
-
-//  /*----------------------------NETWORK------------------------------*/
-//  static String getAccessToken(){
-//    var tokenItem = StorageUtil.getTokenObject();
-//    if(tokenItem != null){
-//      return "Bearer " + tokenItem.accessToken;
-//    }
-//    return "";
-//  }
   /*----------------------------TOKEN ITEM------------------------------*/
-//  static storeTokenObjectToSF(String key, Map<String, dynamic> value) async{
-////    Map<String, dynamic> decodeOptions = jsonDecode(jsonString);
-//    String jsonObject = jsonEncode(TokenItem.fromJson(value));
-//    if (_preferences != null) {
-//      _preferences.setString(key, jsonObject);
-//    }
-//    else {
-//      await StorageUtil.getInstance();
-//     _preferences.setString(key, jsonObject);
-//    }
-//  }
-//
-//  static TokenItem getTokenObject() {
-//    if (_preferences != null) {
-//      String tokenStr = _preferences.getString(KEY.TOKEN);
-//      if(tokenStr != null){
-//        Map tokenItemMap = jsonDecode(tokenStr);
-//        var tokenItem = TokenItem.fromJson(tokenItemMap);
-//        return tokenItem;
-//      }
-//      return null;
-//    }else{
-//      return null;
-//    }
-//  }
-//
-//  static String getAccessToken(){
-//    var tokenItem = StorageUtil.getTokenObject();
-//    if(tokenItem != null){
-//      return "Bearer " + tokenItem.accessToken;
-//    }
-//    return "";
-//  }
-//
+  static storeTokenObjectToSF(Map<String, dynamic> value) async{
+//    Map<String, dynamic> decodeOptions = jsonDecode(jsonString);
+    String jsonObject = jsonEncode(TokenItem.fromJson(value));
+    if (_preferences != null) {
+      _preferences.setString(KEY.TOKEN, jsonObject);
+    }
+    else {
+      await StorageUtil.getInstance();
+      _preferences.setString(KEY.TOKEN, jsonObject);
+    }
+  }
+
+  static TokenItem getTokenObject() {
+    if (_preferences != null) {
+      String tokenStr = _preferences.getString(KEY.TOKEN);
+      if(tokenStr != null){
+        Map tokenItemMap = jsonDecode(tokenStr);
+        var tokenItem = TokenItem.fromJson(tokenItemMap);
+        return tokenItem;
+      }
+      return null;
+    }else{
+      return null;
+    }
+  }
+
+  static String getAccessToken(){
+    var tokenItem = StorageUtil.getTokenObject();
+    if(tokenItem != null){
+      return tokenItem.tokenType + ' ' + tokenItem.accessToken;
+    }
+    return "";
+  }
+
 //  /*----------------------------USER------------------------------*/
 //  static storeUserObjectToSF(String key, Map value) async{
 ////    Map decodeOptions = jsonDecode(value);
@@ -176,30 +170,57 @@ class StorageUtil {
 //    }
 //  }
 //
-//  /*----------------------------COURSES------------------------------*/
-//  static storeCoursesListToSF(String key, Map value) async{
-////    Map decodeOptions = jsonDecode(value);
-//    String jsonObject = jsonEncode(CourseObject.fromJson(value));
-//    if (_preferences != null) {
-//      _preferences.setString(key, jsonObject);
-//    }
-//    else {
-//      await StorageUtil.getInstance();
-//      _preferences.setString(key, jsonObject);
-//    }
-//  }
-//
-//  static CourseObject getCoursesList()  {
-//    if (_preferences != null) {
-//      String courseStr = _preferences.getString(KEY.COURSES);
-//      if(courseStr != null){
-//        Map userItemMap = jsonDecode(courseStr);
-//        var user = CourseObject.fromJson(userItemMap);
-//        return user;
-//      }
-//      return null;
-//    }else{
-//      return null;
-//    }
-//  }
+//  /*----------------------------SCHEDULE------------------------------*/
+  static storeScheduleListToSF( Map value) async{
+//    Map decodeOptions = jsonDecode(value);
+    String jsonObject = jsonEncode(ScheduleModel.fromJson(value));
+    if (_preferences != null) {
+      _preferences.setString(KEY.SCHEDULE, jsonObject);
+    }
+    else {
+      await StorageUtil.getInstance();
+      _preferences.setString(KEY.SCHEDULE, jsonObject);
+    }
+  }
+
+  static ScheduleModel getScheduleList()  {
+    if (_preferences != null) {
+      String schedulesStr = _preferences.getString(KEY.SCHEDULE);
+      if(schedulesStr != null){
+        Map scheduleItemMap = jsonDecode(schedulesStr);
+        var schedules = ScheduleModel.fromJson(scheduleItemMap);
+        return schedules;
+      }
+      return null;
+    }else{
+      return null;
+    }
+  }
+
+  /*----------------------------TEACHER------------------------------*/
+  static storeTeacherListToSF( Map value) async{
+//    Map decodeOptions = jsonDecode(value);
+    String jsonObject = jsonEncode(TeacherModel.fromJson(value));
+    if (_preferences != null) {
+      _preferences.setString(KEY.TEACHER, jsonObject);
+    }
+    else {
+      await StorageUtil.getInstance();
+      _preferences.setString(KEY.TEACHER, jsonObject);
+    }
+  }
+
+  static TeacherModel getTeacherList()  {
+    if (_preferences != null) {
+      String courseStr = _preferences.getString(KEY.TEACHER);
+      if(courseStr != null){
+        Map teacherItemMap = jsonDecode(courseStr);
+        var teachers = TeacherModel.fromJson(teacherItemMap);
+        return teachers;
+      }
+      return null;
+    }else{
+      return null;
+    }
+  }
 }

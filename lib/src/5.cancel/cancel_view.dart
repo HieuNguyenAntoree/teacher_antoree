@@ -1,20 +1,19 @@
-import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/2.home/home_view.dart';
-import 'package:teacher_antoree/src/3.changeschedule/schedule_view.dart';
-import 'package:teacher_antoree/src/customViews/route_names.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
-import 'package:connect_api/const/defaultValue.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teacher_antoree/const/constant.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:teacher_antoree/const/color.dart';
+import 'package:teacher_antoree/const/defaultValue.dart';
+import 'package:teacher_antoree/src/0.connection/api_connection.dart';
+import 'package:teacher_antoree/src/customViews/route_names.dart';
 
 class CancelView extends StatelessWidget {
-
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => CancelView());
+  final String idSchedule;
+  const CancelView(this.idSchedule);
+  static Route route(String idSchedule) {
+    return MaterialPageRoute<void>(builder: (_) => CancelView(idSchedule));
   }
 
   @override
@@ -29,8 +28,13 @@ class CancelView extends StatelessWidget {
             backgroundColor: const Color(0xffffffff)
         ),
         body: Padding(
-          padding: const EdgeInsets.only(top: 0),
-          child: CancelUI(),
+            padding: const EdgeInsets.only(top: 0),
+            child: BlocProvider(
+              create: (context){
+                return APIConnect();
+              },
+              child: CancelUI(this.idSchedule),
+            )
         ),
       ),
       onWillPop: () async {
@@ -84,62 +88,77 @@ class CancelView extends StatelessWidget {
 }
 
 class CancelUI extends StatefulWidget {
+  final String idSchedule;
+  const CancelUI(this.idSchedule);
   @override
-  CancelUIState createState() =>CancelUIState();
+  CancelUIState createState() =>CancelUIState(this.idSchedule);
 }
 
 class CancelUIState extends State<CancelUI>{
 
   bool _isCheckBox1 = true;
   bool _isCheckBox2 = false;
-  APIConnect _apiConnect = APIConnect();
+  bool _isLoading = false;
   TextEditingController reasonController = new TextEditingController();
 
+  String idSchedule;
+  CancelUIState(this.idSchedule);
   @override
   void initState() {
     super.initState();
-    _apiConnect.init();
-    listenConnectionResponse();
   }
-
-  void listenConnectionResponse(){
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: result.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-
-      } else if (result is SuccessState) {
-
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-
-        ErrorState error = result;
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-      }
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      padding: const EdgeInsets.all(0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const Padding(padding: EdgeInsets.all(40)),
-          _topImage(),
-          SizedBox(height: 20),
-          _textSection(),
-          SizedBox(height: 30),
-          _checkbox1(),
-          SizedBox(height: 20),
-          _checkbox2(),
-          SizedBox(height: 20),
-          _reasonTextView(),
-          SizedBox(height: 30),
-          _cancelButton(),
-        ],
+    return BlocListener<APIConnect, ApiState>(
+      listener: (context, state){
+        if (state.result is StateInit) {
+          setState(() {
+            _isLoading = false;
+          });
+        }else if (state.result is LoadingState) {
+          setState(() {
+            _isLoading = true;
+          });
+        }else if (state.result is SuccessState) {
+          setState(() {
+            _isLoading = false;
+          });
+          Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
+        }else {
+          setState(() {
+            _isLoading = false;
+          });
+          ErrorState error = state.result;
+          showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+        }
+      },
+      child: LoadingOverlay(
+        child: Container(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const Padding(padding: EdgeInsets.all(40)),
+              _topImage(),
+              SizedBox(height: 20),
+              _textSection(),
+              SizedBox(height: 30),
+              _checkbox1(),
+              SizedBox(height: 20),
+              _checkbox2(),
+              SizedBox(height: 20),
+              _reasonTextView(),
+              SizedBox(height: 30),
+              _cancelButton(),
+            ],
+          ),
+        ),
+        isLoading: _isLoading,
+        // demo of some additional parameters
+        opacity: 0.2,
+        progressIndicator: CircularProgressIndicator(),
       ),
     );
   }
@@ -155,16 +174,16 @@ class CancelUIState extends State<CancelUI>{
 
   _textSection() {
     return Center(
-      child: Text(
-          "Antoree rất muốn biết\nvì sao bạn muốn hủy buổi test",
-        style: const TextStyle(
-          color:  const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      )
-    )
+        child: Text(
+            "Antoree rất muốn biết\nvì sao bạn muốn hủy buổi test",
+            style: const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w400,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 14.0
+            )
+        )
     );
   }
 
@@ -268,7 +287,9 @@ class CancelUIState extends State<CancelUI>{
 
   _cancelButton(){
     return new GestureDetector(
-      onTap: ()=> Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute)),
+      onTap: ()=> {
+        context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, _isCheckBox1 ? 'change_plan' : 'other', reasonController.text)),
+      },
       child: Container(
         margin: EdgeInsets.only(left: 40, right: 40),
         alignment: Alignment.center,

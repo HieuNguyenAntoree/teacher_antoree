@@ -1,5 +1,5 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/2.home/home_view.dart';
 import 'package:teacher_antoree/src/customViews/route_names.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
@@ -18,8 +18,13 @@ class LoginView extends StatelessWidget{
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.only(top: 35),
-        child: LoginUI(),
+          padding: const EdgeInsets.only(top: 35),
+          child: BlocProvider(
+            create: (context){
+              return APIConnect();
+            },
+            child: LoginUI(),
+          )
       ),
     );
   }
@@ -42,63 +47,65 @@ class LoginUIState extends State<LoginUI>{
   @override
   void initState() {
     super.initState();
-    _apiConnect.init();
-    listenConnectionResponse();
-  }
-
-  void listenConnectionResponse(){
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: result.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-        setState(() {
-          _isLoading = false;
-        });
-      } else if (result is SuccessState) {
-        setState(() {
-          _isLoading = false;
-        });
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
-        ErrorState error = result;
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-      }
-    });
+    emailController..text = 'admin@antoree.com';
+    passController..text = 'Antor33rotnA';
   }
 
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return LoadingOverlay(
-      child: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const Padding(padding: EdgeInsets.all(40)),
-              _topImage(),
-              SizedBox(height: 20),
-              _textSection(),
-              SizedBox(height: 30),
-              _email(),
-              SizedBox(height: 20),
-              _password(),
-              SizedBox(height: 30,),
-              _statusLogin(),
-              SizedBox(height: 40,),
-              _loginButton(),
-            ],
+    return BlocListener<APIConnect, ApiState>(
+      listener: (context, state){
+        if (state.result is StateInit) {
+          setState(() {
+            _isLoading = false;
+          });
+        }else if (state.result is LoadingState) {
+          setState(() {
+            _isLoading = true;
+          });
+        }else if (state.result is ParseJsonToObject) {
+          setState(() {
+            _isLoading = false;
+          });
+          Navigator.of(context).pushNamed(HomeViewRoute);
+        }else {
+          setState(() {
+            _isLoading = false;
+          });
+          ErrorState error = state.result;
+          showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+        }
+      },
+      child: LoadingOverlay(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const Padding(padding: EdgeInsets.all(40)),
+                _topImage(),
+                SizedBox(height: 20),
+                _textSection(),
+                SizedBox(height: 30),
+                _email(),
+                SizedBox(height: 20),
+                _password(),
+                SizedBox(height: 30,),
+                _statusLogin(),
+                SizedBox(height: 40,),
+                _loginButton(),
+              ],
+            ),
           ),
         ),
+        isLoading: _isLoading,
+        // demo of some additional parameters
+        opacity: 0.2,
+        progressIndicator: CircularProgressIndicator(),
       ),
-      isLoading: _isLoading,
-      // demo of some additional parameters
-      opacity: 0.2,
-      progressIndicator: CircularProgressIndicator(),
     );
   }
 
@@ -249,7 +256,7 @@ class LoginUIState extends State<LoginUI>{
 
    _loginButton(){
     return new GestureDetector(
-      onTap: ()=> Navigator.of(context).pushNamed(HomeViewRoute),
+      onTap: ()=> context.bloc<APIConnect>().add(LoginSubmitted( emailController.text, passController.text)),
       child: Container(
           margin: EdgeInsets.only(left: 40, right: 40),
           alignment: Alignment.center,

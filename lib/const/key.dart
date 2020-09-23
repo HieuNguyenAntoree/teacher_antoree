@@ -2,9 +2,15 @@ class KEY {
   static const TOKEN = "TOKEN";
   static const USER = "USER";
   static const PROFILE = "PROFILE";
-  static const COURSES = "COURSES";
+  static const SCHEDULE = "SCHEDULE";
+  static const TEACHER = "TEACHER";
   static const NETWORK = "NETWORK";
   static const LOGIN_STATUS = "LOGIN_STATUS";
+}
+
+class RoleEnum{
+  static const STUDENT = 'student';
+  static const TEACHER = 'teacher';
 }
 
 class GOOGLECLIENT{

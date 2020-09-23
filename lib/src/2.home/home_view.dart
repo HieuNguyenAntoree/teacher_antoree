@@ -1,20 +1,24 @@
 import 'dart:async';
 
-import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/3.changeschedule/schedule_view.dart';
-import 'package:teacher_antoree/src/4.calendar/calendar_view.dart';
-import 'package:teacher_antoree/src/7.video/video_view.dart';
-import 'package:teacher_antoree/src/8.notification/notification_view.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teacher_antoree/models/schedule.dart';
+import 'package:teacher_antoree/src/0.connection/api_connection.dart';
+import 'package:teacher_antoree/src/3.changeschedule/schedule_view.dart';
+import 'package:teacher_antoree/src/4.calendar/calendar_picker_view.dart';
+import 'package:teacher_antoree/src/4.calendar/calendar_view.dart';
+import 'package:teacher_antoree/src/7.video/video_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
-import 'package:intl/intl.dart' show DateFormat;
-import 'package:teacher_antoree/src/customViews/route_names.dart';
+import 'package:intl/intl.dart';  //for date format
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:teacher_antoree/src/8.notification/notification_view.dart';  //for date locale
 
 class HomeView extends StatelessWidget {
 
+  static final DateFormat formatterAPI = DateFormat('yyyy-MM-dd');
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context).settings.name;
@@ -23,13 +27,15 @@ class HomeView extends StatelessWidget {
         backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
             title:_customeHeaderBar(),
-            leading: addLeadingIcon(context),
             centerTitle: true,
             backgroundColor: const Color(0xffffffff)
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
-          child: HomeUI(),
+          child: BlocProvider(
+            create: (context) => APIConnect()..add(ScheduleFetched(0,formatterAPI.format(DateTime.now()), formatterAPI.format(DateTime.now().add(new Duration(days: 7))))),
+            child: HomeUI(),
+          )
         ),
       ),
       onWillPop: () async {
@@ -38,30 +44,6 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  addLeadingIcon(BuildContext context){
-    return new Container(
-      height: 30.0,
-      width: 26.0,
-      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      child: new Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          new Image.asset(
-            IMAGES.HOME_LOGOUT,
-            width: 30.0,
-            height: 26.0,
-          ),
-          new FlatButton(
-              onPressed: (){
-                StorageUtil.removeValues(KEY.PROFILE);
-                Navigator.of(context).pop();
-              }
-          )
-        ],
-      ),
-    );
-  }
   _customeHeaderBar() {
     return Container(
       child: Row(
@@ -91,7 +73,8 @@ class HomeUI extends StatefulWidget {
 class HomeUIState extends State<HomeUI> {
 
   bool _isStartVideoCall = false;
-  APIConnect _apiConnect = APIConnect();
+  ScheduleModel scheduleList;
+  Schedule currentSchedule;
 
   Color leftbuttonColor = Color(0xffb6d6cb);
   Color rightbuttonColor = Color(0xffb6d6cb);
@@ -105,14 +88,7 @@ class HomeUIState extends State<HomeUI> {
   static final DateTime now = DateTime.now();
   static final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm:ss');
   final String formatted = formatter.format(now);
-  String exampleDate = now.year.toString() + '-'
-      + (now.month > 9 ? now.month.toString() : '0' + now.month.toString()) +
-      '-'
-      + (now.day > 9 ? now.day.toString() : '0' + now.day.toString()) + ' '
-      + (now.hour > 9 ? now.hour.toString() : '0' + now.hour.toString()) + ':'
-      + ((now.minute + 0 > 9) ? (now.minute + 0).toString() : '0' +
-          (now.minute + 0).toString()) + ':'
-      + (now.second > 9 ? now.second.toString() : '0' + now.second.toString());
+  String runDate;
   final interval = const Duration(seconds: 1);
 
   startTimeout([int milliseconds]) {
@@ -177,59 +153,65 @@ class HomeUIState extends State<HomeUI> {
   @override
   void initState() {
     super.initState();
-    _apiConnect.init();
-    listenConnectionResponse();
-    print(now.minute);
-    calculatorDuration(exampleDate);
-    if (hours > 0 || minutes > 0 || seconds > 0) {
-      startTimeout();
+    Intl.defaultLocale = 'vi_VN';
+    initializeDateFormatting();
+    loadDataFromLocal();
+  }
+
+  void loadDataFromLocal(){
+    scheduleList = StorageUtil.getScheduleList();
+    if(scheduleList.objects.length > 0) {
+      currentSchedule = scheduleList.objects[0];
+      DateTime date = scheduleList.objects[0].dateTime;
+      String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+      _isStartVideoCall = false;
+      runDate = formattedDate;
+      calculatorDuration(runDate);
+      if (hours > 0 || minutes > 0 || seconds > 0) {
+        startTimeout();
+      }
     }
   }
-
-  void listenConnectionResponse() {
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,
-            title: STRINGS.ERROR_TITLE,
-            message: result.msg,
-            actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-            actionsOverflowDirection: VerticalDirection.up);
-      } else if (result is SuccessState) {
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-        ErrorState error = result;
-        showAlertDialog(context: context,
-            title: STRINGS.ERROR_TITLE,
-            message: error.msg,
-            actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-            actionsOverflowDirection: VerticalDirection.up);
-      }
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      padding: const EdgeInsets.all(0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const Padding(padding: EdgeInsets.all(40)),
-          _avatarImage(),
-          SizedBox(height: 20),
-          _helloUserText(),
-          SizedBox(height: 40),
-          _textTimeSheet('Còn'),
-          SizedBox(height: 5),
-          _timeDownField(),
-          SizedBox(height: 5,),
-          _textTimeSheet('đến giờ hẹn'),
-          Expanded(child: Container()),
-          _bottomButton(),
-        ],
-      ),
+    return BlocListener<APIConnect, ApiState>(
+        listener: (context, state){
+          if (state.result is StateInit) {
+
+          }else if (state.result is LoadingState) {
+
+          }else if (state.result is ParseJsonToObject) {
+            setState(() {
+              loadDataFromLocal();
+            });
+          }else {
+
+            ErrorState error = state.result;
+            showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const Padding(padding: EdgeInsets.all(40)),
+              _avatarImage(),
+              SizedBox(height: 20),
+              _helloUserText(),
+              SizedBox(height: 40),
+              _textTimeSheet('Còn'),
+              SizedBox(height: 5),
+              _timeDownField(),
+              SizedBox(height: 5,),
+              _textTimeSheet('đến giờ hẹn'),
+              Expanded(child: Container()),
+              _bottomButton(),
+            ],
+          ),
+        )
     );
   }
 
@@ -254,6 +236,27 @@ class HomeUIState extends State<HomeUI> {
   }
 
   _helloUserText() {
+
+    String name = 'Xin chào bạn\n';
+    String content1 = "Bạn có cuộc hẹn với thầy ... lúc\n";
+    String content2 = "0:00 chiều thứ xxx DD | MM | YYYY";
+    if(currentSchedule != null){
+      name = currentSchedule.attendees[0].user.lastName;
+      name = 'Xin chào $name\n';
+      content1 = "Bạn có cuộc hẹn với thầy ... lúc\n";
+      DateTime date = scheduleList.objects[0].dateTime;
+      DateFormat format = DateFormat('hh:mm a EEEE  dd | MM | yyyy');
+      DateFormat formatAMPM = DateFormat('a');
+      String ampm = formatAMPM.format(date);
+      if(ampm.toLowerCase() == 'ch'){
+        ampm = "chiều";
+      }else{
+        ampm = 'sáng';
+      }
+      String formattedDate = format.format(date);
+      content2 = formattedDate.toLowerCase().replaceRange(6, 8, ampm);
+    }
+
     return Center(
       child: RichText(
           textAlign: TextAlign.center,
@@ -267,7 +270,7 @@ class HomeUIState extends State<HomeUI> {
                       fontStyle: FontStyle.normal,
                       fontSize: 18.0,
                     ),
-                    text: "Xin chào Trang\n"),
+                    text: name),
                 TextSpan(
                     style: const TextStyle(
                         color: const Color(0xff4B5B53),
@@ -276,7 +279,7 @@ class HomeUIState extends State<HomeUI> {
                         fontStyle: FontStyle.normal,
                         fontSize: 14.0
                     ),
-                    text: "Bạn có cuộc hẹn với thầy Peter lúc\n"),
+                    text: content1),
                 TextSpan(
                     style: const TextStyle(
                         color: const Color(0xff4B5B53),
@@ -285,7 +288,7 @@ class HomeUIState extends State<HomeUI> {
                         fontStyle: FontStyle.normal,
                         fontSize: 14.0
                     ),
-                    text: " 8:00 chiều thứ hai 18 | 07 | 2020")
+                    text: content2)
               ]
           )
       ),
@@ -390,7 +393,7 @@ class HomeUIState extends State<HomeUI> {
                     setState(() {
                       leftbuttonColor = COLOR.COLOR_00C081;
                     }),
-                    Navigator.of(context).push(CalendarView.route()),
+                    Navigator.of(context).push(CalendarView.route(scheduleList.objects[0].id)),
                     Timer(Duration(seconds: 1), () {
                       setState(() {
                         leftbuttonColor = Color(0xffb6d6cb);
@@ -417,7 +420,7 @@ class HomeUIState extends State<HomeUI> {
                       setState(() {
                         rightbuttonColor = COLOR.COLOR_00C081;
                       }),
-                     Navigator.of(context).push(MyHomePage.route()),
+                      Navigator.of(context).push(TimeSlotView.route(scheduleList.objects[0].id)),
                       Timer(Duration(seconds: 1), () {
                         setState(() {
                           rightbuttonColor = Color(0xffb6d6cb);
@@ -447,7 +450,7 @@ class HomeUIState extends State<HomeUI> {
               width: 100,
               height: 100,
               child: GestureDetector(
-                onTap: () => _isStartVideoCall ? VideoState().initState() : "",
+                onTap: () => _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "",
                 child: !_isStartVideoCall ? Image.asset(
                   IMAGES.HOME_CALL_GRAY, width: 100, height: 100,) : Image
                     .asset(IMAGES.HOME_CALL_GREEN, width: 100, height: 100,),
@@ -466,8 +469,8 @@ class HomeUIState extends State<HomeUI> {
       setState(() {
         _isStartVideoCall = false;
         timer.cancel();
-        exampleDate = formattedDate;
-        calculatorDuration(exampleDate);
+        runDate = formattedDate;
+        calculatorDuration(runDate);
         if (hours > 0 || minutes > 0 || seconds > 0) {
           startTimeout();
         }

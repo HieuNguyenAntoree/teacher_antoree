@@ -9,8 +9,11 @@ import 'package:teacher_antoree/src/customViews/router.dart';
 import 'package:teacher_antoree/src/customViews/dialog_manager.dart';
 import 'package:teacher_antoree/src/fcm/fcm_object.dart';
 
-void main(){
+import 'const/sharedPreferences.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await StorageUtil.getInstance();
 //  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
 //    statusBarColor: Colors.transparent, // transparent status bar
 //  ));

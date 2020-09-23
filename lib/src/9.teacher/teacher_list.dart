@@ -1,13 +1,16 @@
 import 'dart:async';
-
-import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/customViews/route_names.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teacher_antoree/const/constant.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_view/flutter_web_view.dart';
+import 'package:teacher_antoree/const/color.dart';
+import 'package:teacher_antoree/const/defaultValue.dart';
+import 'package:teacher_antoree/const/sharedPreferences.dart';
+import 'package:teacher_antoree/models/teacher.dart';
+import 'package:teacher_antoree/src/0.connection/api_connection.dart';
+import 'package:teacher_antoree/src/customViews/route_names.dart';
 
 class Item {
   const Item(this.name,this.cost);
@@ -16,9 +19,11 @@ class Item {
 }
 
 class TeacherListView extends StatelessWidget {
-
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => TeacherListView());
+  final String idSchedule;
+  final String available_time;
+  const TeacherListView(this.idSchedule, this.available_time);
+  static Route route(String idSchedule, String available_time) {
+    return MaterialPageRoute<void>(builder: (_) => TeacherListView(idSchedule, available_time));
   }
 
   @override
@@ -34,7 +39,10 @@ class TeacherListView extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
-          child: TeacherListUI(),
+          child: BlocProvider(
+            create: (context) => APIConnect()..add(TeacherList(0, available_time)),
+            child: TeacherListUI(this.idSchedule),
+          ),
         ),
       ),
       onWillPop: () async {
@@ -88,61 +96,70 @@ class TeacherListView extends StatelessWidget {
 }
 
 class TeacherListUI extends StatefulWidget {
+  final String idSchedule;
+  const TeacherListUI(this.idSchedule);
   @override
-  TeacherListUIState createState() => TeacherListUIState();
+  TeacherListUIState createState() => TeacherListUIState(this.idSchedule);
 }
 
 class TeacherListUIState extends State<TeacherListUI>{
 
   bool _isLoading = false;
-  APIConnect _apiConnect = APIConnect();
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
   int totalItems = 10;
   bool _isShowingDropList = false;
+  TeacherModel teacherModel;
 
+  String idSchedule;
+  TeacherListUIState(this.idSchedule);
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _apiConnect.init();
-    listenConnectionResponse();
 
   }
-
-  void listenConnectionResponse(){
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: result.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-
-      } else if (result is SuccessState) {
-
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-
-        ErrorState error = result;
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-      }
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
     /// Example Calendar Carousel without header and custom prev & next button
+    return BlocListener<APIConnect, ApiState>(
+        listener: (context, state){
+          if (state.result is StateInit) {
+            setState(() {
+              _isLoading = false;
+            });
+          }else if (state.result is LoadingState) {
+            setState(() {
+              _isLoading = true;
+            });
+          }else if (state.result is ParseJsonToObject) {
+            setState(() {
+              _isLoading = false;
+              teacherModel = StorageUtil.getTeacherList();
+            });
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        _filterView(),
-        Stack(
-          children: [
-             _teacherList(context),
-            _isShowingDropList ? _filterList() : _space()
+          }else {
+            setState(() {
+              _isLoading = false;
+            });
+            ErrorState error = state.result;
+            showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            _filterView(),
+            Stack(
+              children: [
+                _teacherList(context),
+                _isShowingDropList ? _filterList() : _space()
+              ],
+            )
           ],
         )
-      ],
     );
   }
 
@@ -159,7 +176,7 @@ class TeacherListUIState extends State<TeacherListUI>{
       child: GestureDetector(onTap: ()=>
       {
         setState(() {
-            _isShowingDropList = !_isShowingDropList;
+          _isShowingDropList = !_isShowingDropList;
         }),
       },
           child: Container(
@@ -214,24 +231,24 @@ class TeacherListUIState extends State<TeacherListUI>{
 
   _filterList(){
     return GestureDetector(
-      onTap: ()=>
+        onTap: ()=>
         {
           setState(() {
             _isShowingDropList = !_isShowingDropList;
           }),
         },
-          child: Container(
-            color: const Color(0xffd8d8d8).withOpacity(0.9),
-            height:  MediaQuery.of(context).size.height - kToolbarHeight - 25 - kBottomNavigationBarHeight,
-            child: ListView.builder(
-              itemBuilder: (context, int index) {
-                //page = page + 1;
-                return _filterItem(index);
-              },
-              itemCount: users.length,
+        child: Container(
+          color: const Color(0xffd8d8d8).withOpacity(0.9),
+          height:  MediaQuery.of(context).size.height - kToolbarHeight - 25 - kBottomNavigationBarHeight,
+          child: ListView.builder(
+            itemBuilder: (context, int index) {
+              //page = page + 1;
+              return _filterItem(index);
+            },
+            itemCount: users.length,
 //      controller: _scrollController,
-            ),
-          )
+          ),
+        )
     );
   }
 
@@ -266,7 +283,7 @@ class TeacherListUIState extends State<TeacherListUI>{
               child: _filterRow(index,)
           ) :
           Container(
-            color: selectedIndex != index ? Colors.white : itemColor,
+              color: selectedIndex != index ? Colors.white : itemColor,
               height: 50,
               padding: EdgeInsets.only(left: 15, right: 15,),
               child: _filterRow(index,)
@@ -325,10 +342,10 @@ class TeacherListUIState extends State<TeacherListUI>{
       child: ListView.builder(
         itemBuilder: (context, int index) {
           //page = page + 1;
-          return new TeacherItem();
+          return new TeacherItem(teacher: teacherModel.objects[index],);
         },
-        itemCount: 30,
-      controller: _scrollController,
+        itemCount: teacherModel != null ? teacherModel.objects.length : 0,
+//      controller: _scrollController,
       ),
     );
   }
@@ -378,30 +395,31 @@ class BottomLoader extends StatelessWidget {
 
 class TeacherItem extends StatelessWidget {
 
-  TeacherItem({Key key}) : super(key: key);
+  TeacherItem({Key key, this.teacher}) : super(key: key);
   double heightCell = (25 + 78 + 10 + 180).toDouble();
   double widthCell = 0;
+  Teacher teacher;
   @override
   Widget build(BuildContext context) {
     widthCell = MediaQuery.of(context).size.width - 20 - 120;
     return Column(
       children: [
         Container(
-          height: heightCell,
+            height: heightCell,
             color: Colors.white,
             child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 25,),
-                        _avatarImage(),
-                        SizedBox(height: 10,),
-                        _rating(),
-                      ],
-                    ),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 25,),
+                      _avatarImage(),
+                      SizedBox(height: 10,),
+                      _rating(),
+                    ],
+                  ),
                   Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -530,7 +548,7 @@ class TeacherItem extends StatelessWidget {
           SizedBox(height: 10,),
           _detail(),
           SizedBox(height: 20,),
-         Container(width: widthCell, child: _bottomButton(context),)
+          Container(width: widthCell, child: _bottomButton(context),)
         ],
       ),
     );
@@ -584,76 +602,117 @@ class TeacherItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
 
-      Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        new GestureDetector(
-          onTap: () {
-            _launchURL;
-          },
-          child: Container(
-            width: 86,
-            alignment: Alignment.center,
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(5),
-                bottomRight: Radius.circular(30),
-                bottomLeft: Radius.circular(5),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            new GestureDetector(
+              onTap: () {
+                launchWebViewExample();
+              },
+              child: Container(
+                  width: 86,
+                  alignment: Alignment.center,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(5),
+                      bottomRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(5),
+                    ),
+                    color: COLOR.COLOR_00C081,
+                  ),
+                  child: Image.asset(
+                    IMAGES.ICON_SQUARE,
+                    width: 24.0,
+                    height: 24.0,
+                  )
               ),
-              color: COLOR.COLOR_00C081,
             ),
-            child: Image.asset(
-              IMAGES.ICON_SQUARE,
-              width: 24.0,
-              height: 24.0,
-            )
-          ),
-        ),
-        SizedBox(width: 10,),
-        new GestureDetector(
-          onTap: () {
-            Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
-          },
-          child: Container(
-            width: 86,
-            alignment: Alignment.center,
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(5),
-                bottomRight: Radius.circular(30),
-                bottomLeft: Radius.circular(5),
+            SizedBox(width: 10,),
+            new GestureDetector(
+              onTap: () {
+                Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
+              },
+              child: Container(
+                width: 86,
+                alignment: Alignment.center,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(5),
+                    bottomRight: Radius.circular(30),
+                    bottomLeft: Radius.circular(5),
+                  ),
+                  color: COLOR.COLOR_00C081,
+                ),
+                child: Text(
+                    "Chọn",
+                    style: const TextStyle(
+                        color:  const Color(0xffffffff),
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Montserrat",
+                        fontStyle:  FontStyle.normal,
+                        fontSize: 18.0
+                    )
+                ),
               ),
-              color: COLOR.COLOR_00C081,
             ),
-            child: Text(
-                "Chọn",
-                style: const TextStyle(
-                    color:  const Color(0xffffffff),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Montserrat",
-                    fontStyle:  FontStyle.normal,
-                    fontSize: 18.0
-                )
-            ),
-          ),
+          ],
         ),
-      ],
-    ),
       ],
     );
   }
 
-  _launchURL() async {
-    const url = 'https://flutter.dev';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+  FlutterWebView flutterWebView = new FlutterWebView();
+  void launchWebViewExample() {
+    if (flutterWebView.isLaunched) {
+      return;
     }
+
+    flutterWebView.launch("https://apptreesoftware.com",
+        headers: {
+          "X-SOME-HEADER": "MyCustomHeader",
+        },
+        javaScriptEnabled: false,
+        toolbarActions: [
+          new ToolbarAction("Dismiss", 1),
+          new ToolbarAction("Reload", 2)
+        ],
+        barColor: Colors.green,
+        tintColor: Colors.white);
+    flutterWebView.onToolbarAction.listen((identifier) {
+      switch (identifier) {
+        case 1:
+          flutterWebView.dismiss();
+          break;
+        case 2:
+          reload();
+          break;
+      }
+    });
+    flutterWebView.listenForRedirect("mobile://test.com", true);
+
+//    flutterWebView.onWebViewDidStartLoading.listen((url) {
+//      setState(() => _isLoading = true);
+//    });
+//    flutterWebView.onWebViewDidLoad.listen((url) {
+//      setState(() => _isLoading = false);
+//    });
+//    flutterWebView.onRedirect.listen((url) {
+//      flutterWebView.dismiss();
+//      setState(() => _redirectedToUrl = url);
+//    });
+  }
+
+  void reload() {
+    flutterWebView.load(
+      "https://google.com",
+      headers: {
+        "X-SOME-HEADER": "MyCustomHeader",
+      },
+    );
   }
 }

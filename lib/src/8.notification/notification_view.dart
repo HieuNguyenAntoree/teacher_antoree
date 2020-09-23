@@ -1,20 +1,17 @@
-import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/2.home/home_view.dart';
-import 'package:teacher_antoree/src/3.changeschedule/schedule_view.dart';
-import 'package:teacher_antoree/src/5.cancel/cancel_view.dart';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:connect_api/connection/model/result.dart';
-import 'package:connect_api/const/defaultValue.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teacher_antoree/const/constant.dart';
-import 'package:loading_overlay/loading_overlay.dart';
+import 'package:teacher_antoree/const/color.dart';
+import 'package:teacher_antoree/const/defaultValue.dart';
+import 'package:teacher_antoree/src/2.home/home_view.dart';
+import 'package:teacher_antoree/src/5.cancel/cancel_view.dart';
+import 'package:teacher_antoree/src/customViews/route_names.dart';
 
 class NotificationView extends StatelessWidget {
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => NotificationView());
+  final String idSchedule;
+  const NotificationView(this.idSchedule);
+  static Route route(String idSchedule) {
+    return MaterialPageRoute<void>(builder: (_) => NotificationView(idSchedule));
   }
 
   @override
@@ -30,7 +27,7 @@ class NotificationView extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
-          child: NotificationUI(),
+          child: NotificationUI(this.idSchedule),
         ),
       ),
       onWillPop: () async {
@@ -84,37 +81,19 @@ class NotificationView extends StatelessWidget {
 }
 
 class NotificationUI extends StatefulWidget {
+  final String idSchedule;
+  const NotificationUI(this.idSchedule);
   @override
-  NotificationUIState createState() =>NotificationUIState();
+  NotificationUIState createState() =>NotificationUIState(this.idSchedule);
 }
 
 class NotificationUIState extends State<NotificationUI>{
 
   bool _isStartVideoCall = false;
-  APIConnect _apiConnect = APIConnect();
-
-
-  @override
+  String idSchedule;
+  NotificationUIState(this.idSchedule);
   void initState() {
     super.initState();
-    _apiConnect.init();
-    listenConnectionResponse();
-  }
-
-  void listenConnectionResponse(){
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: result.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-
-      } else if (result is SuccessState) {
-
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-
-        ErrorState error = result;
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-      }
-    });
   }
 
 
@@ -150,23 +129,23 @@ class NotificationUIState extends State<NotificationUI>{
 
   _textSection() {
     return Center(
-        child: Text(
-            "Cuộc hẹn của bạn đã bị hủy\nvì giáo viên có việc đột xuất\n\nAntoree rất tiếc và trải nghiệm này",
-            style: const TextStyle(
+      child: Text(
+        "Cuộc hẹn của bạn đã bị hủy\nvì giáo viên có việc đột xuất\n\nAntoree rất tiếc và trải nghiệm này",
+        style: const TextStyle(
             color:  const Color(0xff4B5B53),
             fontWeight: FontWeight.w400,
             fontFamily: "Montserrat",
             fontStyle:  FontStyle.normal,
             fontSize: 14.0
         ),
-            textAlign: TextAlign.center,
-    ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
   _okButton(){
     return new GestureDetector(
-      onTap: ()=> Navigator.of(context).push(CancelView.route()),
+      onTap: ()=> Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute)),
       child: Container(
         margin: EdgeInsets.only(left: 40, right: 40),
         alignment: Alignment.center,
@@ -193,7 +172,7 @@ class NotificationUIState extends State<NotificationUI>{
 
   _cancelButton(){
     return new GestureDetector(
-      onTap: ()=> Navigator.of(context).pop(),
+      onTap: ()=> Navigator.of(context).push(CancelView.route(this.idSchedule)),
       child: Container(
         margin: EdgeInsets.only(left: 40, right: 40),
         alignment: Alignment.center,

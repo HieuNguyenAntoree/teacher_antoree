@@ -8,6 +8,8 @@ class VALUES {
   static const COURSE_STATUSES_DELAY_STR = "Delay";
   static const COURSE_STATUSES_CLOSED_STR = "Closed";
   static const COURSE_STATUSES_ALL_STR = "All";
+
+  static const DELAY_TIME = 20;
 }
 
 class STRINGS{
@@ -19,6 +21,7 @@ class STRINGS{
   static const LOGIN_BUTTON = "Đăng nhập";
   static const LOGIN_PASS_VALID = "Password should contains more then 5 characters";
   static const LOGIN_EMAIL_VALID = "Email is invalid";
+  static const EMPTY_LIST = "List is empty";
 }
 
 class IMAGES{
@@ -51,6 +54,7 @@ class IMAGES{
   static const String CALENDAR_CANCEL_ACTIVE = "assets/images/4.calendar/calendar_cancel_green.png";
   static const String CALENDAR_CALL_UNACTIVE = "assets/images/4.calendar/calendar_call_grey.png";
   static const String CALENDAR_CALL_ACTIVE = "assets/images/4.calendar/calendar_call_white.png";
+  static const String CALENDAR_CALL_BACK = "assets/images/4.calendar/calendar_call_back.png";
 
   static const String ARROW_DOWN = "assets/images/9.teacher/arrowdown.png";
   static const String ARROW_UP = "assets/images/9.teacher/arrowup.png";

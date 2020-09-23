@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _currentMonth = DateFormat.yMMM().format(DateTime(2019, 2, 3));
   DateTime _targetDateTime = DateTime(2019, 2, 3);
 //  List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
+
   static Widget _eventIcon = new Container(
     decoration: new BoxDecoration(
         color: Colors.white,

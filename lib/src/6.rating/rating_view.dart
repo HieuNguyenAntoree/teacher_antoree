@@ -1,20 +1,21 @@
-import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/2.home/home_view.dart';
-import 'package:teacher_antoree/src/customViews/route_names.dart';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
-import 'package:connect_api/const/defaultValue.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teacher_antoree/const/constant.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:teacher_antoree/const/color.dart';
+import 'package:teacher_antoree/const/defaultValue.dart';
+import 'package:teacher_antoree/src/0.connection/api_connection.dart';
+import 'package:teacher_antoree/src/customViews/route_names.dart';
 
 class RatingView extends StatelessWidget {
-
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => RatingView());
+  final String idSchedule;
+  const RatingView(this.idSchedule);
+  static Route route(String idSchedule) {
+    return MaterialPageRoute<void>(builder: (_) => RatingView(idSchedule));
   }
 
   @override
@@ -22,68 +23,75 @@ class RatingView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.only(top: 35),
-        child: RatingUI(),
+          padding: const EdgeInsets.only(top: 35),
+          child: BlocProvider(
+            create: (context){
+              return APIConnect();
+            },
+            child: RatingUI(this.idSchedule),
+          )
       ),
     );
   }
 }
 
 class RatingUI extends StatefulWidget {
+  final String idSchedule;
+  const RatingUI(this.idSchedule);
+
   @override
-  RatingUIState createState() =>RatingUIState();
+  RatingUIState createState() => RatingUIState(this.idSchedule);
 }
 
 class RatingUIState extends State<RatingUI>{
 
-  bool _isStartVideoCall = false;
-  APIConnect _apiConnect = APIConnect();
+  double ratingNumber = 1;
+  String idSchedule;
+  RatingUIState(this.idSchedule);
 
 
   @override
   void initState() {
     super.initState();
-    _apiConnect.init();
-    listenConnectionResponse();
-  }
-
-  void listenConnectionResponse(){
-    _apiConnect.hasConnectionResponse().listen((Result result) {
-      if (result is LoadingState) {
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: result.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-
-      } else if (result is SuccessState) {
-
-        //Navigator.push(context, ProfilePage.route());
-      } else {
-
-        ErrorState error = result;
-        showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
-      }
-    });
   }
 
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      padding: const EdgeInsets.all(0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const Padding(padding: EdgeInsets.all(40)),
-          _topImage(),
-          SizedBox(height: 20),
-          _textSection(),
-          SizedBox(height: 40),
-          _textSecondSection(),
-          SizedBox(height: 20,),
-          _rating(),
-          SizedBox(height: 10),
-          _okButton(),
-        ],
-      ),
+    return BlocListener<APIConnect, ApiState>(
+        listener: (context, state){
+          if (state.result is StateInit) {
+
+          }else if (state.result is LoadingState) {
+
+          }else if (state.result is ParseJsonToObject) {
+
+            Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
+          }else {
+
+            ErrorState error = state.result;
+            showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const Padding(padding: EdgeInsets.all(40)),
+              _topImage(),
+              SizedBox(height: 20),
+              _textSection(),
+              SizedBox(height: 40),
+              _textSecondSection(),
+              SizedBox(height: 20,),
+              _rating(),
+              SizedBox(height: 10),
+              _okButton(),
+            ],
+          ),
+        )
     );
   }
 
@@ -156,6 +164,9 @@ class RatingUIState extends State<RatingUI>{
         ),
         onRatingUpdate: (rating) {
           print(rating);
+          setState(() {
+            ratingNumber = rating;
+          });
         },
       ),
     );
@@ -165,7 +176,8 @@ class RatingUIState extends State<RatingUI>{
     return new GestureDetector(
       onTap: ()=>
       {
-        Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute))
+        context.bloc<APIConnect>().add(Rating(this.idSchedule, ratingNumber.toInt(), "" )),
+
       },
       child: Container(
         margin: EdgeInsets.only(left: 40, right: 40),

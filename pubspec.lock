@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  calendar_widget:
+    dependency: "direct main"
+    description:
+      name: calendar_widget
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   camera:
     dependency: "direct main"
     description:
@@ -331,6 +338,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_view:
+    dependency: "direct main"
+    description:
+      name: flutter_web_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.6"
   formz:
     dependency: "direct main"
     description:
@@ -407,7 +421,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.16.1"
+    version: "0.15.8"
   io:
     dependency: transitive
     description:
@@ -681,6 +695,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.3"
+  simple_gesture_detector:
+    dependency: transitive
+    description:
+      name: simple_gesture_detector
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -728,6 +749,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  table_calendar:
+    dependency: "direct main"
+    description:
+      name: table_calendar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.3"
   term_glyph:
     dependency: transitive
     description:

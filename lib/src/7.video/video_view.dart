@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:teacher_antoree/src/6.rating/rating_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
@@ -8,14 +7,7 @@ import 'package:jitsi_meet/jitsi_meeting_listener.dart';
 import 'package:jitsi_meet/room_name_constraint.dart';
 import 'package:jitsi_meet/room_name_constraint_type.dart';
 import 'package:jitsi_meet/feature_flag/feature_flag_enum.dart';
-
-//class VideoPage extends StatefulWidget {
-//  static Route route(){
-//    return MaterialPageRoute<void>(builder: (_) => VideoPage());
-//  }
-//  @override
-//  _VideoState createState() => _VideoState();
-//}
+import 'package:teacher_antoree/src/6.rating/rating_view.dart';
 
 class VideoState{
   final serverText = TextEditingController(text: 'https://vcall.stg.antoree.tech/');
@@ -27,8 +19,12 @@ class VideoState{
   var isAudioOnly = true;
   var isAudioMuted = true;
   var isVideoMuted = true;
+  String idSchedule;
+  BuildContext context;
+  VideoState(this.context, this.idSchedule);
 
   void initState() {
+    roomText.text = this.idSchedule;
     JitsiMeet.addListener(JitsiMeetingListener(
         onConferenceWillJoin: _onConferenceWillJoin,
         onConferenceJoined: _onConferenceJoined,
@@ -39,7 +35,7 @@ class VideoState{
 
   void dispose() {
     JitsiMeet.removeAllListeners();
-//    Navigator.of(context).push(MaterialPageRoute(builder: (context) => RatingView()));
+    Navigator.of(context).push(RatingView.route(idSchedule));
   }
 
   _joinMeeting() async {
@@ -125,4 +121,5 @@ class VideoState{
   _onError(error) {
     debugPrint("_onError broadcasted: $error");
   }
+
 }
