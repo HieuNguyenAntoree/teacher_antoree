@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teacher_antoree/const/color.dart';
 import 'package:teacher_antoree/const/defaultValue.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
+import 'package:teacher_antoree/src/7.video/video_view.dart';
 import 'package:teacher_antoree/src/customViews/route_names.dart';
 
 class TimeSlotView extends StatelessWidget {
@@ -104,7 +105,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   bool _isLoading = false;
   List<String> timeSlots;
   int timelotsCount = 0;
-  int indexSelected = 0;
+  int indexSelected = -1;
 
   String idSchedule;
   TimeSlotUIState(this.idSchedule);
@@ -145,7 +146,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           setState(() {
             _isLoading = false;
           });
-          Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
+//          Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
         }else {
           setState(() {
             _isLoading = false;
@@ -465,17 +466,18 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         children: List.generate(total, (index) {
           return GestureDetector(
             onTap: () {
-              setState(() {
-                indexSelected = index;
-                if(indexSelected == 1){
-                  indexMeeting = 1;
-                }else{
-                  indexMeeting = -1;
-                }
-              });
-              DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-              String datetime = formatterAPI.format(_selectDate);
-              context.bloc<APIConnect>().add(ChangeSchedule(this.idSchedule, datetime));
+              if(indexMeeting == -1){
+                setState(() {
+                  indexSelected = index;
+                  if(indexSelected == 1){
+                    indexMeeting = 1;
+                  }
+                });
+                DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                String datetime = formatterAPI.format(_selectDate);
+                context.bloc<APIConnect>().add(ChangeSchedule(this.idSchedule, datetime));
+              }
+
             },
             child: Center(
               child: _timeItem(itemWidth, itemHeight, index, gridViewCrossAxisCount, total),
@@ -629,46 +631,59 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   }
 
   _callButton(double widthButton, double height){
-    return Container(
-      width: widthButton,
-      alignment: Alignment.center,
-      height: height,
-      decoration: BoxDecoration(
-        color:  const Color(0xffff9900)
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            IMAGES.CALENDAR_CALL_ACTIVE,
-            width: 19.0,
-            height: 19.0,
+    return GestureDetector(
+        onTap: () {
+          VideoState(context, idSchedule).initState();
+        },
+        child: Container(
+          width: widthButton,
+          alignment: Alignment.center,
+          height: height,
+          decoration: BoxDecoration(
+              color:  const Color(0xffff9900)
           ),
-        ],
-      ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                IMAGES.CALENDAR_CALL_ACTIVE,
+                width: 19.0,
+                height: 19.0,
+              ),
+            ],
+          ),
+        )
     );
   }
 
   _backButton(double widthButton, double height){
-    return Container(
-      width: widthButton,
-      alignment: Alignment.center,
-      height: height,
-      decoration: BoxDecoration(
-          color:  Colors.white
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            IMAGES.CALENDAR_CALL_BACK,
-            width: 26.0,
-            height: 20.0,
-          ),
-        ],
-      ),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          indexSelected = -1;
+          indexMeeting = -1;
+        });
+      },
+      child: Container(
+        width: widthButton,
+        alignment: Alignment.center,
+        height: height,
+        decoration: BoxDecoration(
+            color:  Colors.white
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              IMAGES.CALENDAR_CALL_BACK,
+              width: 26.0,
+              height: 20.0,
+            ),
+          ],
+        ),
+      )
     );
   }
 
