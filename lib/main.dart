@@ -1,6 +1,7 @@
 import 'package:teacher_antoree/src/1.login/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:teacher_antoree/src/2.home/home_view.dart';
 import 'package:teacher_antoree/src/fcm/receive_fcm.dart';
 import 'package:teacher_antoree/src/customViews/navigation_service.dart';
 import 'package:teacher_antoree/src/customViews/dialog_service.dart';
@@ -90,7 +91,10 @@ class _AppState extends State<App> {
             builder: (context) => DialogManager(child: child)),
       ),
       navigatorKey: locator<NavigationService>().navigationKey,
-      home: LoginView(),
+      home: StorageUtil.getAccessToken() == "" ? LoginView() : HomeView(),
+      routes: {
+        'HomeView': (context) => HomeView(),
+      },
       onGenerateRoute: generateRoute,
 
     );

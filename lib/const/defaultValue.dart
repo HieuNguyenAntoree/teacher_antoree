@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';  //for date format
 class VALUES {
   static const COURSE_STATUSES_OPEN = 0;
   static const COURSE_STATUSES_DELAY = 6;
@@ -10,6 +11,8 @@ class VALUES {
   static const COURSE_STATUSES_ALL_STR = "All";
 
   static const DELAY_TIME = 20;
+  static const SCHEDULE_DAYS = 7;
+  static DateFormat FORMAT_DATE_API = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 }
 
 class STRINGS{
@@ -22,6 +25,7 @@ class STRINGS{
   static const LOGIN_PASS_VALID = "Password should contains more then 5 characters";
   static const LOGIN_EMAIL_VALID = "Email is invalid";
   static const EMPTY_LIST = "List is empty";
+  static const TEACHER_STRING = "Giáo viên";
 }
 
 class IMAGES{
@@ -54,10 +58,68 @@ class IMAGES{
   static const String CALENDAR_CANCEL_ACTIVE = "assets/images/4.calendar/calendar_cancel_green.png";
   static const String CALENDAR_CALL_UNACTIVE = "assets/images/4.calendar/calendar_call_grey.png";
   static const String CALENDAR_CALL_ACTIVE = "assets/images/4.calendar/calendar_call_white.png";
-  static const String CALENDAR_CALL_BACK = "assets/images/4.calendar/calendar_call_back.png";
+  static const String CALENDAR_CALL_BACK = "assets/images/4.calendar/calendar_back.png";
 
   static const String ARROW_DOWN = "assets/images/9.teacher/arrowdown.png";
   static const String ARROW_UP = "assets/images/9.teacher/arrowup.png";
   static const String ICON_SQUARE = "assets/images/9.teacher/iconsquare.png";
 
 }
+
+enum TEACHER_TYPE {
+  UNKNOWN,
+  PHILIPPINE,
+  VIETNAM,
+  NATIVE,
+}
+
+class TEACHER_TYPE_STRING {
+  static const String ALL = 'Tất cả';
+  static const String VIETNAM = 'Giáo viên Việt Nam';
+  static const String PHILIPINES = 'Giáo viên Philipines';
+  static const String PREMIUM = 'Giáo viên Premium';
+  static const String NATIVE = 'Giáo viên Native';
+  static const String UNKNOWN = 'Giáo viên';
+}
+
+extension TeacherExtension on TEACHER_TYPE {
+  String get displayTitle {
+    switch (this) {
+      case TEACHER_TYPE.NATIVE:
+        return TEACHER_TYPE_STRING.NATIVE;
+      case TEACHER_TYPE.VIETNAM:
+        return TEACHER_TYPE_STRING.VIETNAM;
+      case TEACHER_TYPE.PHILIPPINE:
+        return TEACHER_TYPE_STRING.PHILIPINES;
+      case TEACHER_TYPE.UNKNOWN:
+        return TEACHER_TYPE_STRING.UNKNOWN;
+      default:
+        return TEACHER_TYPE_STRING.UNKNOWN;
+    }
+  }
+}
+
+class SCHEDULE_STATUS{
+  static const int UNKNOWN = -1;// UNKNOWN(-1),
+  static const int ACTIVE = 1;//  ACTIVE(1),
+  static const int CANCEL = 2;// CANCEL(2),
+  static const int DONE = 3;// DONE(3),
+}
+
+class SCHEDULE_STATUS_TEXT{
+  static const String UNKNOWN = "UNKNOWN";
+  static const String ACTIVE = "ACTIVE";
+  static const String CANCEL = "CANCEL";
+  static const String DONE = "DONE";
+}
+
+class TIMESHEET_STATUS{
+  static const int AVAILABLE = 1;// AVAILABLE(1)
+  static const int UNAVAILABLE = 2;//  UNAVAILABLE(2)
+  static const int CANCELED = 3;// CANCELED(3)
+  static const int MEETING = 4;// MEETING(4)
+}
+
+
+
+

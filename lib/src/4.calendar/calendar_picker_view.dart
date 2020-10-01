@@ -9,11 +9,13 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:teacher_antoree/const/color.dart';
 import 'package:teacher_antoree/const/defaultValue.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
 import 'package:teacher_antoree/src/7.video/video_view.dart';
 import 'package:teacher_antoree/src/customViews/route_names.dart';
+import 'package:ui_libraries/calendar/calendarro.dart';
 
 class TimeSlotView extends StatelessWidget {
   final String idSchedule;
@@ -124,10 +126,68 @@ class TimeSlotUIState extends State<TimeSlotUI>{
 
   String nextButton = IMAGES.CALENDAR_NEXT_UN;
   String backButton = IMAGES.CALENDAR_BACK_UN;
-  DateTime _currentDate = DateTime.now();
+  DateTime _currentDate = DateTime.now().subtract(Duration(days: (DateTime.now().day - 1) ));
   DateTime _selectDate = DateTime.now();
-  String _currentMonth = DateFormat.yMMM().format(DateTime.now());
+  static final DateFormat formatMonth = DateFormat('MMMM | yyyy');
+  String _currentMonth = formatMonth.format(DateTime.now());
   DateTime _targetDateTime = DateTime.now();
+  int currentDay = DateTime.now().day;
+  Calendarro _calendarItem;
+
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title, style: const TextStyle(
+              color:  const Color(0xff4B5B53),
+              fontWeight: FontWeight.w700,
+              fontFamily: "Montserrat",
+              fontStyle:  FontStyle.normal,
+              fontSize: 14.0
+          ),),
+          content: Text(mess,
+            style: const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w400,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 12.0
+            ),),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            rightButton == "" ? SizedBox(width: 0,) : CupertinoDialogAction(
+              child: Text(rightButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                _rightAction;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,207 +212,136 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             _isLoading = false;
           });
           ErrorState error = state.result;
-          showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", changeScheduleConnectAPI());
         }
       },
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              color: const Color(0xfff8f8f8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 15.0,
-                      bottom: 15.0,
-                      left: 15.0,
-                    ),
-                    child: new Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: Text(
-                                _currentMonth,
-                                style: const TextStyle(
-                                    color:  const Color(0xff4B5B53),
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: "Montserrat",
-                                    fontStyle:  FontStyle.normal,
-                                    fontSize: 18.0
-                                )
-                            )),
-                        GestureDetector(onTap: ()=>
-                        {
-                          setState(() {
-                            _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
-                            _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-                            nextButton = IMAGES.CALENDAR_NEXT;
-                            Timer(Duration(seconds: 1),(){
-                              nextButton = IMAGES.CALENDAR_NEXT_UN;}
-                            );
-                          }),
-                        },
-                          child: Container(
-                            width: 52,
-                            height: 50,
-                            child: Image.asset(nextButton, width: 52.0, height: 50.0,),
+      child: LoadingOverlay(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                color: const Color(0xfff8f8f8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 15.0,
+                        bottom: 15.0,
+                        left: 15.0,
+                      ),
+                      child: new Row(
+                        children: <Widget>[
+                          Expanded(
+                              child: Text(
+                                  '${_currentMonth[0].toUpperCase()}${_currentMonth.substring(1)}',
+                                  style: const TextStyle(
+                                      color:  const Color(0xff4B5B53),
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: "Montserrat",
+                                      fontStyle:  FontStyle.normal,
+                                      fontSize: 18.0
+                                  )
+                              )),
+                          GestureDetector(onTap: ()=>
+                          {
+                            setState(() {
+                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
+                              _currentMonth = formatMonth.format(_targetDateTime);
+                              _currentDate = _targetDateTime;
+                              nextButton = IMAGES.CALENDAR_NEXT;
+                            }),
+
+                            Timer(Duration(milliseconds: 200),(){
+                              setState(() {
+                                nextButton = IMAGES.CALENDAR_NEXT_UN;
+                              });
+                            })
+                          },
+                            child: Container(
+                              width: 52,
+                              height: 50,
+                              child: Image.asset(nextButton, width: 52.0, height: 50.0,),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 10,),
-                        GestureDetector(onTap: ()=>
-                        {
-                          setState(() {
-                            _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
-                            _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-                            backButton = IMAGES.CALENDAR_BACK;
-                            Timer(Duration(seconds: 1),(){
-                              backButton = IMAGES.CALENDAR_BACK_UN;}
-                            );
-                          }),
-                        },
-                          child: Container(
-                            width: 52,
-                            height: 50,
-                            child: Image.asset(backButton, width: 52.0, height: 50.0,),
+                          SizedBox(width: 10,),
+                          GestureDetector(onTap: ()=>
+                          {
+                            setState(() {
+                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
+                              _currentMonth = formatMonth.format(_targetDateTime);
+                              _currentDate = _targetDateTime;
+                              backButton = IMAGES.CALENDAR_BACK;
+                            }),
+
+                            Timer(Duration(milliseconds: 200),(){
+                              setState(() {
+                                backButton = IMAGES.CALENDAR_BACK_UN;
+                              });
+                            })
+                          },
+                            child: Container(
+                              width: 52,
+                              height: 50,
+                              child: Image.asset(backButton, width: 52.0, height: 50.0,),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 15,),
-                      ],
+                          SizedBox(width: 15,),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: _calendarField(),
-                  ),
-                ],
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: _calendar(),//_calendarField(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20,),
-            _statusField(),
-            SizedBox(height: 0,),
-            _timelineField(),//
-          ],
+              SizedBox(height: 20,),
+              _statusField(),
+              SizedBox(height: 0,),
+              _timelineField(),//
+            ],
+          ),
         ),
-      ),
+        isLoading: _isLoading,
+        // demo of some additional parameters
+        opacity: 0.2,
+        progressIndicator: CircularProgressIndicator(),
+      )
     );
   }
 
-  int currentDay = DateTime.now().day;
-
-  EventList<Event> _markedDateMap = new EventList<Event>(
-    events: {
-      new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day): [
-        new Event(
-          date: new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
-          dot: Container(
-            width: 5,
-            height: 5,
-            decoration: new BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-      ],
-    },
-  );
-
-  _calendarField(){
-    return CalendarCarousel<Event>(
-      onDayPressed: (DateTime date, List<Event> events) {
-        if(date.difference(DateTime.now()).inDays >= 0){
-          getTimeLots(date);
-          this.setState(() => _selectDate = date);
-          events.forEach((event) => print(event.title));
-        }else{
-          SnackBar(
-            content: Text('Can not select previous day'),
-          );
+  _calendar(){
+    _calendarItem = Calendarro(
+        startDate:  _currentDate.subtract(Duration(days: 3600)),
+        endDate: _currentDate.add(Duration(days: 3600)),
+        displayMode: DisplayMode.MONTHS,
+        selectedSingleDate: _selectDate,
+        onPageSelected: (start_page, end_page) {
+          print("onTap: $start_page");
+          print("onTap: $end_page");
+          setState(() {
+            _currentMonth = DateFormat.yMMM().format(start_page);
+          });
+        },
+        onTap: (date) {
+          if(date.difference(DateTime.now()).inDays >= 0){
+            getTimeLots(date);
+            this.setState(() => _selectDate = date);
+          }else{
+            SnackBar(
+              content: Text('Can not select previous day'),
+            );
+          }
         }
-      },
-      markedDatesMap: _markedDateMap,
-      daysHaveCircularBorder: true,
-      showOnlyCurrentMonthDate: false,
-      weekendTextStyle: TextStyle(
-          color:  const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      weekFormat: false,
-      height: 300.0,
-      selectedDateTime: _selectDate,
-      targetDateTime: _targetDateTime,
-      customGridViewPhysics: NeverScrollableScrollPhysics(),
-      showHeader: false,
-      todayTextStyle: TextStyle(
-          color:  const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      todayButtonColor: const Color(0xfff8f8f8),
-      todayBorderColor: const Color(0xfff8f8f8),
-      daysTextStyle: TextStyle(
-          color:  const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      nextDaysTextStyle: TextStyle(
-          color:  Colors.grey,
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      selectedDayTextStyle: TextStyle(
-          color:  const Color(0xffffffff),
-          fontWeight: FontWeight.w700,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      minSelectedDate: _currentDate.subtract(Duration(days: 360)),
-      maxSelectedDate: _currentDate.add(Duration(days: 360)),
-      prevDaysTextStyle: TextStyle(
-          color:  Colors.grey,
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      inactiveDaysTextStyle: TextStyle(
-          color:  Colors.grey,
-          fontWeight: FontWeight.w700,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      weekdayTextStyle: TextStyle(
-          color:  const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle:  FontStyle.normal,
-          fontSize: 14.0
-      ),
-      onCalendarChanged: (DateTime date) {
-        this.setState(() {
-          _targetDateTime = date;
-          _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-        });
-      },
-      onDayLongPressed: (DateTime date) {
-        print('long pressed date $date');
-      },
+
     );
+
+    return _calendarItem;
   }
 
   _statusField(){
@@ -473,9 +462,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                     indexMeeting = 1;
                   }
                 });
-                DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                String datetime = formatterAPI.format(_selectDate);
-                context.bloc<APIConnect>().add(ChangeSchedule(this.idSchedule, datetime));
+                changeScheduleConnectAPI();
               }
 
             },
@@ -487,6 +474,12 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         }),
       ),
     );
+  }
+
+  changeScheduleConnectAPI(){
+    DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    String datetime = formatterAPI.format(_selectDate);
+    context.bloc<APIConnect>().add(ChangeSchedule(this.idSchedule, datetime));
   }
 
   int indexMeeting = -1;

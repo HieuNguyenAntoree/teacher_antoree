@@ -44,14 +44,14 @@ class CancelSchedule extends ApiEvent {
 }
 
 class Rating extends ApiEvent {
-  const Rating(this.idSchedule, this.rating, this.feedback);
+  const Rating(this.idSchedule, this.rating, this.role);
 
   final String idSchedule;
   final int rating;
-  final String feedback;
+  final String role;
 
   @override
-  List<Object> get props => [idSchedule, rating, feedback];
+  List<Object> get props => [idSchedule, rating, role];
 }
 
 class ChangeSchedule extends ApiEvent {
@@ -75,12 +75,23 @@ class TeacherList extends ApiEvent {
 }
 
 class ChangeTeacher extends ApiEvent {
-  const ChangeTeacher(this.idSchedule, this.datetime, this.idTeacher);
+  const ChangeTeacher(this.idSchedule, this.datetime, this.idTeacher, this.role);
 
   final String idSchedule;
   final String idTeacher;
   final String datetime;
+  final String role;
 
   @override
-  List<Object> get props => [idSchedule, datetime, idTeacher];
+  List<Object> get props => [idSchedule, datetime, idTeacher, role];
+}
+
+class CallVideo extends ApiEvent {
+  const CallVideo(this.idSchedule, this.role);
+
+  final String idSchedule;
+  final String role;
+
+  @override
+  List<Object> get props => [idSchedule, role];
 }

@@ -5,7 +5,6 @@ import 'package:connect_api/connection/model/result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/3.changeschedule/schedule_view.dart';
 import 'package:teacher_antoree/src/4.calendar/calendar_picker_view.dart';
 import 'package:teacher_antoree/src/4.calendar/calendar_view.dart';
 import 'package:teacher_antoree/src/7.video/video_view.dart';
@@ -14,11 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
 import 'package:intl/intl.dart';  //for date format
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:teacher_antoree/src/8.notification/notification_view.dart';  //for date locale
 
 class HomeView extends StatelessWidget {
 
-  static final DateFormat formatterAPI = DateFormat('yyyy-MM-dd');
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context).settings.name;
@@ -33,7 +30,7 @@ class HomeView extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
           child: BlocProvider(
-            create: (context) => APIConnect()..add(ScheduleFetched(0,formatterAPI.format(DateTime.now()), formatterAPI.format(DateTime.now().add(new Duration(days: 7))))),
+            create: (context) => APIConnect()..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
             child: HomeUI(),
           )
         ),
@@ -72,9 +69,12 @@ class HomeUI extends StatefulWidget {
 
 class HomeUIState extends State<HomeUI> {
 
+  bool _isLoading = false;
   bool _isStartVideoCall = false;
   ScheduleModel scheduleList;
   Schedule currentSchedule;
+  User student;
+  User teacher;
 
   Color leftbuttonColor = Color(0xffb6d6cb);
   Color rightbuttonColor = Color(0xffb6d6cb);
@@ -84,11 +84,10 @@ class HomeUIState extends State<HomeUI> {
   int seconds = 0;
   int days = 0;
   Timer timer;
+  DateTime timerDate;
 
-  static final DateTime now = DateTime.now();
-  static final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm:ss');
-  final String formatted = formatter.format(now);
-  String runDate;
+  static final DateFormat formatDateForTimer = DateFormat('yyyy-MM-dd HH:mm:ss');
+  static final DateFormat formatDateForUI = DateFormat('hh:mm a EEEE  dd | MM | yyyy');
   final interval = const Duration(seconds: 1);
 
   startTimeout([int milliseconds]) {
@@ -96,15 +95,12 @@ class HomeUIState extends State<HomeUI> {
     timer = Timer.periodic(duration, (timer) {
       setState(() {
         print(timer.tick);
-        if(seconds - 1 < 0){
-          _isStartVideoCall = true;
-          timer.cancel();
-        }
+
         seconds = seconds - 1;
         if (hours == 0 && minutes == 0 && seconds == 0) {
           _isStartVideoCall = true;
           timer.cancel();
-        } else if (seconds == 0) {
+        } else if (seconds <= 0) {
           minutes = minutes - 1;
           if (minutes == 0) {
             hours = hours - 1;
@@ -118,12 +114,8 @@ class HomeUIState extends State<HomeUI> {
           } else if (minutes < 0) {
             minutes = 0;
             seconds = 60;
-          } else {
-            seconds = 0;
-            hours = 0;
-            minutes = 0;
-            _isStartVideoCall = true;
-            timer.cancel();
+          }else  {
+            seconds = 60;
           }
         }
       });
@@ -131,23 +123,20 @@ class HomeUIState extends State<HomeUI> {
   }
 
   void calculatorDuration(String date) {
-    setState(() {
-      DateTime dob = DateTime.parse(date);
-      Duration dur = dob.difference(DateTime.now());
-      int s = dur.inSeconds;
-      if (s > 0) {
-//        days = dur.inDays;
-        hours = dur.inHours;
-        minutes = dur.inMinutes - (days * 24 * 60) - (hours * 60);
-        seconds = dur.inSeconds - (days * 24 * 60 * 60) - (hours * 60 * 60) -
-            (minutes * 60);
-      } else {
-        days = 0;
-        hours = 0;
-        minutes = 0;
-        seconds = 0;
-      }
-    });
+    DateTime dob = DateTime.parse(date);
+    Duration dur = dob.difference(DateTime.now());
+    int s = dur.inSeconds;
+    if (s > 0) {
+      hours = dur.inHours;
+      minutes = dur.inMinutes - (days * 24 * 60) - (hours * 60);
+      seconds = dur.inSeconds - (days * 24 * 60 * 60) - (hours * 60 * 60) -
+          (minutes * 60);
+    } else {
+      days = 0;
+      hours = 0;
+      minutes = 0;
+      seconds = 0;
+    }
   }
 
   @override
@@ -158,19 +147,110 @@ class HomeUIState extends State<HomeUI> {
     loadDataFromLocal();
   }
 
-  void loadDataFromLocal(){
+  loadDataFromLocal(){
+    _isStartVideoCall = false;
     scheduleList = StorageUtil.getScheduleList();
-    if(scheduleList.objects.length > 0) {
-      currentSchedule = scheduleList.objects[0];
-      DateTime date = scheduleList.objects[0].dateTime;
-      String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
-      _isStartVideoCall = false;
-      runDate = formattedDate;
-      calculatorDuration(runDate);
-      if (hours > 0 || minutes > 0 || seconds > 0) {
-        startTimeout();
+    if(scheduleList != null){
+      if(scheduleList.objects.length > 0) {
+        for(var i = 0; i < scheduleList.objects.length; i ++){
+          List<Schedule> list = scheduleList.objects[i].schedules;
+          if(list.length > 0){
+            Schedule schMin = list[0];
+            DateTime nowTime = DateTime.now();
+            for(Schedule sch in list){
+              DateTime schTime = sch.startTime;
+              int minsNow =  schTime.difference(nowTime).inMinutes;
+              int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
+              if(minsNow > 0 && minsNow < minsWithMinSch) {
+                schMin = sch;
+              }
+            }
+            if(schMin.startTime.difference(nowTime).inMinutes > 0){
+              currentSchedule = schMin;
+              timerDate = currentSchedule.startTime;
+              if(timer != null){
+                timer.cancel();
+              }
+              calculatorDuration(formatDateForTimer.format(timerDate));
+              if (hours > 0 || minutes > 0 || seconds > 0) {
+                startTimeout();
+              }
+              for(var j = 0; j < currentSchedule.users.length; j ++){
+                User _user = currentSchedule.users[j];
+                if(_user.role == "teacher"){
+                  teacher = _user;
+                }else if(_user.role == "student"){
+                  student = _user;
+                }
+              }
+            }
+            if(currentSchedule == null){
+              _handleClickMe(STRINGS.ERROR_TITLE, "You don't' have some schedule in next 7 days", 'OK', '', null);
+            }
+            break;
+          }
+        }
       }
     }
+  }
+
+  getScheduleListFromAPI(){
+    APIConnect()..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+  }
+
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title, style: const TextStyle(
+              color:  const Color(0xff4B5B53),
+              fontWeight: FontWeight.w700,
+              fontFamily: "Montserrat",
+              fontStyle:  FontStyle.normal,
+              fontSize: 14.0
+          ),),
+          content: Text(mess,
+            style: const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w400,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 12.0
+            ),),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            rightButton == "" ? SizedBox(width: 0,) : CupertinoDialogAction(
+              child: Text(rightButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                _rightAction;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -179,17 +259,32 @@ class HomeUIState extends State<HomeUI> {
     return BlocListener<APIConnect, ApiState>(
         listener: (context, state){
           if (state.result is StateInit) {
-
+            setState(() {
+              _isLoading = true;
+            });
           }else if (state.result is LoadingState) {
-
+            setState(() {
+              _isLoading = true;
+            });
           }else if (state.result is ParseJsonToObject) {
+            setState(() {
+              _isLoading = false;
+            });
+            scheduleList = StorageUtil.getScheduleList();
+            if(scheduleList != null) {
+              if (scheduleList.objects.length == 0) {
+                _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.EMPTY_LIST, "Close", "", null);
+              }
+            }
             setState(() {
               loadDataFromLocal();
             });
           }else {
-
+            setState(() {
+              _isLoading = false;
+            });
             ErrorState error = state.result;
-            showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getScheduleListFromAPI());
           }
         },
         child: Container(
@@ -227,7 +322,10 @@ class HomeUIState extends State<HomeUI> {
               ),
               border: Border.all(width: 5.0, color: COLOR.COLOR_00C081),
               color: Colors.white,
-              image: new DecorationImage(
+              image: (teacher != null && teacher.avatar.url != null) ? new DecorationImage(
+                  fit: BoxFit.fill,
+                  image: NetworkImage(teacher.avatar.url)
+              ) : new DecorationImage(
                   fit: BoxFit.none, image: new AssetImage(IMAGES
                   .HOME_AVATAR), scale: 2)
           ),
@@ -236,24 +334,24 @@ class HomeUIState extends State<HomeUI> {
   }
 
   _helloUserText() {
-
-    String name = 'Xin chào bạn\n';
-    String content1 = "Bạn có cuộc hẹn với thầy ... lúc\n";
-    String content2 = "0:00 chiều thứ xxx DD | MM | YYYY";
+    String studentName = 'Xin chào bạn\n';
+    String content1 = "Hiện tại bạn không có cuộc hẹn nào với giáo viên\n";
+    String content2 = "";
     if(currentSchedule != null){
-      name = currentSchedule.attendees[0].user.lastName;
-      name = 'Xin chào $name\n';
-      content1 = "Bạn có cuộc hẹn với thầy ... lúc\n";
-      DateTime date = scheduleList.objects[0].dateTime;
-      DateFormat format = DateFormat('hh:mm a EEEE  dd | MM | yyyy');
+      studentName = student != null && student.lastName != null ? student.lastName : "bạn";
+      studentName = 'Xin chào $studentName\n';
+
+      var teacherName = teacher != null && teacher.lastName != null ? (" " + teacher.lastName) : "";
+      content1 = "Bạn có cuộc hẹn với giáo viên$teacherName lúc\n";
+
       DateFormat formatAMPM = DateFormat('a');
-      String ampm = formatAMPM.format(date);
+      String ampm = formatAMPM.format(timerDate);
       if(ampm.toLowerCase() == 'ch'){
         ampm = "chiều";
       }else{
         ampm = 'sáng';
       }
-      String formattedDate = format.format(date);
+      String formattedDate = formatDateForUI.format(timerDate);
       content2 = formattedDate.toLowerCase().replaceRange(6, 8, ampm);
     }
 
@@ -270,7 +368,7 @@ class HomeUIState extends State<HomeUI> {
                       fontStyle: FontStyle.normal,
                       fontSize: 18.0,
                     ),
-                    text: name),
+                    text: studentName),
                 TextSpan(
                     style: const TextStyle(
                         color: const Color(0xff4B5B53),
@@ -393,7 +491,7 @@ class HomeUIState extends State<HomeUI> {
                     setState(() {
                       leftbuttonColor = COLOR.COLOR_00C081;
                     }),
-                    Navigator.of(context).push(CalendarView.route(scheduleList.objects[0].id)),
+                    Navigator.of(context).push(CalendarView.route(currentSchedule.id)),
                     Timer(Duration(seconds: 1), () {
                       setState(() {
                         leftbuttonColor = Color(0xffb6d6cb);
@@ -420,7 +518,7 @@ class HomeUIState extends State<HomeUI> {
                       setState(() {
                         rightbuttonColor = COLOR.COLOR_00C081;
                       }),
-                      Navigator.of(context).push(TimeSlotView.route(scheduleList.objects[0].id)),
+                      Navigator.of(context).push(TimeSlotView.route(currentSchedule.id)),
                       Timer(Duration(seconds: 1), () {
                         setState(() {
                           rightbuttonColor = Color(0xffb6d6cb);
@@ -464,18 +562,17 @@ class HomeUIState extends State<HomeUI> {
 
   void _openNextScreen(Route route ) {
     Navigator.of(context).push(route).then((result) => setState((){
-      String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(result);
-
-      setState(() {
+      if(result != null){
+        String formattedDate = formatDateForTimer.format(result);
         _isStartVideoCall = false;
-        timer.cancel();
-        runDate = formattedDate;
-        calculatorDuration(runDate);
+        if(timer != null) {
+          timer.cancel();
+        }
+        calculatorDuration(formattedDate);
         if (hours > 0 || minutes > 0 || seconds > 0) {
           startTimeout();
         }
-      });
-
+      }
     }));
   }
 }

@@ -4,79 +4,79 @@
 
 import 'dart:convert';
 
-TeacherModel emptyFromJson(String str) => TeacherModel.fromJson(json.decode(str));
+List<TeacherModel> emptyFromJson(String str) => List<TeacherModel>.from(json.decode(str).map((x) => TeacherModel.fromJson(x)));
 
-String emptyToJson(TeacherModel data) => json.encode(data.toJson());
+String emptyToJson(List<TeacherModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class TeacherModel {
   TeacherModel({
-    this.paging,
-    this.objects,
-  });
-
-  Paging paging;
-  List<Teacher> objects;
-
-  factory TeacherModel.fromJson(Map<String, dynamic> json) => TeacherModel(
-    paging: Paging.fromJson(json["paging"]),
-    objects: List<Teacher>.from(json["objects"].map((x) => Teacher.fromJson(x))),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "paging": paging.toJson(),
-    "objects": List<dynamic>.from(objects.map((x) => x.toJson())),
-  };
-}
-
-class Teacher {
-  Teacher({
     this.id,
-    this.user,
-    this.identificationFiles,
-    this.voice,
+    this.userId,
     this.voiceDemo,
-    this.job,
     this.interviewedBy,
-    this.isVerified,
-    this.isAvailable,
     this.contract,
+    this.createdAt,
+    this.modifiedAt,
+    this.isActive,
+    this.teacherType,
+    this.introduction,
+    this.tsNote,
+    this.rating,
+    this.pricePerHour,
+    this.user,
+    this.profileLink,
   });
 
   String id;
-  InterviewedBy user;
-  List<Contract> identificationFiles;
-  String voice;
+  String userId;
   Contract voiceDemo;
-  String job;
-  InterviewedBy interviewedBy;
-  bool isVerified;
-  bool isAvailable;
+  String interviewedBy;
   Contract contract;
+  DateTime createdAt;
+  DateTime modifiedAt;
+  bool isActive;
+  String teacherType;
+  String introduction;
+  String tsNote;
+  int rating;
+  double pricePerHour;
+  User user;
+  String profileLink;
 
-  factory Teacher.fromJson(Map<String, dynamic> json) => Teacher(
+  factory TeacherModel.fromJson(Map<String, dynamic> json) => TeacherModel(
     id: json["id"],
-    user: InterviewedBy.fromJson(json["user"]),
-    identificationFiles: List<Contract>.from(json["identificationFiles"].map((x) => Contract.fromJson(x))),
-    voice: json["voice"],
+    userId: json["userId"],
     voiceDemo: Contract.fromJson(json["voiceDemo"]),
-    job: json["job"],
-    interviewedBy: InterviewedBy.fromJson(json["interviewedBy:"]),
-    isVerified: json["isVerified"],
-    isAvailable: json["isAvailable"],
+    interviewedBy: json["interviewedBy"],
     contract: Contract.fromJson(json["contract"]),
+    createdAt: DateTime.parse(json["createdAt"]),
+    modifiedAt: DateTime.parse(json["modifiedAt"]),
+    isActive: json["isActive"],
+    teacherType: json["teacherType"],
+    introduction: json["introduction"],
+    tsNote: json["tsNote"],
+    rating: json["rating"],
+    pricePerHour: json["pricePerHour"],
+    user: User.fromJson(json["user"]),
+    profileLink: json["profileLink"]
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "user": user.toJson(),
-    "identificationFiles": List<dynamic>.from(identificationFiles.map((x) => x.toJson())),
-    "voice": voice,
+    "userId": userId,
     "voiceDemo": voiceDemo.toJson(),
-    "job": job,
-    "interviewedBy:": interviewedBy.toJson(),
-    "isVerified": isVerified,
-    "isAvailable": isAvailable,
+    "interviewedBy": interviewedBy,
     "contract": contract.toJson(),
+    "createdAt": createdAt.toIso8601String(),
+    "modifiedAt": modifiedAt.toIso8601String(),
+    "isActive": isActive,
+    "teacherType": teacherType,
+    "introduction": introduction,
+    "tsNote": tsNote,
+    "rating": rating,
+    "pricePerHour": pricePerHour,
+    "user": user.toJson(),
+    "profileLink": profileLink,
   };
 }
 
@@ -116,59 +116,51 @@ class Contract {
   };
 }
 
-class InterviewedBy {
-  InterviewedBy({
+class User {
+  User({
     this.id,
-    this.firstName,
-    this.lastName,
-    this.avatar,
-    this.birthday,
-    this.phoneNumber,
-    this.address,
+    this.birthDay,
     this.email,
-    this.isPhoneVerified,
-    this.isEmailVerified,
-    this.status,
+    this.name,
+    this.phoneNumber,
+    this.createdAt,
+    this.modifiedAt,
+    this.avatar,
+    this.address,
   });
 
   String id;
-  String firstName;
-  String lastName;
-  Contract avatar;
-  DateTime birthday;
-  String phoneNumber;
-  Address address;
+  int birthDay;
   String email;
-  bool isPhoneVerified;
-  bool isEmailVerified;
-  String status;
+  String name;
+  String phoneNumber;
+  int createdAt;
+  int modifiedAt;
+  Avatar avatar;
+  Address address;
 
-  factory InterviewedBy.fromJson(Map<String, dynamic> json) => InterviewedBy(
+  factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
-    firstName: json["firstName"],
-    lastName: json["lastName"],
-    avatar: Contract.fromJson(json["avatar"]),
-    birthday: DateTime.parse(json["birthday"]),
-    phoneNumber: json["phoneNumber"],
-    address: Address.fromJson(json["address"]),
+    birthDay: json["birth_day"],
     email: json["email"],
-    isPhoneVerified: json["isPhoneVerified"],
-    isEmailVerified: json["isEmailVerified"],
-    status: json["status"],
+    name: json["name"],
+    phoneNumber: json["phone_number"],
+    createdAt: json["created_at"],
+    modifiedAt: json["modified_at"],
+    avatar: Avatar.fromJson(json["avatar"]),
+    address: Address.fromJson(json["address"]),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "firstName": firstName,
-    "lastName": lastName,
-    "avatar": avatar.toJson(),
-    "birthday": "${birthday.year.toString().padLeft(4, '0')}-${birthday.month.toString().padLeft(2, '0')}-${birthday.day.toString().padLeft(2, '0')}",
-    "phoneNumber": phoneNumber,
-    "address": address.toJson(),
+    "birth_day": birthDay,
     "email": email,
-    "isPhoneVerified": isPhoneVerified,
-    "isEmailVerified": isEmailVerified,
-    "status": status,
+    "name": name,
+    "phone_number": phoneNumber,
+    "created_at": createdAt,
+    "modified_at": modifiedAt,
+    "avatar": avatar.toJson(),
+    "address": address.toJson(),
   };
 }
 
@@ -204,30 +196,34 @@ class Address {
   };
 }
 
-class Paging {
-  Paging({
-    this.page,
-    this.limit,
-    this.offset,
-    this.total,
+class Avatar {
+  Avatar({
+    this.id,
+    this.bucketName,
+    this.region,
+    this.url,
+    this.createdAt,
   });
 
-  int page;
-  int limit;
-  int offset;
-  int total;
+  String id;
+  String bucketName;
+  String region;
+  String url;
+  int createdAt;
 
-  factory Paging.fromJson(Map<String, dynamic> json) => Paging(
-    page: json["page"],
-    limit: json["limit"],
-    offset: json["offset"],
-    total: json["total"],
+  factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
+    id: json["id"],
+    bucketName: json["bucketName"],
+    region: json["region"],
+    url: json["url"],
+    createdAt: json["createdAt"],
   );
 
   Map<String, dynamic> toJson() => {
-    "page": page,
-    "limit": limit,
-    "offset": offset,
-    "total": total,
+    "id": id,
+    "bucketName": bucketName,
+    "region": region,
+    "url": url,
+    "createdAt": createdAt,
   };
 }

@@ -7,7 +7,6 @@ import 'package:jitsi_meet/jitsi_meeting_listener.dart';
 import 'package:jitsi_meet/room_name_constraint.dart';
 import 'package:jitsi_meet/room_name_constraint_type.dart';
 import 'package:jitsi_meet/feature_flag/feature_flag_enum.dart';
-import 'package:teacher_antoree/src/6.rating/rating_view.dart';
 
 class VideoState{
   final serverText = TextEditingController(text: 'https://vcall.stg.antoree.tech/');
@@ -35,7 +34,6 @@ class VideoState{
 
   void dispose() {
     JitsiMeet.removeAllListeners();
-    Navigator.of(context).push(RatingView.route(idSchedule));
   }
 
   _joinMeeting() async {

@@ -8,11 +8,6 @@ class KEY {
   static const LOGIN_STATUS = "LOGIN_STATUS";
 }
 
-class RoleEnum{
-  static const STUDENT = 'student';
-  static const TEACHER = 'teacher';
-}
-
 class GOOGLECLIENT{
   static const CLIENT_ID = "10";
   static const CLIENT_SECRET = "NUivZBe8znfXecrB0y1YzmC3CTIVtL6MoqjvfMev";

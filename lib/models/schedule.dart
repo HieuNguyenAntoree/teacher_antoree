@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final empty = emptyFromJson(jsonString);
-
 import 'dart:convert';
 
 ScheduleModel emptyFromJson(String str) => ScheduleModel.fromJson(json.decode(str));
@@ -15,11 +11,11 @@ class ScheduleModel {
   });
 
   Paging paging;
-  List<Schedule> objects;
+  List<Dates> objects;
 
   factory ScheduleModel.fromJson(Map<String, dynamic> json) => ScheduleModel(
     paging: Paging.fromJson(json["paging"]),
-    objects: List<Schedule>.from(json["objects"].map((x) => Schedule.fromJson(x))),
+    objects: List<Dates>.from(json["objects"].map((x) => Dates.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -28,47 +24,79 @@ class ScheduleModel {
   };
 }
 
+class Dates {
+  Dates({
+    this.date,
+    this.schedules,
+  });
+
+  DateTime date;
+  List<Schedule> schedules;
+
+  factory Dates.fromJson(Map<String, dynamic> json) => Dates(
+    date: json["date"] != null ? DateTime.parse(json["date"]) : DateTime.now(),
+    schedules: List<Schedule>.from(json["schedules"].map((x) => Schedule.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "date": date.toIso8601String(),
+    "schedules": List<dynamic>.from(schedules.map((x) => x.toJson())),
+  };
+}
+
 class Schedule {
   Schedule({
     this.id,
-    this.attendees,
-    this.dateTime,
+    this.description,
+    this.content,
+    this.startTime,
+    this.endTime,
+    this.status,
+    this.createdAt,
+    this.modifiedAt,
+    this.users,
+    this.scheduleType,
+    this.comment,
   });
 
   String id;
-  List<Attendee> attendees;
-  DateTime dateTime;
+  String description;
+  String content;
+  DateTime startTime;
+  DateTime endTime;
+  int status;
+  DateTime createdAt;
+  DateTime modifiedAt;
+  List<User> users;
+  String comment;
+  dynamic scheduleType;
 
   factory Schedule.fromJson(Map<String, dynamic> json) => Schedule(
     id: json["id"],
-    attendees: List<Attendee>.from(json["attendees"].map((x) => Attendee.fromJson(x))),
-    dateTime: DateTime.parse(json["dateTime"]),
+    comment: json["comment"],
+    description: json["description"],
+    content: json["content"],
+    startTime: DateTime.parse(json["startTime"]),
+    endTime: DateTime.parse(json["endTime"]),
+    status: json["status"],
+    createdAt: DateTime.parse(json["createdAt"]),
+    modifiedAt: DateTime.parse(json["modifiedAt"]),
+    users: List<User>.from(json["users"].map((x) => User.fromJson(x))),
+    scheduleType: json["scheduleType"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "attendees": List<dynamic>.from(attendees.map((x) => x.toJson())),
-    "dateTime": dateTime.toIso8601String(),
-  };
-}
-
-class Attendee {
-  Attendee({
-    this.user,
-    this.role,
-  });
-
-  User user;
-  String role;
-
-  factory Attendee.fromJson(Map<String, dynamic> json) => Attendee(
-    user: User.fromJson(json["user"]),
-    role: json["role"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "user": user.toJson(),
-    "role": role,
+    "comment": comment,
+    "description": description,
+    "content": content,
+    "startTime": startTime.toIso8601String(),
+    "endTime": endTime.toIso8601String(),
+    "status": status,
+    "createdAt": createdAt.toIso8601String(),
+    "modifiedAt": modifiedAt.toIso8601String(),
+    "users": List<dynamic>.from(users.map((x) => x.toJson())),
+    "scheduleType": scheduleType,
   };
 }
 
@@ -82,35 +110,38 @@ class User {
     this.phoneNumber,
     this.address,
     this.email,
-    this.isPhoneVerified,
-    this.isEmailVerified,
     this.status,
+    this.phoneVerified,
+    this.emailVerified,
+    this.role,
   });
 
   String id;
-  String firstName;
-  String lastName;
+  dynamic firstName;
+  dynamic lastName;
   Avatar avatar;
-  DateTime birthday;
-  String phoneNumber;
+  dynamic birthday;
+  dynamic phoneNumber;
   Address address;
   String email;
-  bool isPhoneVerified;
-  bool isEmailVerified;
   String status;
+  dynamic phoneVerified;
+  dynamic emailVerified;
+  String role;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
     firstName: json["firstName"],
     lastName: json["lastName"],
     avatar: Avatar.fromJson(json["avatar"]),
-    birthday: DateTime.parse(json["birthday"]),
+    birthday: json["birthday"],
     phoneNumber: json["phoneNumber"],
     address: Address.fromJson(json["address"]),
     email: json["email"],
-    isPhoneVerified: json["isPhoneVerified"],
-    isEmailVerified: json["isEmailVerified"],
     status: json["status"],
+    phoneVerified: json["phoneVerified"],
+    emailVerified: json["emailVerified"],
+    role: json["role"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -118,13 +149,14 @@ class User {
     "firstName": firstName,
     "lastName": lastName,
     "avatar": avatar.toJson(),
-    "birthday": "${birthday.year.toString().padLeft(4, '0')}-${birthday.month.toString().padLeft(2, '0')}-${birthday.day.toString().padLeft(2, '0')}",
+    "birthday": birthday,
     "phoneNumber": phoneNumber,
     "address": address.toJson(),
     "email": email,
-    "isPhoneVerified": isPhoneVerified,
-    "isEmailVerified": isEmailVerified,
     "status": status,
+    "phoneVerified": phoneVerified,
+    "emailVerified": emailVerified,
+    "role": role,
   };
 }
 
@@ -137,11 +169,11 @@ class Address {
     this.locationLevel3,
   });
 
-  String id;
-  String address;
-  String locationLevel1;
-  String locationLevel2;
-  String locationLevel3;
+  dynamic id;
+  dynamic address;
+  dynamic locationLevel1;
+  dynamic locationLevel2;
+  dynamic locationLevel3;
 
   factory Address.fromJson(Map<String, dynamic> json) => Address(
     id: json["id"],
@@ -170,12 +202,12 @@ class Avatar {
     this.createdAt,
   });
 
-  String id;
-  String fileName;
-  String bucketName;
-  String region;
-  String url;
-  DateTime createdAt;
+  dynamic id;
+  dynamic fileName;
+  dynamic bucketName;
+  dynamic region;
+  dynamic url;
+  dynamic createdAt;
 
   factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
     id: json["id"],
@@ -183,7 +215,7 @@ class Avatar {
     bucketName: json["bucketName"],
     region: json["region"],
     url: json["url"],
-    createdAt: DateTime.parse(json["createdAt"]),
+    createdAt: json["createdAt"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -192,34 +224,34 @@ class Avatar {
     "bucketName": bucketName,
     "region": region,
     "url": url,
-    "createdAt": createdAt.toIso8601String(),
+    "createdAt": createdAt,
   };
 }
 
 class Paging {
   Paging({
-    this.page,
     this.limit,
     this.offset,
+    this.page,
     this.total,
   });
 
-  int page;
   int limit;
   int offset;
+  dynamic page;
   int total;
 
   factory Paging.fromJson(Map<String, dynamic> json) => Paging(
-    page: json["page"],
     limit: json["limit"],
     offset: json["offset"],
+    page: json["page"],
     total: json["total"],
   );
 
   Map<String, dynamic> toJson() => {
-    "page": page,
     "limit": limit,
     "offset": offset,
+    "page": page,
     "total": total,
   };
 }

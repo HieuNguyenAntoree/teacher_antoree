@@ -57,9 +57,9 @@ class StorageUtil {
     }
   }
 
-  static String getStringValuesSF(String key){
-    if (_preferences != null) return _preferences.getString(key);
-    return "";
+ static String getStringValuesSF(String key){
+   if (_preferences != null) return _preferences.getString(key);
+   return "";
   }
 
   static bool getBoolValuesSF(String key) {
@@ -81,7 +81,7 @@ class StorageUtil {
     if (_preferences != null) return _preferences.remove(key);
   }
 
-  /*----------------------------TOKEN ITEM------------------------------*/
+ /*----------------------------TOKEN ITEM------------------------------*/
   static storeTokenObjectToSF(Map<String, dynamic> value) async{
 //    Map<String, dynamic> decodeOptions = jsonDecode(jsonString);
     String jsonObject = jsonEncode(TokenItem.fromJson(value));
@@ -90,7 +90,7 @@ class StorageUtil {
     }
     else {
       await StorageUtil.getInstance();
-      _preferences.setString(KEY.TOKEN, jsonObject);
+     _preferences.setString(KEY.TOKEN, jsonObject);
     }
   }
 
@@ -198,9 +198,9 @@ class StorageUtil {
   }
 
   /*----------------------------TEACHER------------------------------*/
-  static storeTeacherListToSF( Map value) async{
+  static storeTeacherListToSF( List<dynamic> value) async{
 //    Map decodeOptions = jsonDecode(value);
-    String jsonObject = jsonEncode(TeacherModel.fromJson(value));
+    String jsonObject = jsonEncode(value);
     if (_preferences != null) {
       _preferences.setString(KEY.TEACHER, jsonObject);
     }
@@ -210,13 +210,16 @@ class StorageUtil {
     }
   }
 
-  static TeacherModel getTeacherList()  {
+  static List<TeacherModel> getTeacherList()  {
     if (_preferences != null) {
       String courseStr = _preferences.getString(KEY.TEACHER);
       if(courseStr != null){
-        Map teacherItemMap = jsonDecode(courseStr);
-        var teachers = TeacherModel.fromJson(teacherItemMap);
-        return teachers;
+        var value = jsonDecode(courseStr);
+        List<TeacherModel> user = List<TeacherModel>();
+        for(Map i in value){
+          user.add(TeacherModel.fromJson(i));
+        }
+        return user;
       }
       return null;
     }else{

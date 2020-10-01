@@ -42,8 +42,6 @@ class LoginUIState extends State<LoginUI>{
   TextEditingController emailController = new TextEditingController();
   TextEditingController passController = new TextEditingController();
 
-  APIConnect _apiConnect = APIConnect();
-
   @override
   void initState() {
     super.initState();
@@ -51,6 +49,60 @@ class LoginUIState extends State<LoginUI>{
     passController..text = 'Antor33rotnA';
   }
 
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title, style: const TextStyle(
+              color:  const Color(0xff4B5B53),
+              fontWeight: FontWeight.w700,
+              fontFamily: "Montserrat",
+              fontStyle:  FontStyle.normal,
+              fontSize: 14.0
+          ),),
+          content: Text(mess,
+            style: const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w400,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 12.0
+            ),),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            rightButton == "" ? SizedBox(width: 0,) : CupertinoDialogAction(
+              child: Text(rightButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                _rightAction;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +127,7 @@ class LoginUIState extends State<LoginUI>{
             _isLoading = false;
           });
           ErrorState error = state.result;
-          showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, 'Ok', 'Try again!', _loginAction());
         }
       },
       child: LoadingOverlay(
@@ -279,6 +331,10 @@ class LoginUIState extends State<LoginUI>{
             ),),
       ),
     );
+  }
+
+  _loginAction(){
+    context.bloc<APIConnect>().add(LoginSubmitted( emailController.text, passController.text));
   }
 
   String validatePassword() {

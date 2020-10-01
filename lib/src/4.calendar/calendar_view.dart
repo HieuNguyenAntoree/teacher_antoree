@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
@@ -10,24 +10,17 @@ import 'package:connect_api/connection/model/result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    show CalendarCarousel;
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:teacher_antoree/src/customViews/route_names.dart';
+import 'package:ui_libraries/calendar/calendarro.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:calendar_widget/calendar_widget.dart';
-import 'dart:math';
+
 class CalendarView extends StatelessWidget {
   final String idSchedule;
   const CalendarView(this.idSchedule);
   static Route route(String idSchedule) {
     return MaterialPageRoute<void>(builder: (_) => CalendarView(idSchedule));
   }
-
-  static final DateFormat formatterAPI = DateFormat('yyyy-MM-dd');
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +36,7 @@ class CalendarView extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
           child: BlocProvider(
-            create: (context) => APIConnect()..add(ScheduleFetched(0,formatterAPI.format(DateTime.now()), formatterAPI.format(DateTime.now().add(new Duration(days: 7))))),
+            create: (context) => APIConnect()..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
             child: CalendarUI(this.idSchedule),
           ),
         ),
@@ -112,414 +105,290 @@ class CalendarUIState extends State<CalendarUI> {
   String idSchedule;
   CalendarUIState(this.idSchedule);
 
-  @override
-  void initState() {
-    super.initState();
-    _calendarController = CalendarController();
-    loadDataFromLocal();
-  }
-
-  void loadDataFromLocal(){
-    scheduleList = StorageUtil.getScheduleList();
-    users = getScheduleDependToDate();
-  }
-  static final DateFormat formatterAPI = DateFormat('yyyy-MM-dd');
-  void getUsers(){
-    setState(() {
-      users = getScheduleDependToDate();
-    });
-    context.bloc<APIConnect>().add(ScheduleFetched(0,formatterAPI.format(DateTime.now()), formatterAPI.format(DateTime.now().add(new Duration(days: 7)))));
-  }
-
+  bool _isLoading = false;
   String nextButton = IMAGES.CALENDAR_NEXT_UN;
   String backButton = IMAGES.CALENDAR_BACK_UN;
-  DateTime _currentDate = DateTime.now();
+  DateTime _currentDate = DateTime.now().subtract(Duration(days: (DateTime.now().day - 1) ));
   DateTime _selectDate = DateTime.now();
-  String _currentMonth = DateFormat.yMMM().format(DateTime.now());
+  static final DateFormat formatMonth = DateFormat('MMMM | yyyy');
+  String _currentMonth = formatMonth.format(DateTime.now());
   DateTime _targetDateTime = DateTime.now();
+  int currentDay = DateTime.now().day;
+  Calendarro _calendarItem;
   bool _isCancel = false;
   bool isScrollEventList = false;
 
   double maxHeight = 0;
-  double heightCalendar = 300;
-  int currentDay = DateTime.now().day;
-  List<Attendee> users = List<Attendee>();
-  CalendarController _calendarController;
+  List<Schedule> schedulesInDay = List<Schedule>();
+
+  @override
+  void initState() {
+    super.initState();
+    getSchedulesInDay();
+  }
+
+  getSchedulesInDay(){
+    scheduleList = StorageUtil.getScheduleList();
+    getScheduleDependToDate();
+  }
+
+  getDateFromAPI(){
+    context.bloc<APIConnect>().add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(_selectDate), VALUES.FORMAT_DATE_API.format(_selectDate.add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+  }
+
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title, style: const TextStyle(
+              color:  const Color(0xff4B5B53),
+              fontWeight: FontWeight.w700,
+              fontFamily: "Montserrat",
+              fontStyle:  FontStyle.normal,
+              fontSize: 14.0
+          ),),
+          content: Text(mess,
+            style: const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w400,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 12.0
+            ),),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            rightButton == "" ? SizedBox(width: 0,) : CupertinoDialogAction(
+              child: Text(rightButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                _rightAction;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<APIConnect, ApiState>(
         listener: (context, state){
           if (state.result is StateInit) {
-
+            setState(() {
+              _isLoading = false;
+            });
           }else if (state.result is LoadingState) {
+            setState(() {
+              _isLoading = true;
+            });
+          }else if (state.result is SuccessState) {
+            setState(() {
+              _isLoading = false;
+            });
 
           }else if (state.result is ParseJsonToObject) {
             setState(() {
-              loadDataFromLocal();
+              _isLoading = false;
             });
-          }else {
-
+            setState(() {
+              getSchedulesInDay();
+            });
+          }
+          else {
+            setState(() {
+              _isLoading = false;
+            });
             ErrorState error = state.result;
-            showAlertDialog(context: context,title: STRINGS.ERROR_TITLE,message: error.msg, actions: [AlertDialogAction(isDefaultAction: true,label: 'OK')],actionsOverflowDirection: VerticalDirection.up);
+            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getDateFromAPI());
           }
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              color: const Color(0xfff8f8f8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 15.0,
-                      bottom: 15.0,
-                      left: 15.0,
-                    ),
-                    child: new Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: Text(
-                                _currentMonth,
-                                style: const TextStyle(
-                                    color: const Color(0xff4B5B53),
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: "Montserrat",
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 18.0
-                                )
-                            )),
-                        GestureDetector(onTap: () =>
-                        {
-                          setState(() {
-                            _targetDateTime = DateTime(
-                                _targetDateTime.year, _targetDateTime.month - 1);
-                            _currentMonth =
-                                DateFormat.yMMM().format(_targetDateTime);
-                            nextButton = IMAGES.CALENDAR_NEXT;
-                            Timer(Duration(seconds: 1), () {
-                              nextButton = IMAGES.CALENDAR_NEXT_UN;
-                            }
-                            );
-                          }),
-                        },
-                          child: Container(
-                            width: 52,
-                            height: 50,
-                            child: Image.asset(
-                              nextButton, width: 52.0, height: 50.0,),
+        child: LoadingOverlay(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                color: const Color(0xfff8f8f8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 15.0,
+                        bottom: 15.0,
+                        left: 15.0,
+                      ),
+                      child: new Row(
+                        children: <Widget>[
+                          Expanded(
+                              child: Text(
+                                  '${_currentMonth[0].toUpperCase()}${_currentMonth.substring(1)}',
+                                  style: const TextStyle(
+                                      color:  const Color(0xff4B5B53),
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: "Montserrat",
+                                      fontStyle:  FontStyle.normal,
+                                      fontSize: 18.0
+                                  )
+                              )),
+                          GestureDetector(onTap: ()=>
+                          {
+                            setState(() {
+                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
+                              _currentMonth = formatMonth.format(_targetDateTime);
+                              _currentDate = _targetDateTime;
+                              nextButton = IMAGES.CALENDAR_NEXT;
+                            }),
+
+                            Timer(Duration(milliseconds: 200),(){
+                              setState(() {
+                                nextButton = IMAGES.CALENDAR_NEXT_UN;
+                              });
+                            })
+                          },
+                            child: Container(
+                              width: 52,
+                              height: 50,
+                              child: Image.asset(nextButton, width: 52.0, height: 50.0,),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 10,),
-                        GestureDetector(onTap: () =>
-                        {
-                          setState(() {
-                            _targetDateTime = DateTime(
-                                _targetDateTime.year, _targetDateTime.month + 1);
-                            _currentMonth =
-                                DateFormat.yMMM().format(_targetDateTime);
-                            backButton = IMAGES.CALENDAR_BACK;
-                            Timer(Duration(seconds: 1), () {
-                              backButton = IMAGES.CALENDAR_BACK_UN;
-                            }
-                            );
-                          }),
-                        },
-                          child: Container(
-                            width: 52,
-                            height: 50,
-                            child: Image.asset(
-                              backButton, width: 52.0, height: 50.0,),
+                          SizedBox(width: 10,),
+                          GestureDetector(onTap: ()=>
+                          {
+                            setState(() {
+                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
+                              _currentMonth = formatMonth.format(_targetDateTime);
+                              _currentDate = _targetDateTime;
+                              backButton = IMAGES.CALENDAR_BACK;
+                            }),
+
+                            Timer(Duration(milliseconds: 200),(){
+                              setState(() {
+                                backButton = IMAGES.CALENDAR_BACK_UN;
+                              });
+                            })
+                          },
+                            child: Container(
+                              width: 52,
+                              height: 50,
+                              child: Image.asset(backButton, width: 52.0, height: 50.0,),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 15,),
-                      ],
+                          SizedBox(width: 15,),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: _calendarView(),
-                  ),
-                ],
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: _calendar(),//_calendarField(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20,),
-            _timeSheet(context), //
-          ],
-        )
-    );
-  }
-
-  EventList<Event> _markedDateMap = new EventList<Event>(
-    events: {
-      new DateTime(DateTime
-          .now()
-          .year, DateTime
-          .now()
-          .month, DateTime
-          .now()
-          .day): [
-        new Event(
-          date: new DateTime(DateTime
-              .now()
-              .year, DateTime
-              .now()
-              .month, DateTime
-              .now()
-              .day),
-          dot: Container(
-            width: 5,
-            height: 5,
-            decoration: new BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
-            ),
+              SizedBox(height: 10,),
+              _timeSheet(context), //
+            ],
           ),
-        ),
-      ],
-    },
-  );
-
-  CalendarHighlighter highlighter = (DateTime dt) {
-    // randomly generate a boolean list of length monthLength + 1 (because months start at 1)
-    return List.generate(Calendar.monthLength(dt) + 1, (index) {
-      return (Random().nextDouble() < 0.3);
-    });
-  };
-
-  _calendarView()
-  {
-    return Calendar(
-      width: MediaQuery.of(context).size.width - 32,
-      onTapListener: (DateTime dt) {
-        final snackbar = SnackBar(content: Text('Clicked ${dt.month}/${dt.day}/${dt.year}!'),);
-        Scaffold.of(context).showSnackBar(snackbar);
-      },
-      highlighter: highlighter,
+          isLoading: _isLoading,
+          // demo of some additional parameters
+          opacity: 0.2,
+          progressIndicator: CircularProgressIndicator(),
+      )
     );
   }
-  _calendarField() {
-    return CalendarCarousel<Event>(
-      onDayPressed: (DateTime date, List<Event> events) {
-        _selectDate = date;
-        getUsers();
-        this.setState(() => _selectDate = date);
-        events.forEach((event) => print(event.title));
-      },
-      weekFormat: isScrollEventList,
-      markedDatesMap: _markedDateMap,
-      daysHaveCircularBorder: true,
-      showOnlyCurrentMonthDate: false,
-      weekendTextStyle: TextStyle(
-          color: const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      height: heightCalendar,
-      selectedDateTime: _selectDate,
-      targetDateTime: _targetDateTime,
-      customGridViewPhysics: NeverScrollableScrollPhysics(),
-      showHeader: false,
-      todayTextStyle: TextStyle(
-          color: const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      todayButtonColor: const Color(0xfff8f8f8),
-      todayBorderColor: const Color(0xfff8f8f8),
-      daysTextStyle: TextStyle(
-          color: const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      nextDaysTextStyle: TextStyle(
-          color: Colors.grey,
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      selectedDayTextStyle: TextStyle(
-          color: const Color(0xffffffff),
-          fontWeight: FontWeight.w700,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      minSelectedDate: _currentDate.subtract(Duration(days: 3600)),
-      maxSelectedDate: _currentDate.add(Duration(days: 3600)),
-      prevDaysTextStyle: TextStyle(
-          color: Colors.grey,
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      inactiveDaysTextStyle: TextStyle(
-          color: Colors.grey,
-          fontWeight: FontWeight.w700,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      weekdayTextStyle: TextStyle(
-          color: const Color(0xff4B5B53),
-          fontWeight: FontWeight.w400,
-          fontFamily: "Montserrat",
-          fontStyle: FontStyle.normal,
-          fontSize: 14.0
-      ),
-      onCalendarChanged: (DateTime date) {
-        this.setState(() {
-          _targetDateTime = date;
-          _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-        });
-      },
-      onDayLongPressed: (DateTime date) {
-        print('long pressed date $date');
-      },
+
+  _calendar(){
+    _calendarItem = Calendarro(
+        startDate:  _currentDate.subtract(Duration(days: 3600)),
+        endDate: _currentDate.add(Duration(days: 3600)),
+        displayMode: DisplayMode.MONTHS,
+        selectedSingleDate: _selectDate,
+        onPageSelected: (start_page, end_page) {
+          print("onTap: $start_page");
+          print("onTap: $end_page");
+          setState(() {
+            _currentMonth = DateFormat.yMMM().format(start_page);
+          });
+        },
+        onTap: (date) {
+          if(date.difference(DateTime.now()).inDays >= 0){
+            this.setState(() {
+              _selectDate = date;
+              getSchedulesInDay();
+            });
+          }else{
+            SnackBar(
+              content: Text('Can not select previous day'),
+            );
+          }
+        }
+
     );
+
+    return _calendarItem;
   }
+
   _timeSheet(BuildContext context){
 
-    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 5 - 300 - 40 - 30 - kBottomNavigationBarHeight;
-    return users.length == 0 ? SizedBox(height: 0,) : Container(
-      height:users.length == 0 ?  0: maxHeight,
+    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 10 - 320 - 55;
+    return schedulesInDay.length == 0 ? SizedBox(height: 0,) : Container(
+      height:schedulesInDay.length == 0 ?  0: maxHeight,
       child: ListView.builder(
         itemBuilder: (context, int index) {
-          //page = page + 1;
-          return  TimeSheetItem(item: users[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(), selectDate: _selectDate,);
+          return  TimeSheetItem(scheduleItem: schedulesInDay[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
         },
         scrollDirection: Axis.vertical,
         shrinkWrap: false,
-        itemCount: users.length,
+        itemCount: schedulesInDay.length,
 //        controller: _scrollController,
       ),
     );
   }
 
-  List<Attendee> getScheduleDependToDate(){
-    List<Attendee> users = List<Attendee>();
+  getScheduleDependToDate(){
+    schedulesInDay.clear();
     for (var i = 0; i < scheduleList.objects.length; i++) {
-      DateTime dateSchedule = scheduleList.objects[i].dateTime;
+      DateTime dateSchedule = scheduleList.objects[i].date;
       int days =  _selectDate.difference(dateSchedule).inDays;
       if(days == 0 && _selectDate.day - dateSchedule.day == 0) {
-        for (var j = 0; i < scheduleList.objects[i].attendees.length; j++) {
-          Attendee user = scheduleList.objects[i].attendees[j];
-          if(user.role == RoleEnum.STUDENT){
-              users.add(user);
+        for(Schedule sch in scheduleList.objects[i].schedules){
+          List<User> users = sch.users;
+          User student = users.firstWhere((element) => element.role == "student");
+          if(student != null){
+            schedulesInDay.add(sch);
           }
         }
-        return users;
+        break;
       }
     }
-    return users;
   }
 
   @override
   void dispose() {
-    _calendarController.dispose();
     super.dispose();
-  }
-
-  _cancelPopupView(){
-    return GestureDetector(
-        onTap: ()=>
-        {
-          setState(() {
-            _isCancel = !_isCancel;
-          }),
-        },
-        child: Container(
-          color: const Color(0xffd8d8d8).withOpacity(0.9),
-//          height:  MediaQuery.of(context).size.height - kToolbarHeight - 25 - kBottomNavigationBarHeight,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(5),
-                  bottomRight: Radius.circular(30),
-                  bottomLeft: Radius.circular(5),
-                ),
-                color: Colors.white,
-              ),
-              width: MediaQuery.of(context).size.width - 40,
-              height: (48 * 2 + 20 + 80).toDouble(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 40,),
-                  new GestureDetector(
-                    onTap: ()=> {launch("tel://21213123123"),},
-                    child: Container(
-                      width: 150,
-                      alignment: Alignment.center,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(5),
-                          bottomRight: Radius.circular(30),
-                          bottomLeft: Radius.circular(5),
-                        ),
-                        color: COLOR.COLOR_00C081,
-                      ),
-                      child: Text('Call center',
-                        style: TextStyle(
-                            color: const Color(0xffffffff),
-                            fontSize: 18,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.bold
-                        ),),
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  new GestureDetector(
-                    onTap: ()=> {cancelAction(false)},
-                    child: Container(
-                      width: 150,
-                      alignment: Alignment.center,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(5),
-                          bottomRight: Radius.circular(30),
-                          bottomLeft: Radius.circular(5),
-                        ),
-                        color: Colors.white,
-                        border: Border.all(
-                            color: COLOR.COLOR_00C081,
-                            width: 4
-                        ),
-                      ),
-                      child: Text('back',
-                        style: TextStyle(
-                            color: COLOR.COLOR_00C081,
-                            fontSize: 18,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.bold
-                        ),),
-                    ),
-                  )
-                ],
-              ),
-            )
-          )
-        )
-    );
   }
 
   int checkCurrentDay(){
@@ -540,7 +409,13 @@ class CalendarUIState extends State<CalendarUI> {
     setState(() {
       _isCancel = value;
     });
-    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, 'change_plan', ''));
+    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, '', ''));
+  }
+  cancelSchedule(index){
+    setState(() {
+      Schedule sche = schedulesInDay[index];
+      sche.status = SCHEDULE_STATUS.CANCEL;
+    });
   }
 }
 
@@ -563,32 +438,29 @@ class BottomLoader extends StatelessWidget {
 }
 
 class TimeSheetItem extends StatefulWidget {
-  final DateTime selectDate;
-  final Attendee item;
+  final Schedule scheduleItem;
   final Function cancelAction;
   final isCurrentDay;
 
-  TimeSheetItem({Key key, this.item, this.cancelAction, this.isCurrentDay, this.selectDate})
+  TimeSheetItem({Key key, this.scheduleItem, this.cancelAction, this.isCurrentDay})
       : super(key: key);
 
   @override
-  TimeSheetItemState createState() => TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay, this.selectDate);
+  TimeSheetItemState createState() => TimeSheetItemState(this.scheduleItem, this.cancelAction, this.isCurrentDay);
 
 }
 
 class TimeSheetItemState extends State<TimeSheetItem> {
 
-  TimeSheetItemState(this.item, this.cancelAction, this.isCurrentDay, this.selectDate);
+  TimeSheetItemState(this.scheduleItem, this.cancelAction, this.isCurrentDay);
 
-//  double heightCell = (25 + 78 + 10 + 180).toDouble();
   double widthCell = 0;
-  Attendee item;
   Function cancelAction;
   int isCurrentDay;
   Timer timer;
   int isOnTime = 1;
   int delayTime = 14;
-  final DateTime selectDate;
+  Schedule scheduleItem;
 
   @override
   void initState() {
@@ -601,7 +473,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
 
   //Function
   _checkOnTime(){
-    DateTime date = selectDate;
+    DateTime date = scheduleItem.startTime;
     int ms = date.difference(DateTime.now()).inMinutes;
     if(ms >= -delayTime && ms <= delayTime){
       setState(() {
@@ -621,14 +493,29 @@ class TimeSheetItemState extends State<TimeSheetItem> {
 
   String _getHourAndMinutes(){
     int start = 9;
-    String hours = selectDate.hour > 9 ? selectDate.hour.toString() : "0" + selectDate.hour.toString();
-    String minutes = selectDate.minute > 9 ? selectDate.minute.toString() : "0" + selectDate.minute.toString();
+    String hours = scheduleItem.startTime.hour > 9 ? scheduleItem.startTime.hour.toString() : "0" + scheduleItem.startTime.hour.toString();
+    String minutes = scheduleItem.startTime.minute > 9 ? scheduleItem.startTime.minute.toString() : "0" + scheduleItem.startTime.minute.toString();
     return hours + ':' + minutes;
+  }
+
+  String scheduleStatus(){
+    if(scheduleItem.status == SCHEDULE_STATUS.CANCEL){
+      return SCHEDULE_STATUS_TEXT.CANCEL;
+    }else if(scheduleItem.status == SCHEDULE_STATUS.DONE){
+      return SCHEDULE_STATUS_TEXT.DONE;
+    }else if(scheduleItem.status == SCHEDULE_STATUS.ACTIVE){
+      return "";
+    }else{
+      return SCHEDULE_STATUS_TEXT.UNKNOWN;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
+    List<User> users = scheduleItem.users;
+    User student = users.firstWhere((element) => element.role == "student");
+    Color textColor = (scheduleItem.status == SCHEDULE_STATUS.DONE || scheduleItem.status == SCHEDULE_STATUS.ACTIVE) ? const Color(0xff00c081) :
+    (scheduleItem.status == SCHEDULE_STATUS.CANCEL ? const Color(0xffFF5600) : const Color(0xffFF9900));
     widthCell = MediaQuery
         .of(context)
         .size
@@ -675,22 +562,22 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                         color: const Color(0xffd8d8d8)
                     )
                 ),
-                SizedBox(height: 10,),
+                student.lastName != null ? SizedBox(height: 10,) : SizedBox(height: 0,),
                 new Text(
-                    item.user.lastName,
-                    style: const TextStyle(
-                        color:  const Color(0xff00c081),
+                  (student.lastName != null ? student.lastName : "") + " " + scheduleStatus(),
+                    style: TextStyle(
+                        color:  textColor,
                         fontWeight: FontWeight.w700,
                         fontFamily: "Montserrat",
                         fontStyle:  FontStyle.normal,
                         fontSize: 14.0
-                    )
+                    ),
                 ),
-                SizedBox(height: 13,),
+                scheduleItem.comment != null ? SizedBox(height: 13,) : SizedBox(height: 10,),
                 Container(
                   width: widthCell - 15,
                   child: new Text(
-                      item.user.firstName,
+                      scheduleItem.comment != null ? scheduleItem.comment : "",
                       style: const TextStyle(
                           color:  const Color(0xff4B5B53),
                           fontWeight: FontWeight.w400,
@@ -700,61 +587,62 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                       )
                   )
                 ),
-                SizedBox(height: 10,),
-                (isCurrentDay >= 0 && isOnTime >= 0) ? _bottomButton(context, widthCell) : SizedBox(height: 0,),
+//                SizedBox(height: 10,),
+                ((isCurrentDay >= 0 && isOnTime >= 0) ||  scheduleItem.status != SCHEDULE_STATUS.ACTIVE)? _bottomButton(context, widthCell) : SizedBox(height: 0,),
               ],
             ),
         )
       ],
-
     );
   }
 
   _bottomButton(BuildContext context, double width){
     double widthButton = (width - 10 - 15)/2;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-
-        Row(
+    return Container(
+        margin: EdgeInsets.only( top: 10),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            new GestureDetector(
-              onTap: () {
-                if(isOnTime > 0) {
-                  cancelAction(true);
-                }else {
-                  showAlertDialog(context: context,
-                      title: '',
-                      message: "Can't cancel this time",
-                      actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-                      actionsOverflowDirection: VerticalDirection.up);
-                }
-              },
-              child: isCurrentDay > 0 ? _cancelGreenButton(widthButton) : (isOnTime == 0  ? _cancelGreyButton(widthButton) : _cancelGreenButton(widthButton)),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                new GestureDetector(
+                  onTap: () {
+                    if(isOnTime > 0) {
+                      cancelAction(scheduleItem.id);
+                    }else {
+                      showAlertDialog(context: context,
+                          title: '',
+                          message: "Can't cancel this time",
+                          actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
+                          actionsOverflowDirection: VerticalDirection.up);
+                    }
+                  },
+                  child: isCurrentDay > 0 ? _cancelGreenButton(widthButton) : (isOnTime == 0  ? _cancelGreyButton(widthButton) : _cancelGreenButton(widthButton)),
+                ),
+                SizedBox(width: 10,),
+                new GestureDetector(
+                  onTap: () {
+                    if (isOnTime == 0) {
+                      Navigator.popUntil(
+                          context, ModalRoute.withName(HomeViewRoute));
+                    }else if (isOnTime > 0) {
+                      showAlertDialog(context: context,
+                          title: '',
+                          message: "Can't call this time",
+                          actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
+                          actionsOverflowDirection: VerticalDirection.up);
+                    }
+                  },
+                  child: isOnTime > 0 ? _callGreyButton(widthButton) : _callGreenButton(widthButton),
+                ),
+              ],
             ),
-            SizedBox(width: 10,),
-            new GestureDetector(
-              onTap: () {
-                if (isOnTime == 0) {
-                  Navigator.popUntil(
-                      context, ModalRoute.withName(HomeViewRoute));
-                }else {
-                  showAlertDialog(context: context,
-                      title: '',
-                      message: "Can't call this time",
-                      actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-                      actionsOverflowDirection: VerticalDirection.up);
-                }
-              },
-              child: isOnTime > 0 ? _callGreyButton(widthButton) : _callGreenButton(widthButton),
-            ),
+            SizedBox(height: 15,),
           ],
-        ),
-        SizedBox(height: 15,),
-      ],
+        )
     );
   }
 

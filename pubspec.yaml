@@ -42,6 +42,8 @@ dependencies:
   calendar_widget:
   connect_api:
     path: ../connect_api/
+  ui_libraries:
+    path: ../ui_libraries/
 
 
 dev_dependencies:
