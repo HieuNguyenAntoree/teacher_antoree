@@ -127,7 +127,7 @@ class CalendarUIState extends State<CalendarUI> {
     getSchedulesInDay();
   }
 
-  getSchedulesInDay(){
+    getSchedulesInDay(){
     scheduleList = StorageUtil.getScheduleList();
     getScheduleDependToDate();
   }
@@ -157,7 +157,21 @@ class CalendarUIState extends State<CalendarUI> {
                 fontStyle:  FontStyle.normal,
                 fontSize: 12.0
             ),),
-          actions: <Widget>[
+          actions: rightButton == "" ?
+          CupertinoDialogAction(
+            child: Text(leftButton, style:
+            const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w700,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 14.0
+            ),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+              : <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
               const TextStyle(
@@ -171,7 +185,7 @@ class CalendarUIState extends State<CalendarUI> {
                 Navigator.of(context).pop();
               },
             ),
-            rightButton == "" ? SizedBox(width: 0,) : CupertinoDialogAction(
+            CupertinoDialogAction(
               child: Text(rightButton, style:
               const TextStyle(
                   color:  const Color(0xff4B5B53),
@@ -626,8 +640,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 new GestureDetector(
                   onTap: () {
                     if (isOnTime == 0) {
-                      Navigator.popUntil(
-                          context, ModalRoute.withName(HomeViewRoute));
+
                     }else if (isOnTime > 0) {
                       showAlertDialog(context: context,
                           title: '',
