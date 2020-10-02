@@ -184,9 +184,7 @@ class HomeUIState extends State<HomeUI> {
                 }
               }
             }
-            if(currentSchedule == null){
-              _handleClickMe(STRINGS.ERROR_TITLE, "You don't' have some schedule in next 7 days", 'OK', '', null);
-            }
+
             break;
           }
         }
@@ -219,22 +217,22 @@ class HomeUIState extends State<HomeUI> {
                 fontStyle:  FontStyle.normal,
                 fontSize: 12.0
             ),),
-          actions:
-          rightButton == "" ?
-          CupertinoDialogAction(
-            child: Text(leftButton, style:
-            const TextStyle(
-                color:  const Color(0xff4B5B53),
-                fontWeight: FontWeight.w700,
-                fontFamily: "Montserrat",
-                fontStyle:  FontStyle.normal,
-                fontSize: 14.0
-            ),),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          )
-          : <Widget>[
+          actions: rightButton == "" ?
+          <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )] :
+           <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
               const TextStyle(
@@ -294,6 +292,10 @@ class HomeUIState extends State<HomeUI> {
             setState(() {
               loadDataFromLocal();
             });
+
+            if(currentSchedule == null){
+              _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.NO_SCHEDULE, 'OK', '', null);
+            }
           }else {
             setState(() {
               _isLoading = false;
@@ -506,12 +508,18 @@ class HomeUIState extends State<HomeUI> {
                     setState(() {
                       leftbuttonColor = COLOR.COLOR_00C081;
                     }),
-                    Navigator.of(context).push(CalendarView.route(currentSchedule.id)),
+
                     Timer(Duration(seconds: 1), () {
                       setState(() {
                         leftbuttonColor = Color(0xffb6d6cb);
                       });
                     }),
+
+                    if(currentSchedule != null){
+                      Navigator.of(context).push(CalendarView.route(currentSchedule.id)),
+                    }else{
+                      _handleClickMe("", STRINGS.NO_SCHEDULE, 'OK', '', null)
+                    }
                   },
                     child: Container(
                       width: width / 2 - 10,
@@ -533,12 +541,18 @@ class HomeUIState extends State<HomeUI> {
                       setState(() {
                         rightbuttonColor = COLOR.COLOR_00C081;
                       }),
-                      Navigator.of(context).push(TimeSlotView.route(currentSchedule.id)),
+
                       Timer(Duration(seconds: 1), () {
                         setState(() {
                           rightbuttonColor = Color(0xffb6d6cb);
                         });
                       }),
+
+                      if(currentSchedule != null){
+                        Navigator.of(context).push(TimeSlotView.route()),
+                      }else{
+                        _handleClickMe("", STRINGS.NO_SCHEDULE, 'OK', '', null)
+                      }
                     },
                     child: Container(
                       width: width / 2 - 10,
@@ -563,7 +577,15 @@ class HomeUIState extends State<HomeUI> {
               width: 100,
               height: 100,
               child: GestureDetector(
-                onTap: () => _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "",
+                onTap: () =>
+                {
+                  if(currentSchedule != null){
+                    context.bloc<APIConnect>().add(CallVideo(currentSchedule.id,  "teacher")),
+                    _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "",
+                  }else{
+                    _handleClickMe("", STRINGS.NO_SCHEDULE, 'OK', '', null)
+                  }
+                },
                 child: !_isStartVideoCall ? Image.asset(
                   IMAGES.HOME_CALL_GRAY, width: 100, height: 100,) : Image
                     .asset(IMAGES.HOME_CALL_GREEN, width: 100, height: 100,),

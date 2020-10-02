@@ -1,31 +1,27 @@
 import 'dart:async';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connect_api/connection/model/result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    show CalendarCarousel;
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:teacher_antoree/const/color.dart';
+import 'package:teacher_antoree/const/constant.dart';
 import 'package:teacher_antoree/const/defaultValue.dart';
+import 'package:teacher_antoree/models/timesheet.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
 import 'package:teacher_antoree/src/7.video/video_view.dart';
-import 'package:teacher_antoree/src/customViews/route_names.dart';
 import 'package:ui_libraries/calendar/calendarro.dart';
 
 class TimeSlotView extends StatelessWidget {
-  final String idSchedule;
-  const TimeSlotView(this.idSchedule);
-  static Route route(String idSchedule) {
-    return MaterialPageRoute<void>(builder: (_) => TimeSlotView(idSchedule));
+  const TimeSlotView();
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => TimeSlotView());
   }
 
   @override
   Widget build(BuildContext context) {
+    String selectDateTime = VALUES.FORMAT_DATE_yyyy_mm_ddd.format(DateTime.now());
     return new WillPopScope(
       child: Scaffold(
         backgroundColor: const Color(0xffffffff),
@@ -38,10 +34,8 @@ class TimeSlotView extends StatelessWidget {
         body: Padding(
             padding: const EdgeInsets.only(top: 0),
             child: BlocProvider(
-              create: (context){
-                return APIConnect();
-              },
-              child: TimeSlotUI(this.idSchedule),
+              create: (context) => APIConnect()..add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime)))),
+              child: TimeSlotUI(),
             )
         ),
       ),
@@ -96,10 +90,9 @@ class TimeSlotView extends StatelessWidget {
 }
 
 class TimeSlotUI extends StatefulWidget {
-  final String idSchedule;
-  const TimeSlotUI(this.idSchedule);
+  const TimeSlotUI();
   @override
-  TimeSlotUIState createState() => TimeSlotUIState(this.idSchedule);
+  TimeSlotUIState createState() => TimeSlotUIState();
 }
 
 class TimeSlotUIState extends State<TimeSlotUI>{
@@ -109,8 +102,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   int timelotsCount = 0;
   int indexSelected = -1;
 
-  String idSchedule;
-  TimeSlotUIState(this.idSchedule);
+  TimeSlotUIState();
 
   @override
   void initState() {
@@ -133,6 +125,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   DateTime _targetDateTime = DateTime.now();
   int currentDay = DateTime.now().day;
   Calendarro _calendarItem;
+  List<TimeSheet> timeSheetList;
 
   Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
     return showDialog<void>(
@@ -156,19 +149,20 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                 fontSize: 12.0
             ),),
           actions: rightButton == "" ?
-          CupertinoDialogAction(
-            child: Text(leftButton, style:
-            const TextStyle(
-                color:  const Color(0xff4B5B53),
-                fontWeight: FontWeight.w700,
-                fontFamily: "Montserrat",
-                fontStyle:  FontStyle.normal,
-                fontSize: 14.0
-            ),),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          )
+          <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )]
               : <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
@@ -183,7 +177,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                 Navigator.of(context).pop();
               },
             ),
-             CupertinoDialogAction(
+            CupertinoDialogAction(
               child: Text(rightButton, style:
               const TextStyle(
                   color:  const Color(0xff4B5B53),
@@ -203,6 +197,147 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     );
   }
 
+  Color getTimeSheetWithTime(String time){
+    DateTime currentTime = DateTime.parse(time);
+    DateTime next20Time = DateTime.parse(time).add(new Duration(minutes: 20));
+    timeSheetList = StorageUtil.getTimeSheetList();
+    TimeSheet ts = timeSheetList.firstWhere((element) => element.timeStart.compareTo(currentTime) >= 0 && element.timeStart.compareTo(next20Time) < 0);
+    if(ts.status == 3){
+      return Color(0xffFF5600);
+    }else if(ts.status == 4){
+      return Color(0xffFF9900);
+    }else if(ts.status == 1){
+      return Color(0xff00C081);
+    }else{
+      return Colors.white;
+    }
+  }
+
+  setTimeSheetConnectAPI(){
+
+    setState(() {
+      _isLoading = true;
+    });
+    String time = timeSlots[indexSelected] + ":00";
+    String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + time;
+    DateTime selectDateTime = DateTime.parse(exdateTimeString);
+
+    DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    String startime = formatterAPI.format(selectDateTime);
+    String endTime = formatterAPI.format(selectDateTime.add(new Duration(minutes: 20)));
+    context.bloc<APIConnect>().add(SetTimeSheet(1, startime, endTime));
+  }
+
+  cancelTimeSheetConnectAPI(String time){
+    setState(() {
+      _isLoading = true;
+    });
+    DateTime currentTime = DateTime.parse(time);
+    DateTime next20Time = DateTime.parse(time).add(new Duration(minutes: 20));
+    TimeSheet ts = timeSheetList.firstWhere((element) => element.timeStart.compareTo(currentTime) >= 0 && element.timeStart.compareTo(next20Time) < 0);
+    context.bloc<APIConnect>().add(CancelTimeSheet(ts.id));
+  }
+
+  getTimeLots(DateTime date){
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        timeSlots = _caculatorTimeSlots(date);
+        timelotsCount = timeSlots.length;
+      });
+    });
+  }
+
+  List<String> _caculatorTimeSlots(DateTime date)
+  {
+    List<String> slots = List<String>();
+    int difference = date.day - DateTime.now().day;
+    if(difference > 0){
+      int minute = 0;
+      int hour = 5;
+      int maxHour = 22;
+
+      var i = hour;
+      do{
+        if (minute == 0){
+          if(i + 1 > 9) {
+            String str = i.toString() + ":00";
+            slots.add(str);
+          }else{
+            String str = "0" + i.toString() + ":00";
+            slots.add(str);
+          }
+          minute = VALUES.DELAY_TIME;
+        }else if (minute != VALUES.DELAY_TIME){
+          if(i > 9) {
+            String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
+            slots.add(str);
+          }else{
+            String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
+            slots.add(str);
+          }
+          minute = 0;
+          i++;
+        }
+        else{
+          if(i > 9) {
+            String str = (i).toString() + ":${VALUES.DELAY_TIME}";
+            slots.add(str);
+          }else{
+            String str = "0" + (i).toString() + ":${VALUES.DELAY_TIME}";
+            slots.add(str);
+          }
+          minute = 2*VALUES.DELAY_TIME;
+        }
+      }while(i <= maxHour);
+      return slots;
+    }else if (difference == 0){
+      DateTime date = DateTime.now();
+      int minute = date.minute > 2*VALUES.DELAY_TIME ? 0 : (date.minute > VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : VALUES.DELAY_TIME);
+      int hour = date.hour;
+      int maxHour = 22;
+      var i = (minute == 0 ? hour + 1 :hour);
+      if(minute - date.minute < VALUES.DELAY_TIME){
+        int ms = minute;
+        minute = ms == 0 ? VALUES.DELAY_TIME : (ms == VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : 0);
+        i = (minute == 0 ? hour + 1 : (ms > 2*VALUES.DELAY_TIME ? hour + 1 : hour ));
+      }
+
+      do{
+        if (minute == 0){
+          if(i + 1 > 9) {
+            String str = i.toString() + ":00";
+            slots.add(str);
+          }else{
+            String str = "0" + i.toString() + ":00";
+            slots.add(str);
+          }
+          minute = VALUES.DELAY_TIME;
+        }else if (minute != VALUES.DELAY_TIME){
+          if(i > 9) {
+            String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
+            slots.add(str);
+          }else{
+            String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
+            slots.add(str);
+          }
+          minute = 0;
+          i++;
+        }
+        else{
+          if(i > 9) {
+            String str = (i).toString() + ":${VALUES.DELAY_TIME}";
+            slots.add(str);
+          }else{
+            String str = "0" + (i).toString() + ":${VALUES.DELAY_TIME}";
+            slots.add(str);
+          }
+          minute = 2*VALUES.DELAY_TIME;
+        }
+      }while(i <= maxHour);
+      return slots;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     /// Example Calendar Carousel without header and custom prev & next button
@@ -216,17 +351,28 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           setState(() {
             _isLoading = true;
           });
+        }else if (state.result is SuccessState) {
+          setState(() {
+            _isLoading = false;
+            indexSelected = -1;
+          });
         }else if (state.result is ParseJsonToObject) {
           setState(() {
             _isLoading = false;
           });
-//          Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute));
-        }else {
+        }
+        else {
           setState(() {
             _isLoading = false;
           });
           ErrorState error = state.result;
-          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", changeScheduleConnectAPI());
+          if(error.msg == "Cancel"){
+            _handleClickMe(STRINGS.ERROR_TITLE, "Time can't' cancel" , "Close", "", null);
+          }else if(error.msg == "Set"){
+            _handleClickMe(STRINGS.ERROR_TITLE, "Time can't' set", "Close", "", null);
+          }else{
+            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "", null);
+          }
         }
       },
       child: LoadingOverlay(
@@ -311,6 +457,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                       margin: EdgeInsets.symmetric(horizontal: 15.0),
                       child: _calendar(),//_calendarField(),
                     ),
+                    SizedBox(height: 20,)
                   ],
                 ),
               ),
@@ -329,11 +476,12 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     );
   }
 
+
   _calendar(){
     _calendarItem = Calendarro(
         startDate:  _currentDate.subtract(Duration(days: 3600)),
         endDate: _currentDate.add(Duration(days: 3600)),
-        displayMode: DisplayMode.MONTHS,
+        displayMode: DisplayMode.WEEKS,
         selectedSingleDate: _selectDate,
         onPageSelected: (start_page, end_page) {
           print("onTap: $start_page");
@@ -343,14 +491,8 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           });
         },
         onTap: (date) {
-          if(date.difference(DateTime.now()).inDays >= 0){
-            getTimeLots(date);
-            this.setState(() => _selectDate = date);
-          }else{
-            SnackBar(
-              content: Text('Can not select previous day'),
-            );
-          }
+          getTimeLots(date);
+          this.setState(() => _selectDate = date);
         }
 
     );
@@ -444,7 +586,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _timelineField(){
     final double itemHeight = 40;
     final int total = timelotsCount;
-    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 30 - 50 - 300 - 30 - kBottomNavigationBarHeight - 100 - 10;
+    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 30 - 50 - 70 - 30 - kBottomNavigationBarHeight - 100 - 10;
     double girdHeight = (itemHeight * ((total/4).floor() + (total%4 > 0 ? 1 : 0)));
     double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
     double width = MediaQuery.of(context).size.width;
@@ -476,7 +618,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                     indexMeeting = 1;
                   }
                 });
-                changeScheduleConnectAPI();
+                setTimeSheetConnectAPI();
               }
 
             },
@@ -490,19 +632,13 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     );
   }
 
-  changeScheduleConnectAPI(){
-    DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    String datetime = formatterAPI.format(_selectDate);
-    context.bloc<APIConnect>().add(ChangeSchedule(this.idSchedule, datetime));
-  }
-
   int indexMeeting = -1;
   _timeItem(double itemWidth, double itemHeight, int index, int count, int total){
     return Container(
         width: itemWidth,
         height: itemHeight,
         decoration: BoxDecoration(
-          color: (indexSelected == index && indexMeeting != index) ? COLOR.COLOR_00C081 : Colors.white,
+          color: (indexSelected == index && indexMeeting != index) ? COLOR.COLOR_00C081 : getTimeSheetWithTime(timeSlots[index]),
           border: Border(
             top:  BorderSide(color: const Color(0xffd8d8d8), width: 1),
             right: BorderSide(color: const Color(0xffd8d8d8), width: 1),
@@ -515,7 +651,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             ),
           ),
         ),
-        child: (indexMeeting == index && indexSelected == indexMeeting) ? _timeMeetingItem(itemWidth, itemHeight) : _timeNormalItem(index),
+        child: (indexMeeting == index && indexSelected == indexMeeting) ? _timeMeetingItem(itemWidth, itemHeight,'') : _timeNormalItem(index),
     );
   }
 
@@ -534,7 +670,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     );
   }
 
-  _timeMeetingItem(double itemWidth, double itemHeight){
+  _timeMeetingItem(double itemWidth, double itemHeight, String idSchedule){
     return  Container(
       width: itemWidth,
       height: itemHeight,
@@ -546,101 +682,17 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _backButton(itemWidth/2 - 1, itemHeight),
-          _callButton(itemWidth/2 - 1, itemHeight),
+          _callButton(itemWidth/2 - 1, itemHeight, idSchedule),
         ],
       ),
     );
   }
 
-  List<String> _caculatorTimeSlots(DateTime date)
-  {
-    List<String> slots = List<String>();
-    int difference = date.day - DateTime.now().day;
-    if(difference > 0){
-      int minute = 0;
-      int hour = 5;
-      int maxHour = 22;
-
-      var i = hour;
-      do{
-        if (minute == 0){
-          if(i + 1 > 9) {
-            String str = i.toString() + ":00";
-            slots.add(str);
-          }else{
-            String str = "0" + i.toString() + ":00";
-            slots.add(str);
-          }
-          minute = VALUES.DELAY_TIME;
-        }else if (minute != VALUES.DELAY_TIME){
-          if(i > 9) {
-            String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 0;
-          i++;
-        }
-        else{
-          if(i > 9) {
-            String str = (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 2*VALUES.DELAY_TIME;
-        }
-      }while(i <= maxHour);
-      return slots;
-    }else if (difference == 0){
-      DateTime date = DateTime.now();
-      int minute = date.minute > 2*VALUES.DELAY_TIME ? 0 : (date.minute > VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : VALUES.DELAY_TIME);
-      int hour = date.hour;
-      int maxHour = 22;
-      var i = minute == 0 ? hour + 1 :hour;
-      do{
-        if (minute == 0){
-          if(i + 1 > 9) {
-            String str = i.toString() + ":00";
-            slots.add(str);
-          }else{
-            String str = "0" + i.toString() + ":00";
-            slots.add(str);
-          }
-          minute = VALUES.DELAY_TIME;
-        }else if (minute != VALUES.DELAY_TIME){
-          if(i > 9) {
-            String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 0;
-          i++;
-        }
-        else{
-          if(i > 9) {
-            String str = (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 2*VALUES.DELAY_TIME;
-        }
-      }while(i <= maxHour);
-      return slots;
-    }
-  }
-
-  _callButton(double widthButton, double height){
+  _callButton(double widthButton, double height, String idSchedule){
     return GestureDetector(
         onTap: () {
-          VideoState(context, idSchedule).initState();
+          context.bloc<APIConnect>().add(CallVideo(idSchedule,  "teacher"));
+           VideoState(context, idSchedule).initState() ;
         },
         child: Container(
           width: widthButton,
@@ -694,12 +746,4 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     );
   }
 
-  getTimeLots(DateTime date){
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        timeSlots = _caculatorTimeSlots(date);
-        timelotsCount = timeSlots.length;
-      });
-    });
-  }
 }

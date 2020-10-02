@@ -95,3 +95,33 @@ class CallVideo extends ApiEvent {
   @override
   List<Object> get props => [idSchedule, role];
 }
+
+class TimeSheetList extends ApiEvent {
+  const TimeSheetList( this.date);
+
+  final String date;
+
+  @override
+  List<Object> get props => [date];
+}
+
+class SetTimeSheet extends ApiEvent {
+  const SetTimeSheet(this.status, this.startTime, this.endTime);
+
+  final String startTime;
+  final String endTime;
+  final int status;
+
+  @override
+  List<Object> get props => [status, startTime, endTime];
+}
+
+class CancelTimeSheet extends ApiEvent {
+  const CancelTimeSheet(this.idTimeSheet);
+
+  final String idTimeSheet;
+
+  @override
+  List<Object> get props => [idTimeSheet];
+}
+

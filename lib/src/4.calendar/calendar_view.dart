@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -115,8 +116,8 @@ class CalendarUIState extends State<CalendarUI> {
   DateTime _targetDateTime = DateTime.now();
   int currentDay = DateTime.now().day;
   Calendarro _calendarItem;
-  bool _isCancel = false;
-  bool isScrollEventList = false;
+  bool isScrollUp = false;
+  final ScrollController _scrollController = ScrollController();
 
   double maxHeight = 0;
   List<Schedule> schedulesInDay = List<Schedule>();
@@ -127,13 +128,34 @@ class CalendarUIState extends State<CalendarUI> {
     getSchedulesInDay();
   }
 
-    getSchedulesInDay(){
+  getSchedulesInDay(){
     scheduleList = StorageUtil.getScheduleList();
     getScheduleDependToDate();
   }
 
   getDateFromAPI(){
     context.bloc<APIConnect>().add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(_selectDate), VALUES.FORMAT_DATE_API.format(_selectDate.add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+  }
+
+  int checkCurrentDay(){
+    int days =  _selectDate.difference(DateTime.now()).inDays;
+    if(days == 0){
+      if(_selectDate.day - DateTime.now().day == 0) {
+        return 0;
+      }else{
+        return 1;
+      }
+    }else if(days > 0){
+      return 1;
+    } else{
+      return -1;
+    }
+  }
+  cancelAction(value){
+    setState(() {
+      _isLoading = true;
+    });
+    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, '', ''));
   }
 
   Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
@@ -158,19 +180,20 @@ class CalendarUIState extends State<CalendarUI> {
                 fontSize: 12.0
             ),),
           actions: rightButton == "" ?
-          CupertinoDialogAction(
-            child: Text(leftButton, style:
-            const TextStyle(
-                color:  const Color(0xff4B5B53),
-                fontWeight: FontWeight.w700,
-                fontFamily: "Montserrat",
-                fontStyle:  FontStyle.normal,
-                fontSize: 14.0
-            ),),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          )
+          <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )]
               : <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
@@ -235,7 +258,7 @@ class CalendarUIState extends State<CalendarUI> {
               _isLoading = false;
             });
             ErrorState error = state.result;
-            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getDateFromAPI());
+            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "", null);
           }
         },
         child: LoadingOverlay(
@@ -338,7 +361,7 @@ class CalendarUIState extends State<CalendarUI> {
     _calendarItem = Calendarro(
         startDate:  _currentDate.subtract(Duration(days: 3600)),
         endDate: _currentDate.add(Duration(days: 3600)),
-        displayMode: DisplayMode.MONTHS,
+        displayMode: isScrollUp  ? DisplayMode.WEEKS : DisplayMode.MONTHS,
         selectedSingleDate: _selectDate,
         onPageSelected: (start_page, end_page) {
           print("onTap: $start_page");
@@ -348,16 +371,10 @@ class CalendarUIState extends State<CalendarUI> {
           });
         },
         onTap: (date) {
-          if(date.difference(DateTime.now()).inDays >= 0){
-            this.setState(() {
-              _selectDate = date;
-              getSchedulesInDay();
-            });
-          }else{
-            SnackBar(
-              content: Text('Can not select previous day'),
-            );
-          }
+          this.setState(() {
+            _selectDate = date;
+            getSchedulesInDay();
+          });
         }
 
     );
@@ -368,17 +385,37 @@ class CalendarUIState extends State<CalendarUI> {
   _timeSheet(BuildContext context){
 
     maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 10 - 320 - 55;
-    return schedulesInDay.length == 0 ? SizedBox(height: 0,) : Container(
-      height:schedulesInDay.length == 0 ?  0: maxHeight,
-      child: ListView.builder(
-        itemBuilder: (context, int index) {
-          return  TimeSheetItem(scheduleItem: schedulesInDay[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
-        },
-        scrollDirection: Axis.vertical,
-        shrinkWrap: false,
-        itemCount: schedulesInDay.length,
-//        controller: _scrollController,
-      ),
+    return schedulesInDay.length == 0 ? SizedBox(height: 0,) :
+    NotificationListener<ScrollNotification>(
+        onNotification: (scrollNotification) {
+      print('inside the onNotification');
+      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+        print('scrolled down');
+//        setState(() {
+////          isScrollUp = true;
+////          maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 10 - 70 - 55;
+//        });
+      } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        print('scrolled up');
+//        setState(() {
+////          isScrollUp = false;
+////          maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 10 - 320 - 55;
+//        });
+      }
+      return true;
+    },
+      child: Container(
+        height: maxHeight,
+        child: ListView.builder(
+          itemBuilder: (context, int index) {
+            return  TimeSheetItem(scheduleItem: schedulesInDay[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
+          },
+          scrollDirection: Axis.vertical,
+          shrinkWrap: false,
+          itemCount: schedulesInDay.length,
+        controller: _scrollController,
+        ),
+      )
     );
   }
 
@@ -395,6 +432,7 @@ class CalendarUIState extends State<CalendarUI> {
             schedulesInDay.add(sch);
           }
         }
+        schedulesInDay.sort((a, b) => a.startTime.compareTo(b.startTime));
         break;
       }
     }
@@ -403,33 +441,6 @@ class CalendarUIState extends State<CalendarUI> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  int checkCurrentDay(){
-    int days =  _selectDate.difference(DateTime.now()).inDays;
-    if(days == 0){
-      if(_selectDate.day - DateTime.now().day == 0) {
-        return 0;
-      }else{
-        return 1;
-      }
-    }else if(days > 0){
-      return 1;
-    } else{
-      return -1;
-    }
-  }
-  cancelAction(value){
-    setState(() {
-      _isCancel = value;
-    });
-    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, '', ''));
-  }
-  cancelSchedule(index){
-    setState(() {
-      Schedule sche = schedulesInDay[index];
-      sche.status = SCHEDULE_STATUS.CANCEL;
-    });
   }
 }
 
@@ -576,7 +587,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                         color: const Color(0xffd8d8d8)
                     )
                 ),
-                student.lastName != null ? SizedBox(height: 10,) : SizedBox(height: 0,),
+                SizedBox(height: 10,),
                 new Text(
                   (student.lastName != null ? student.lastName : "") + " " + scheduleStatus(),
                     style: TextStyle(

@@ -2,6 +2,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/models/teacher.dart';
+import 'package:teacher_antoree/models/timesheet.dart';
 import 'package:teacher_antoree/models/token.dart';
 import 'dart:convert';
 
@@ -220,6 +221,36 @@ class StorageUtil {
           user.add(TeacherModel.fromJson(i));
         }
         return user;
+      }
+      return null;
+    }else{
+      return null;
+    }
+  }
+
+  /*----------------------------TIMESHEET------------------------------*/
+  static storeTimeSheetListToSF( List<dynamic> value) async{
+//    Map decodeOptions = jsonDecode(value);
+    String jsonObject = jsonEncode(value);
+    if (_preferences != null) {
+      _preferences.setString(KEY.TIMESHEET, jsonObject);
+    }
+    else {
+      await StorageUtil.getInstance();
+      _preferences.setString(KEY.TIMESHEET, jsonObject);
+    }
+  }
+
+  static List<TimeSheet> getTimeSheetList()  {
+    if (_preferences != null) {
+      String courseStr = _preferences.getString(KEY.TIMESHEET);
+      if(courseStr != null){
+        var value = jsonDecode(courseStr);
+        List<TimeSheet> ts = List<TimeSheet>();
+        for(Map i in value){
+          ts.add(TimeSheet.fromJson(i));
+        }
+        return ts;
       }
       return null;
     }else{

@@ -13,6 +13,7 @@ class VALUES {
   static const DELAY_TIME = 20;
   static const SCHEDULE_DAYS = 7;
   static DateFormat FORMAT_DATE_API = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+  static DateFormat FORMAT_DATE_yyyy_mm_ddd = DateFormat("yyyy-MM-dd");
 }
 
 class STRINGS{
@@ -26,6 +27,7 @@ class STRINGS{
   static const LOGIN_EMAIL_VALID = "Email is invalid";
   static const EMPTY_LIST = "List is empty";
   static const TEACHER_STRING = "Giáo viên";
+  static const NO_SCHEDULE = "You don't' have schedule in next 30 days, so you can't' connect the feature.";
 }
 
 class IMAGES{

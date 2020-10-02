@@ -6,6 +6,7 @@ class KEY {
   static const TEACHER = "TEACHER";
   static const NETWORK = "NETWORK";
   static const LOGIN_STATUS = "LOGIN_STATUS";
+  static const TIMESHEET = "TIMESHEET";
 }
 
 class GOOGLECLIENT{

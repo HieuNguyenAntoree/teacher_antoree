@@ -4,9 +4,12 @@ import 'package:connect_api/connection/connection.dart';
 import 'package:connect_api/connection/model/result.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:teacher_antoree/const/sharedPreferences.dart';
 import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/models/teacher.dart';
+import 'package:teacher_antoree/models/timesheet.dart';
 import 'package:teacher_antoree/models/token.dart';
 part 'api_event.dart';
 part 'api_state.dart';
@@ -84,7 +87,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     else if(event is ChangeSchedule){
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.changeSchedule(accessToken, event.idSchedule, event.datetime);
-      if (result is ParseJsonToObject){
+      if (result is SuccessState){
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );
@@ -107,7 +110,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     else if(event is ChangeTeacher){
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.changeTeacher(accessToken, event.idSchedule, event.datetime, event.idTeacher, event.role);
-      if (result is ParseJsonToObject){
+      if (result is SuccessState){
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );
@@ -116,10 +119,46 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     else if(event is CallVideo){
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.video(accessToken, event.idSchedule, event.role);
-      if (result is ParseJsonToObject){
+      if (result is SuccessState){
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );
+      }
+    }
+    else if(event is TimeSheetList){
+      final accessToken = StorageUtil.getAccessToken();
+      Result result = await _connectionAPI.getTeacherTimeSheet(accessToken, event.date);
+      if (result is ParseJsonToObject){
+        List<TimeSheet> ts = List<TimeSheet>();
+        for(Map i in result.value){
+          ts.add(TimeSheet.fromJson(i));
+        }
+        StorageUtil.storeTimeSheetListToSF(result.value);
+        yield ApiState(result: result );
+      }else{
+        yield ApiState(result: result );
+      }
+    }
+    else if(event is CancelTimeSheet){
+      final accessToken = StorageUtil.getAccessToken();
+      Result result = await _connectionAPI.cancelTeacherTimeSheet(accessToken, event.idTimeSheet);
+      if (result is SuccessState){
+        SuccessState success = SuccessState('Cancel');
+        yield ApiState(result: success );
+      }else{
+        ErrorState error = ErrorState("Cancel");
+        yield ApiState(result: error );
+      }
+    }
+    else if(event is SetTimeSheet){
+      final accessToken = StorageUtil.getAccessToken();
+      Result result = await _connectionAPI.postTeacherTimeSheet(accessToken, event.status, event.startTime, event.endTime);
+      if (result is SuccessState){
+        SuccessState success = SuccessState('Set');
+        yield ApiState(result: success );
+      }else{
+        ErrorState error = ErrorState("Set");
+        yield ApiState(result: error );
       }
     }
     else{
