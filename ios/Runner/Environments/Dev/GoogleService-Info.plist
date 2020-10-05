@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>650971458779-u3va53jffsl3i248runlboq0p5n7uobh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.650971458779-u3va53jffsl3i248runlboq0p5n7uobh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyChksj-2oTBwbNLf6zXAKVX3u36ep6Umq8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>650971458779</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.antoree.teacher.dev</string>
+	<key>PROJECT_ID</key>
+	<string>antoree-development</string>
+	<key>STORAGE_BUCKET</key>
+	<string>antoree-development.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:650971458779:ios:d5ed7a0ec2d23b8402f0fe</string>
+	<key>DATABASE_URL</key>
+	<string>https://antoree-development.firebaseio.com</string>
+</dict>
+</plist>

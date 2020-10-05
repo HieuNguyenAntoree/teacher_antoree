@@ -1,0 +1,72 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+
+  lane :release_staging do
+    match(
+      app_identifier: "com.antoree.teacher.stg",
+      type: "adhoc", force_for_new_devices: true
+    )
+    clear_derived_data
+    increment_build_number_in_plist(
+      target: 'Antoree-Teacher-Staging',
+      build_number: Time.now.strftime("%Y%m%d.%H%M")
+    )
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "staging",
+      export_method: "ad-hoc",
+      export_options: {
+        method: "ad-hoc",
+        iCloudContainerEnvironment: 'Production',
+        provisioningProfiles: {
+          "com.antoree.teacher.stg" => "match AdHoc com.antoree.teacher.stg"
+        },
+        signingStyle: "manual"
+      },
+      export_xcargs: "-allowProvisioningUpdates"
+    )
+    commit_version_bump(force: true, xcodeproj: "Runner.xcodeproj", no_verify: true)
+
+    version = get_version_number(xcodeproj: "Runner.xcodeproj", target: 'Antoree-Teacher-Staging')
+    build_number = get_build_number_from_plist(xcodeproj: 'Runner.xcodeproj', # optional
+      target: 'Antoree-Teacher-Staging', # optional, or `scheme`
+      # optional, must be specified if you have different Info.plist build settings
+      # for different build configurations
+      build_configuration_name: 'Release')
+
+    change_logs = changelog_from_git_commits(
+      pretty: "- (%ae) %s",# Optional, lets you provide a custom format to apply to each commit when generating the changelog text
+      date_format: "short",# Optional, lets you provide an additional date format to dates within the pretty-formatted string
+      match_lightweight_tag: false,  # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
+      merge_commit_filtering: "exclude_merges" # Optional, lets you filter out merge commits
+    )
+    firebase_app_distribution(
+      app: "1:68569391172:ios:2220e8f2741c38a3d65c11",
+      release_notes: change_logs,
+      groups: "internal-testers"
+    )
+    add_git_tag(
+      grouping: "Ant-Teacher",
+      prefix: "v",
+      build_number: build_number,
+      postfix: "-Stg." + version
+    )
+  end
+end
