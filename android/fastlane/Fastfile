@@ -1,0 +1,59 @@
+require 'java-properties'
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new staing build to Fastlane Beta"
+  lane :release_staging do
+    gradle(task: "clean assembleStagingRelease")
+
+    change_logs = changelog_from_git_commits(
+      pretty: "- (%ae) %s",# Optional, lets you provide a custom format to apply to each commit when generating the changelog text
+      date_format: "short",# Optional, lets you provide an additional date format to dates within the pretty-formatted string
+      match_lightweight_tag: false,  # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
+      merge_commit_filtering: "exclude_merges", # Optional, lets you filter out merge commits
+      tag_match_pattern: "/androidrelease_staging/gs"
+    )
+    firebase_app_distribution(
+      apk_path: "../build/app/outputs/apk/staging/release/app-staging-release.apk",
+      app: "1:68569391172:android:d3ed7fc2f91ec2d3d65c11",
+      release_notes: change_logs,
+      groups: "internal-testers"
+    )
+    versionProperties = JavaProperties.load("../version.properties")
+    build_number = versionProperties[:VERSION_CODE] # => "bar"
+    git_add(path: "./")
+    git_commit(path: "./", message: "Version bump " + build_number)
+    add_git_tag(
+      grouping: "Antoree-Teacher",
+      prefix: "v",
+      build_number: build_number,
+      postfix: "-Stg"
+    )
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean assembleRelease")
+    upload_to_play_store
+  end
+end

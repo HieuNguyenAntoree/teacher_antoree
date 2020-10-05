@@ -1,5 +1,18 @@
 buildscript {
-    ext.kotlin_version = '1.3.50'
+
+    ext {
+        compileSdkVersion = 29
+        applicationId = "com.antoree.teacher"
+        minSdkVersion = 21
+        targetSdkVersion = 28
+        versionCode = 1
+        versionName = "0.0.1"
+
+        //library version
+        kotlin_version = '1.3.50'
+    }
+
+
     repositories {
         google()
         jcenter()

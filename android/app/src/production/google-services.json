@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "204701476475",
+    "firebase_url": "https://antoree-prod.firebaseio.com",
+    "project_id": "antoree-prod",
+    "storage_bucket": "antoree-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204701476475:android:72e49a080df8c490bb24de",
+        "android_client_info": {
+          "package_name": "com.antoree.student"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204701476475-6jh9ikf00p51ce37qgqrit9emlidivu1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk9v3t7cU8Zd6r4Xo2tqwaqKfzcUxMG0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204701476475-6jh9ikf00p51ce37qgqrit9emlidivu1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "204701476475-0049arpibg1m6ips9ksecesqi3ind301.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.antoree.teacher"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204701476475:android:c36cd73f719fe252bb24de",
+        "android_client_info": {
+          "package_name": "com.antoree.teacher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204701476475-6jh9ikf00p51ce37qgqrit9emlidivu1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk9v3t7cU8Zd6r4Xo2tqwaqKfzcUxMG0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204701476475-6jh9ikf00p51ce37qgqrit9emlidivu1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "204701476475-0049arpibg1m6ips9ksecesqi3ind301.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.antoree.teacher"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

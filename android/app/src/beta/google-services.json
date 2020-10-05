@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "207114269782",
+    "firebase_url": "https://antoree-beta.firebaseio.com",
+    "project_id": "antoree-beta",
+    "storage_bucket": "antoree-beta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207114269782:android:ff39d6e8c225505cb137f7",
+        "android_client_info": {
+          "package_name": "com.antoree.student.beta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207114269782-oka50tlerlpto75m9tjoc8176u6831n4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjIgmBJ6gnRmKuKyPP_ObpbOcnIushx4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207114269782-oka50tlerlpto75m9tjoc8176u6831n4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "207114269782-013m4idgok18cs34o0gt0k9426gee95h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.antoree.teacher.beta"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207114269782:android:0ce35f971acb71e4b137f7",
+        "android_client_info": {
+          "package_name": "com.antoree.teacher.beta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207114269782-oka50tlerlpto75m9tjoc8176u6831n4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjIgmBJ6gnRmKuKyPP_ObpbOcnIushx4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207114269782-oka50tlerlpto75m9tjoc8176u6831n4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "207114269782-013m4idgok18cs34o0gt0k9426gee95h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.antoree.teacher.beta"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,22 @@
+
+def getVersionCodeTimestamp() {
+    def date = new Date()
+    def formattedDate = date.format('yyMMddHHmm')
+    def code = formattedDate.toInteger()
+    println sprintf("VersionCode: %d", code)
+    return code
+}
+
+def versionPropsFile = rootProject.file('version.properties')
+Properties versionProps = new Properties()
+
+if (versionPropsFile.canRead()) {
+    versionProps.load(new FileInputStream(versionPropsFile))
+    versionProps.setProperty('VERSION_CODE', getVersionCodeTimestamp().toString())
+    versionProps.store(versionPropsFile.newWriter(), null)
+}
+def appVersionCode = versionProps['VERSION_CODE'].toInteger()
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -8,7 +27,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+    throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -27,6 +46,22 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def betaStagingKeystorePropertiesFile = rootProject.file("keys/keystore-beta-staging.properties")
+// Initialize a new Properties() object called keystoreProperties.
+def betaStagingKeystoreProperties = new Properties()
+// Load your keystore.properties file into the betaStagingKeystoreProperties object.
+betaStagingKeystoreProperties.load(new FileInputStream(betaStagingKeystorePropertiesFile))
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def prodKeystorePropertiesFile = rootProject.file("keys/keystore-prod.properties")
+// Initialize a new Properties() object called keystoreProperties.
+def prodKeystoreProperties = new Properties()
+// Load your keystore.properties file into the prodKeystoreProperties object.
+prodKeystoreProperties.load(new FileInputStream(prodKeystorePropertiesFile))
 
 android {
     compileSdkVersion 28
@@ -51,7 +86,7 @@ android {
         applicationId "com.antoree.v2"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode flutterVersionCode.toInteger()
+        versionCode appVersionCode
         versionName flutterVersionName
     }
 
@@ -65,6 +100,73 @@ android {
             minifyEnabled true
             useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file("keystores/debug.keystore")
+            storePassword 'android'
+        }
+
+        release {
+            keyAlias prodKeystoreProperties['PROD_KEY_ALIAS']
+            keyPassword prodKeystoreProperties['PROD_KEY_PASSWORD']
+            storeFile file(prodKeystoreProperties['PROD_STORE_FILE'])
+            storePassword prodKeystoreProperties['PROD_STORE_PASSWORD']
+        }
+
+        betaStaging {
+            keyAlias betaStagingKeystoreProperties['STG_BETA_KEY_ALIAS']
+            keyPassword betaStagingKeystoreProperties['STG_BETA_KEY_PASSWORD']
+            storeFile file(betaStagingKeystoreProperties['STG_BETA_STORE_FILE'])
+            storePassword betaStagingKeystoreProperties['STG_BETA_STORE_PASSWORD']
+        }
+    }
+
+
+    //environment build
+    flavorDimensions "version"
+    productFlavors {
+        runner {
+            dimension "version"
+            applicationId rootProject.ext.applicationId
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Antoree Teacher Runnder"
+            signingConfig signingConfigs.betaStaging
+        }
+
+        dev {
+            dimension "version"
+            applicationId rootProject.ext.applicationId
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Antoree Teacher Dev"
+            signingConfig signingConfigs.betaStaging
+        }
+
+        staging {
+            dimension "version"
+            applicationId rootProject.ext.applicationId
+            applicationIdSuffix ".stg"
+            resValue "string", "app_name", "Antoree Teacher Stg"
+            signingConfig signingConfigs.betaStaging
+        }
+
+        beta {
+            dimension "version"
+            applicationId rootProject.ext.applicationId
+            applicationIdSuffix ".beta"
+            resValue "string", "app_name", "Antoree Teacher Beta"
+            signingConfig signingConfigs.betaStaging
+        }
+
+        production {
+            dimension "version"
+            applicationId rootProject.ext.applicationId
+            resValue "string", "app_name", "Antoree Student"
+            signingConfig signingConfigs.release
         }
     }
 }
