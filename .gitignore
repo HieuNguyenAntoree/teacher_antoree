@@ -68,3 +68,4 @@ vendor/bundle
 **/ios/**/*.app.dSYM.zip
 **/ios/**/*.ipa
 **/android/fastlane/report.xml
+/ios/Flutter/.last_build_id
