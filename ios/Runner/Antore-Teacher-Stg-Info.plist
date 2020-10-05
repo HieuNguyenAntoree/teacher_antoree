@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Antoree Teacher Stg</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -34,6 +36,18 @@
 	<string>$(PRODUCT_NAME) MyApp needs access to your camera for meetings.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) MyApp needs access to your microphone for meetings.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Montserrat-Black</string>
+		<string>Montserrat-Bold</string>
+		<string>Montserrat-ExtraBold</string>
+		<string>Montserrat-Hairline</string>
+		<string>Montserrat-Light</string>
+		<string>Montserrat-Regular</string>
+		<string>Montserrat-SemiBold</string>
+		<string>Montserrat-Thin</string>
+		<string>Montserrat-UltraLight</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -43,6 +57,8 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -58,19 +74,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>UIStatusBarHidden</key>
-    <true/>
-    <key>UIAppFonts</key>
-    <array>
-        <string>Montserrat-Black</string>
-        <string>Montserrat-Bold</string>
-        <string>Montserrat-ExtraBold</string>
-        <string>Montserrat-Hairline</string>
-        <string>Montserrat-Light</string>
-        <string>Montserrat-Regular</string>
-        <string>Montserrat-SemiBold</string>
-        <string>Montserrat-Thin</string>
-        <string>Montserrat-UltraLight</string>
-    </array>
 </dict>
 </plist>

@@ -3,12 +3,56 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		34130724B367D16A29851C95 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90C272D2B679543DB0CC4DF5 /* Pods_Runner.framework */; };
+		34130724B367D16A29851C95 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		35C7E0C3252AD2F300058177 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */; };
+		35C7E0C8252AD3A900058177 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		35C7E0C9252AD3A900058177 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		35C7E0CD252AD3A900058177 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		35C7E0CE252AD3A900058177 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		35C7E0CF252AD3A900058177 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */; };
+		35C7E0D0252AD3A900058177 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		35C7E0D1252AD3A900058177 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
+		35C7E10B252AD41400058177 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		35C7E10C252AD41400058177 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		35C7E110252AD41400058177 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		35C7E111252AD41400058177 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		35C7E112252AD41400058177 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */; };
+		35C7E113252AD41400058177 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		35C7E114252AD41400058177 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
+		35C7E121252AD41B00058177 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		35C7E122252AD41B00058177 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		35C7E126252AD41B00058177 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		35C7E127252AD41B00058177 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		35C7E128252AD41B00058177 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */; };
+		35C7E129252AD41B00058177 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		35C7E12A252AD41B00058177 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
+		35C7E138252AD48100058177 /* Antore-Teacher-Dev-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E134252AD48100058177 /* Antore-Teacher-Dev-Info.plist */; };
+		35C7E13F252AD4C400058177 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		35C7E140252AD4C400058177 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		35C7E144252AD4C400058177 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		35C7E145252AD4C400058177 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		35C7E146252AD4C400058177 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */; };
+		35C7E147252AD4C400058177 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		35C7E148252AD4C400058177 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
+		35C7E151252AD50700058177 /* Antore-Teacher-Beta-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E133252AD48100058177 /* Antore-Teacher-Beta-Info.plist */; };
+		35C7E152252AD50C00058177 /* Antore-Teacher-Dev-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E134252AD48100058177 /* Antore-Teacher-Dev-Info.plist */; };
+		35C7E154252AD50F00058177 /* Antore-Teacher-Prod-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E136252AD48100058177 /* Antore-Teacher-Prod-Info.plist */; };
+		35C7E155252AD51300058177 /* Antore-Teacher-Stg-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35C7E135252AD48100058177 /* Antore-Teacher-Stg-Info.plist */; };
+		35C7E180252AD5E400058177 /* Pods_Antoree_Teacher_Prod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5082CCE8BB5549F8F616B67F /* Pods_Antoree_Teacher_Prod.framework */; };
+		35C7E181252AD5E400058177 /* Pods_Antoree_Teacher_Prod.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5082CCE8BB5549F8F616B67F /* Pods_Antoree_Teacher_Prod.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		35C7E182252AD5E800058177 /* Pods_Antoree_Teacher_Staging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25834FF39C2C8C57A9AFEEB5 /* Pods_Antoree_Teacher_Staging.framework */; };
+		35C7E183252AD5E800058177 /* Pods_Antoree_Teacher_Staging.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 25834FF39C2C8C57A9AFEEB5 /* Pods_Antoree_Teacher_Staging.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		35C7E184252AD5EB00058177 /* Pods_Antoree_Teacher_Beta.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28CCF3E380EE826DCA0D9B64 /* Pods_Antoree_Teacher_Beta.framework */; };
+		35C7E185252AD5EB00058177 /* Pods_Antoree_Teacher_Beta.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 28CCF3E380EE826DCA0D9B64 /* Pods_Antoree_Teacher_Beta.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		35C7E1B1252AD61000058177 /* Pods_Antoree_Teacher_Dev.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70FC86C6FFA96A31F836834D /* Pods_Antoree_Teacher_Dev.framework */; };
+		35C7E1B2252AD61000058177 /* Pods_Antoree_Teacher_Dev.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70FC86C6FFA96A31F836834D /* Pods_Antoree_Teacher_Dev.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		35C7E1B3252AD61500058177 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19AB166DFC36868972F64C6B /* Pods_Runner.framework */; };
+		35C7E1B4252AD61500058177 /* Pods_Runner.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 19AB166DFC36868972F64C6B /* Pods_Runner.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -17,12 +61,57 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		35C7E0D2252AD3A900058177 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				35C7E1B2252AD61000058177 /* Pods_Antoree_Teacher_Dev.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E115252AD41400058177 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				35C7E185252AD5EB00058177 /* Pods_Antoree_Teacher_Beta.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E12B252AD41B00058177 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				35C7E183252AD5E800058177 /* Pods_Antoree_Teacher_Staging.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E149252AD4C400058177 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				35C7E181252AD5E400058177 /* Pods_Antoree_Teacher_Prod.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				35C7E1B4252AD61500058177 /* Pods_Runner.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -32,35 +121,132 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		19AB166DFC36868972F64C6B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B530766385BE89CEC32B8EC /* Pods-Antoree-Teacher-Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Dev.debug.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev.debug.xcconfig"; sourceTree = "<group>"; };
+		1BB6D8F00A556758CEBB4525 /* Pods-Antoree-Teacher-Staging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Staging.debug.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging.debug.xcconfig"; sourceTree = "<group>"; };
 		234EA080DC93B91B7DC5FAAC /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		25834FF39C2C8C57A9AFEEB5 /* Pods_Antoree_Teacher_Staging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Antoree_Teacher_Staging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		28CCF3E380EE826DCA0D9B64 /* Pods_Antoree_Teacher_Beta.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Antoree_Teacher_Beta.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		35C7E0D9252AD3A900058177 /* Antoree-Teacher-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Antoree-Teacher-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		35C7E11C252AD41400058177 /* Antoree-Teacher-Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Antoree-Teacher-Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		35C7E132252AD41B00058177 /* Antoree-Teacher-Staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Antoree-Teacher-Staging.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		35C7E133252AD48100058177 /* Antore-Teacher-Beta-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Antore-Teacher-Beta-Info.plist"; sourceTree = "<group>"; };
+		35C7E134252AD48100058177 /* Antore-Teacher-Dev-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Antore-Teacher-Dev-Info.plist"; sourceTree = "<group>"; };
+		35C7E135252AD48100058177 /* Antore-Teacher-Stg-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Antore-Teacher-Stg-Info.plist"; sourceTree = "<group>"; };
+		35C7E136252AD48100058177 /* Antore-Teacher-Prod-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Antore-Teacher-Prod-Info.plist"; sourceTree = "<group>"; };
+		35C7E150252AD4C400058177 /* Antoree-Teacher-Prod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Antoree-Teacher-Prod.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37A1F2BE0089EAE99A5C9BA0 /* Pods-Antoree-Teacher-Beta.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Beta.profile.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Beta/Pods-Antoree-Teacher-Beta.profile.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		3B429BA6477C387B5019E209 /* Pods-Antoree-Teacher-Beta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Beta.release.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Beta/Pods-Antoree-Teacher-Beta.release.xcconfig"; sourceTree = "<group>"; };
+		3D62AAC3518E77AD8A8820AD /* Pods-Antoree-Teacher-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Dev.release.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev.release.xcconfig"; sourceTree = "<group>"; };
+		5082CCE8BB5549F8F616B67F /* Pods_Antoree_Teacher_Prod.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Antoree_Teacher_Prod.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		70FC86C6FFA96A31F836834D /* Pods_Antoree_Teacher_Dev.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Antoree_Teacher_Dev.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		752EC307A41E53711A012013 /* Pods-Antoree-Teacher-Staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Staging.release.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging.release.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		88D7C6F1BF37F2DED0849152 /* Pods-Antoree-Teacher-Beta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Beta.debug.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Beta/Pods-Antoree-Teacher-Beta.debug.xcconfig"; sourceTree = "<group>"; };
 		8E9CB9268721E5ED61341F3E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
-		90C272D2B679543DB0CC4DF5 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97C146FB1CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B7E3A5C67F12C2B5B3ED163E /* Pods-Antoree-Teacher-Prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Prod.debug.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Prod/Pods-Antoree-Teacher-Prod.debug.xcconfig"; sourceTree = "<group>"; };
+		C1BC0733E0098973A627D3FA /* Pods-Antoree-Teacher-Staging.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Staging.profile.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging.profile.xcconfig"; sourceTree = "<group>"; };
+		C7CF01FC6098D7001F8A4893 /* Pods-Antoree-Teacher-Prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Prod.release.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Prod/Pods-Antoree-Teacher-Prod.release.xcconfig"; sourceTree = "<group>"; };
 		DBFF9748071E060738680D99 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		EA13DAB32F4BFC2422670A46 /* Pods-Antoree-Teacher-Prod.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Prod.profile.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Prod/Pods-Antoree-Teacher-Prod.profile.xcconfig"; sourceTree = "<group>"; };
+		EC851824EAA19FBE89FDAF42 /* Pods-Antoree-Teacher-Dev.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Dev.profile.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		35C7E0CA252AD3A900058177 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E1B1252AD61000058177 /* Pods_Antoree_Teacher_Dev.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E10D252AD41400058177 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E184252AD5EB00058177 /* Pods_Antoree_Teacher_Beta.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E123252AD41B00058177 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E182252AD5E800058177 /* Pods_Antoree_Teacher_Staging.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E141252AD4C400058177 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E180252AD5E400058177 /* Pods_Antoree_Teacher_Prod.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EB1CF9000F007C117D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34130724B367D16A29851C95 /* Pods_Runner.framework in Frameworks */,
+				35C7E1B3252AD61500058177 /* Pods_Runner.framework in Frameworks */,
+				34130724B367D16A29851C95 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		35C7E0BD252AD2F300058177 /* Environments */ = {
+			isa = PBXGroup;
+			children = (
+				35C7E0BE252AD2F300058177 /* Beta */,
+				35C7E0BF252AD2F300058177 /* Prod */,
+				35C7E0C1252AD2F300058177 /* Staging */,
+				35C7E0C2252AD2F300058177 /* Dev */,
+			);
+			path = Environments;
+			sourceTree = "<group>";
+		};
+		35C7E0BE252AD2F300058177 /* Beta */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Beta;
+			sourceTree = "<group>";
+		};
+		35C7E0BF252AD2F300058177 /* Prod */ = {
+			isa = PBXGroup;
+			children = (
+				35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */,
+			);
+			path = Prod;
+			sourceTree = "<group>";
+		};
+		35C7E0C1252AD2F300058177 /* Staging */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Staging;
+			sourceTree = "<group>";
+		};
+		35C7E0C2252AD2F300058177 /* Dev */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Dev;
+			sourceTree = "<group>";
+		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
@@ -87,6 +273,10 @@
 			isa = PBXGroup;
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
+				35C7E0D9252AD3A900058177 /* Antoree-Teacher-Dev.app */,
+				35C7E11C252AD41400058177 /* Antoree-Teacher-Beta.app */,
+				35C7E132252AD41B00058177 /* Antoree-Teacher-Staging.app */,
+				35C7E150252AD4C400058177 /* Antoree-Teacher-Prod.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,10 +284,14 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				35C7E133252AD48100058177 /* Antore-Teacher-Beta-Info.plist */,
+				35C7E134252AD48100058177 /* Antore-Teacher-Dev-Info.plist */,
+				35C7E136252AD48100058177 /* Antore-Teacher-Prod-Info.plist */,
+				35C7E135252AD48100058177 /* Antore-Teacher-Stg-Info.plist */,
+				35C7E0BD252AD2F300058177 /* Environments */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
-				97C147021CF9000F007C117D /* Info.plist */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
@@ -109,7 +303,11 @@
 		9915725028FBC0B7A008B85D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				90C272D2B679543DB0CC4DF5 /* Pods_Runner.framework */,
+				28CCF3E380EE826DCA0D9B64 /* Pods_Antoree_Teacher_Beta.framework */,
+				5082CCE8BB5549F8F616B67F /* Pods_Antoree_Teacher_Prod.framework */,
+				25834FF39C2C8C57A9AFEEB5 /* Pods_Antoree_Teacher_Staging.framework */,
+				19AB166DFC36868972F64C6B /* Pods_Runner.framework */,
+				70FC86C6FFA96A31F836834D /* Pods_Antoree_Teacher_Dev.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -120,14 +318,113 @@
 				8E9CB9268721E5ED61341F3E /* Pods-Runner.debug.xcconfig */,
 				234EA080DC93B91B7DC5FAAC /* Pods-Runner.release.xcconfig */,
 				DBFF9748071E060738680D99 /* Pods-Runner.profile.xcconfig */,
+				88D7C6F1BF37F2DED0849152 /* Pods-Antoree-Teacher-Beta.debug.xcconfig */,
+				3B429BA6477C387B5019E209 /* Pods-Antoree-Teacher-Beta.release.xcconfig */,
+				37A1F2BE0089EAE99A5C9BA0 /* Pods-Antoree-Teacher-Beta.profile.xcconfig */,
+				B7E3A5C67F12C2B5B3ED163E /* Pods-Antoree-Teacher-Prod.debug.xcconfig */,
+				C7CF01FC6098D7001F8A4893 /* Pods-Antoree-Teacher-Prod.release.xcconfig */,
+				EA13DAB32F4BFC2422670A46 /* Pods-Antoree-Teacher-Prod.profile.xcconfig */,
+				1BB6D8F00A556758CEBB4525 /* Pods-Antoree-Teacher-Staging.debug.xcconfig */,
+				752EC307A41E53711A012013 /* Pods-Antoree-Teacher-Staging.release.xcconfig */,
+				C1BC0733E0098973A627D3FA /* Pods-Antoree-Teacher-Staging.profile.xcconfig */,
+				1B530766385BE89CEC32B8EC /* Pods-Antoree-Teacher-Dev.debug.xcconfig */,
+				3D62AAC3518E77AD8A8820AD /* Pods-Antoree-Teacher-Dev.release.xcconfig */,
+				EC851824EAA19FBE89FDAF42 /* Pods-Antoree-Teacher-Dev.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		35C7E0C4252AD3A900058177 /* Antoree-Teacher-Dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 35C7E0D5252AD3A900058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Dev" */;
+			buildPhases = (
+				9378FA509C1CDA368481E5BE /* [CP] Check Pods Manifest.lock */,
+				35C7E0C6252AD3A900058177 /* Run Script */,
+				35C7E0C7252AD3A900058177 /* Sources */,
+				35C7E0CA252AD3A900058177 /* Frameworks */,
+				35C7E0CC252AD3A900058177 /* Resources */,
+				35C7E0D2252AD3A900058177 /* Embed Frameworks */,
+				35C7E0D3252AD3A900058177 /* Thin Binary */,
+				81FAB4F1EF8C11218AF29B1B /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Antoree-Teacher-Dev";
+			productName = Runner;
+			productReference = 35C7E0D9252AD3A900058177 /* Antoree-Teacher-Dev.app */;
+			productType = "com.apple.product-type.application";
+		};
+		35C7E107252AD41400058177 /* Antoree-Teacher-Beta */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 35C7E118252AD41400058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Beta" */;
+			buildPhases = (
+				35C7E108252AD41400058177 /* [CP] Check Pods Manifest.lock */,
+				35C7E109252AD41400058177 /* Run Script */,
+				35C7E10A252AD41400058177 /* Sources */,
+				35C7E10D252AD41400058177 /* Frameworks */,
+				35C7E10F252AD41400058177 /* Resources */,
+				35C7E115252AD41400058177 /* Embed Frameworks */,
+				35C7E116252AD41400058177 /* Thin Binary */,
+				35C7E117252AD41400058177 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Antoree-Teacher-Beta";
+			productName = Runner;
+			productReference = 35C7E11C252AD41400058177 /* Antoree-Teacher-Beta.app */;
+			productType = "com.apple.product-type.application";
+		};
+		35C7E11D252AD41B00058177 /* Antoree-Teacher-Staging */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 35C7E12E252AD41B00058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Staging" */;
+			buildPhases = (
+				35C7E11E252AD41B00058177 /* [CP] Check Pods Manifest.lock */,
+				35C7E11F252AD41B00058177 /* Run Script */,
+				35C7E120252AD41B00058177 /* Sources */,
+				35C7E123252AD41B00058177 /* Frameworks */,
+				35C7E125252AD41B00058177 /* Resources */,
+				35C7E12B252AD41B00058177 /* Embed Frameworks */,
+				35C7E12C252AD41B00058177 /* Thin Binary */,
+				35C7E12D252AD41B00058177 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Antoree-Teacher-Staging";
+			productName = Runner;
+			productReference = 35C7E132252AD41B00058177 /* Antoree-Teacher-Staging.app */;
+			productType = "com.apple.product-type.application";
+		};
+		35C7E13B252AD4C400058177 /* Antoree-Teacher-Prod */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 35C7E14C252AD4C400058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Prod" */;
+			buildPhases = (
+				35C7E13C252AD4C400058177 /* [CP] Check Pods Manifest.lock */,
+				35C7E13D252AD4C400058177 /* Run Script */,
+				35C7E13E252AD4C400058177 /* Sources */,
+				35C7E141252AD4C400058177 /* Frameworks */,
+				35C7E143252AD4C400058177 /* Resources */,
+				35C7E149252AD4C400058177 /* Embed Frameworks */,
+				35C7E14A252AD4C400058177 /* Thin Binary */,
+				35C7E14B252AD4C400058177 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Antoree-Teacher-Prod";
+			productName = Runner;
+			productReference = 35C7E150252AD4C400058177 /* Antoree-Teacher-Prod.app */;
+			productType = "com.apple.product-type.application";
+		};
 		97C146ED1CF9000F007C117D /* Runner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
@@ -179,18 +476,76 @@
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
+				35C7E0C4252AD3A900058177 /* Antoree-Teacher-Dev */,
+				35C7E107252AD41400058177 /* Antoree-Teacher-Beta */,
+				35C7E11D252AD41B00058177 /* Antoree-Teacher-Staging */,
+				35C7E13B252AD4C400058177 /* Antoree-Teacher-Prod */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		35C7E0CC252AD3A900058177 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E0CD252AD3A900058177 /* LaunchScreen.storyboard in Resources */,
+				35C7E0CE252AD3A900058177 /* AppFrameworkInfo.plist in Resources */,
+				35C7E0CF252AD3A900058177 /* GoogleService-Info.plist in Resources */,
+				35C7E0D0252AD3A900058177 /* Assets.xcassets in Resources */,
+				35C7E152252AD50C00058177 /* Antore-Teacher-Dev-Info.plist in Resources */,
+				35C7E0D1252AD3A900058177 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E10F252AD41400058177 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E151252AD50700058177 /* Antore-Teacher-Beta-Info.plist in Resources */,
+				35C7E110252AD41400058177 /* LaunchScreen.storyboard in Resources */,
+				35C7E111252AD41400058177 /* AppFrameworkInfo.plist in Resources */,
+				35C7E112252AD41400058177 /* GoogleService-Info.plist in Resources */,
+				35C7E113252AD41400058177 /* Assets.xcassets in Resources */,
+				35C7E114252AD41400058177 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E125252AD41B00058177 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E126252AD41B00058177 /* LaunchScreen.storyboard in Resources */,
+				35C7E155252AD51300058177 /* Antore-Teacher-Stg-Info.plist in Resources */,
+				35C7E127252AD41B00058177 /* AppFrameworkInfo.plist in Resources */,
+				35C7E128252AD41B00058177 /* GoogleService-Info.plist in Resources */,
+				35C7E129252AD41B00058177 /* Assets.xcassets in Resources */,
+				35C7E12A252AD41B00058177 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E143252AD4C400058177 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E144252AD4C400058177 /* LaunchScreen.storyboard in Resources */,
+				35C7E145252AD4C400058177 /* AppFrameworkInfo.plist in Resources */,
+				35C7E146252AD4C400058177 /* GoogleService-Info.plist in Resources */,
+				35C7E154252AD50F00058177 /* Antore-Teacher-Prod-Info.plist in Resources */,
+				35C7E147252AD4C400058177 /* Assets.xcassets in Resources */,
+				35C7E148252AD4C400058177 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EC1CF9000F007C117D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
+				35C7E0C3252AD2F300058177 /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
+				35C7E138252AD48100058177 /* Antore-Teacher-Dev-Info.plist in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -215,6 +570,235 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		35C7E0C6252AD3A900058177 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		35C7E0D3252AD3A900058177 /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		35C7E108252AD41400058177 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Antoree-Teacher-Beta-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		35C7E109252AD41400058177 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		35C7E116252AD41400058177 /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		35C7E117252AD41400058177 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Beta/Pods-Antoree-Teacher-Beta-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Beta/Pods-Antoree-Teacher-Beta-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Beta/Pods-Antoree-Teacher-Beta-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		35C7E11E252AD41B00058177 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Antoree-Teacher-Staging-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		35C7E11F252AD41B00058177 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		35C7E12C252AD41B00058177 /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		35C7E12D252AD41B00058177 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		35C7E13C252AD4C400058177 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Antoree-Teacher-Prod-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		35C7E13D252AD4C400058177 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		35C7E14A252AD4C400058177 /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		35C7E14B252AD4C400058177 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Prod/Pods-Antoree-Teacher-Prod-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Prod/Pods-Antoree-Teacher-Prod-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Prod/Pods-Antoree-Teacher-Prod-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -228,6 +812,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		81FAB4F1EF8C11218AF29B1B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9378FA509C1CDA368481E5BE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Antoree-Teacher-Dev-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -268,6 +891,42 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		35C7E0C7252AD3A900058177 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E0C8252AD3A900058177 /* AppDelegate.swift in Sources */,
+				35C7E0C9252AD3A900058177 /* GeneratedPluginRegistrant.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E10A252AD41400058177 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E10B252AD41400058177 /* AppDelegate.swift in Sources */,
+				35C7E10C252AD41400058177 /* GeneratedPluginRegistrant.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E120252AD41B00058177 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E121252AD41B00058177 /* AppDelegate.swift in Sources */,
+				35C7E122252AD41B00058177 /* GeneratedPluginRegistrant.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		35C7E13E252AD4C400058177 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35C7E13F252AD4C400058177 /* AppDelegate.swift in Sources */,
+				35C7E140252AD4C400058177 /* GeneratedPluginRegistrant.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EA1CF9000F007C117D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -361,7 +1020,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Dev-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -371,7 +1030,371 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacherAntoree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		35C7E0D6252AD3A900058177 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Dev-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		35C7E0D7252AD3A900058177 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Dev-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		35C7E0D8252AD3A900058177 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Dev-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		35C7E119252AD41400058177 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Beta-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.beta;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		35C7E11A252AD41400058177 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Beta-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.beta;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		35C7E11B252AD41400058177 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Beta-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.beta;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		35C7E12F252AD41B00058177 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Stg-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.stg;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		35C7E130252AD41B00058177 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Stg-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.stg;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		35C7E131252AD41B00058177 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Stg-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.stg;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		35C7E14D252AD4C400058177 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Prod-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		35C7E14E252AD4C400058177 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Prod-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		35C7E14F252AD4C400058177 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Prod-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -498,7 +1521,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Dev-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -508,7 +1531,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacherAntoree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -529,7 +1552,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Runner/Antore-Teacher-Dev-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -539,7 +1562,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacherAntoree;
+				PRODUCT_BUNDLE_IDENTIFIER = com.antoree.teacher.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -550,6 +1573,46 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		35C7E0D5252AD3A900058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				35C7E0D6252AD3A900058177 /* Debug */,
+				35C7E0D7252AD3A900058177 /* Release */,
+				35C7E0D8252AD3A900058177 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		35C7E118252AD41400058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Beta" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				35C7E119252AD41400058177 /* Debug */,
+				35C7E11A252AD41400058177 /* Release */,
+				35C7E11B252AD41400058177 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		35C7E12E252AD41B00058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Staging" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				35C7E12F252AD41B00058177 /* Debug */,
+				35C7E130252AD41B00058177 /* Release */,
+				35C7E131252AD41B00058177 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		35C7E14C252AD4C400058177 /* Build configuration list for PBXNativeTarget "Antoree-Teacher-Prod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				35C7E14D252AD4C400058177 /* Debug */,
+				35C7E14E252AD4C400058177 /* Release */,
+				35C7E14F252AD4C400058177 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -41,7 +41,6 @@ lib/generated_plugin_registrant.dart
 **/ios/**/profile
 **/ios/**/xcuserdata
 **/ios/.generated/
-**/ios/Flutter/.last_build_id
 **/ios/Flutter/App.framework
 **/ios/Flutter/Flutter.framework
 **/ios/Flutter/Flutter.podspec
@@ -61,3 +60,11 @@ lib/generated_plugin_registrant.dart
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter
+
+**/.DS_Store
+
+ios/fastlane/report.xml
+vendor/bundle
+**/ios/**/*.app.dSYM.zip
+**/ios/**/*.ipa
+**/android/fastlane/report.xml

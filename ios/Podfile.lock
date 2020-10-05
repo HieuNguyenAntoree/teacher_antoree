@@ -137,8 +137,8 @@ PODS:
     - Flutter
   - jitsi_meet (0.0.1):
     - Flutter
-    - JitsiMeetSDK (= 2.9.3)
-  - JitsiMeetSDK (2.9.3)
+    - JitsiMeetSDK (= 2.10.2)
+  - JitsiMeetSDK (2.10.2)
   - nanopb (1.30905.0):
     - nanopb/decode (= 1.30905.0)
     - nanopb/encode (= 1.30905.0)
@@ -151,9 +151,9 @@ PODS:
   - PromisesObjC (1.2.10)
   - Protobuf (3.13.0)
   - Reachability (3.2)
-  - SDWebImage (5.9.1):
-    - SDWebImage/Core (= 5.9.1)
-  - SDWebImage/Core (5.9.1)
+  - SDWebImage (5.9.2):
+    - SDWebImage/Core (= 5.9.2)
+  - SDWebImage/Core (5.9.2)
   - shared_preferences (0.0.1):
     - Flutter
   - SwiftyGif (5.3.0)
@@ -172,6 +172,7 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - in_app_update (from `.symlinks/plugins/in_app_update/ios`)
   - jitsi_meet (from `.symlinks/plugins/jitsi_meet/ios`)
+  - JitsiMeetSDK
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -258,19 +259,19 @@ SPEC CHECKSUMS:
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
   in_app_update: 16e877e205f4360264cb536e3a6481f0d90299e1
-  jitsi_meet: a755bc87895d7763e3c20dca4351cbaa475b38f4
-  JitsiMeetSDK: 1aa3166bc1eabafdf03941bb3e9d65777fe84205
+  jitsi_meet: ec739208b5a4397e99c951ed3bb56d51b890fec0
+  JitsiMeetSDK: d7612d73befd3f7f51f989458a816bbd05d0bc8e
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  SDWebImage: a990c053fff71e388a10f3357edb0be17929c9c5
+  SDWebImage: 0b42b8719ab0c5257177d5894306e8a336b21cbb
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 
-PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+PODFILE CHECKSUM: f70a6d4d2ef5c66f0a17250d975d089af4b69782
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0.rc.1
