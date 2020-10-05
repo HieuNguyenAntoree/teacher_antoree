@@ -69,3 +69,5 @@ vendor/bundle
 **/ios/**/*.ipa
 **/android/fastlane/report.xml
 /ios/Flutter/.last_build_id
+/.idea/
+/android/.idea/

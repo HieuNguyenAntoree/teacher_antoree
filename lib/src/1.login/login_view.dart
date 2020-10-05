@@ -21,7 +21,7 @@ class LoginView extends StatelessWidget{
           padding: const EdgeInsets.only(top: 35),
           child: BlocProvider(
             create: (context){
-              return APIConnect();
+              return APIConnect(context);
             },
             child: LoginUI(),
           )
@@ -49,7 +49,7 @@ class LoginUIState extends State<LoginUI>{
     passController..text = 'Antor33rotnA';
   }
 
-  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -70,8 +70,7 @@ class LoginUIState extends State<LoginUI>{
                 fontStyle:  FontStyle.normal,
                 fontSize: 12.0
             ),),
-          actions: rightButton == "" ?
-          <Widget>[
+          actions: rightButton == "" ? <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
               const TextStyle(
@@ -109,7 +108,7 @@ class LoginUIState extends State<LoginUI>{
                   fontSize: 14.0
               ),),
               onPressed: () {
-                _rightAction;
+                _onTap();
                 Navigator.of(context).pop();
               },
             ),
@@ -142,7 +141,7 @@ class LoginUIState extends State<LoginUI>{
             _isLoading = false;
           });
           ErrorState error = state.result;
-          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, 'Ok', 'Try again!', _loginAction());
+          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, 'Ok', 'Try again!', _loginAction);
         }
       },
       child: LoadingOverlay(
@@ -348,7 +347,7 @@ class LoginUIState extends State<LoginUI>{
     );
   }
 
-  _loginAction(){
+  VoidCallback _loginAction(){
     context.bloc<APIConnect>().add(LoginSubmitted( emailController.text, passController.text));
   }
 

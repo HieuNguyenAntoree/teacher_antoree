@@ -30,7 +30,7 @@ class HomeView extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.only(top: 0),
           child: BlocProvider(
-            create: (context) => APIConnect()..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+            create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
             child: HomeUI(),
           )
         ),
@@ -192,11 +192,11 @@ class HomeUIState extends State<HomeUI> {
     }
   }
 
-  getScheduleListFromAPI(){
-    APIConnect()..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+  VoidCallback getScheduleListFromAPI(){
+    APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
   }
 
-  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -217,8 +217,7 @@ class HomeUIState extends State<HomeUI> {
                 fontStyle:  FontStyle.normal,
                 fontSize: 12.0
             ),),
-          actions: rightButton == "" ?
-          <Widget>[
+          actions: rightButton == "" ? <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
               const TextStyle(
@@ -231,8 +230,8 @@ class HomeUIState extends State<HomeUI> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-            )] :
-           <Widget>[
+            )]
+              : <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
               const TextStyle(
@@ -256,7 +255,7 @@ class HomeUIState extends State<HomeUI> {
                   fontSize: 14.0
               ),),
               onPressed: () {
-                _rightAction;
+                _onTap();
                 Navigator.of(context).pop();
               },
             ),
@@ -301,7 +300,7 @@ class HomeUIState extends State<HomeUI> {
               _isLoading = false;
             });
             ErrorState error = state.result;
-            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getScheduleListFromAPI());
+            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getScheduleListFromAPI);
           }
         },
         child: Container(

@@ -31,7 +31,7 @@ class CancelView extends StatelessWidget {
             padding: const EdgeInsets.only(top: 0),
             child: BlocProvider(
               create: (context){
-                return APIConnect();
+                return APIConnect(context);
               },
               child: CancelUI(this.idSchedule),
             )

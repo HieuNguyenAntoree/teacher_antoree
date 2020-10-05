@@ -34,7 +34,7 @@ class TimeSlotView extends StatelessWidget {
         body: Padding(
             padding: const EdgeInsets.only(top: 0),
             child: BlocProvider(
-              create: (context) => APIConnect()..add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime)))),
+              create: (context) => APIConnect(context)..add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime)))),
               child: TimeSlotUI(),
             )
         ),
@@ -127,7 +127,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   Calendarro _calendarItem;
   List<TimeSheet> timeSheetList;
 
-  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, Function _rightAction) async {
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -148,8 +148,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                 fontStyle:  FontStyle.normal,
                 fontSize: 12.0
             ),),
-          actions: rightButton == "" ?
-          <Widget>[
+          actions: rightButton == "" ? <Widget>[
             CupertinoDialogAction(
               child: Text(leftButton, style:
               const TextStyle(
@@ -187,7 +186,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                   fontSize: 14.0
               ),),
               onPressed: () {
-                _rightAction;
+                _onTap();
                 Navigator.of(context).pop();
               },
             ),
@@ -198,19 +197,33 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   }
 
   Color getTimeSheetWithTime(String time){
-    DateTime currentTime = DateTime.parse(time);
-    DateTime next20Time = DateTime.parse(time).add(new Duration(minutes: 20));
+    String timeStr = time + ":00";
+    String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + timeStr;
+    DateTime currentTime = DateTime.parse(exdateTimeString);
+    DateTime next20Time = currentTime.add(new Duration(minutes: 20));
     timeSheetList = StorageUtil.getTimeSheetList();
-    TimeSheet ts = timeSheetList.firstWhere((element) => element.timeStart.compareTo(currentTime) >= 0 && element.timeStart.compareTo(next20Time) < 0);
-    if(ts.status == 3){
-      return Color(0xffFF5600);
-    }else if(ts.status == 4){
-      return Color(0xffFF9900);
-    }else if(ts.status == 1){
-      return Color(0xff00C081);
-    }else{
+    if(timeSheetList != null) {
+      if (timeSheetList.length == 0) {
+        return Colors.white;
+      }
+      for (TimeSheet ts in timeSheetList) {
+        int hour = ts.timeStart.hour - currentTime.hour;
+        int minutes = ts.timeStart.minute - next20Time.minute;
+        if (hour == 0 && minutes < 0) {
+          if (ts.status == 3) {
+            return Color(0xffFF5600);
+          } else if (ts.status == 4) {
+            return Color(0xffFF9900);
+          } else if (ts.status == 1) {
+            return Color(0xff00C081);
+          } else {
+            return Colors.white;
+          }
+        }
+      }
       return Colors.white;
     }
+    return Colors.white;
   }
 
   setTimeSheetConnectAPI(){
@@ -491,8 +504,8 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           });
         },
         onTap: (date) {
-          getTimeLots(date);
           this.setState(() => _selectDate = date);
+          getTimeLots(date);
         }
 
     );

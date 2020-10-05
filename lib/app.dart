@@ -1,36 +1,26 @@
-import 'package:teacher_antoree/src/1.login/login_view.dart';
-import 'package:flutter/material.dart';
+
+
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:teacher_antoree/src/1.login/login_view.dart';
 import 'package:teacher_antoree/src/2.home/home_view.dart';
-import 'package:teacher_antoree/src/fcm/receive_fcm.dart';
-import 'package:teacher_antoree/src/customViews/navigation_service.dart';
+import 'package:teacher_antoree/src/customViews/dialog_manager.dart';
 import 'package:teacher_antoree/src/customViews/dialog_service.dart';
 import 'package:teacher_antoree/src/customViews/locator.dart';
+import 'package:teacher_antoree/src/customViews/navigation_service.dart';
 import 'package:teacher_antoree/src/customViews/router.dart';
-import 'package:teacher_antoree/src/customViews/dialog_manager.dart';
 import 'package:teacher_antoree/src/fcm/fcm_object.dart';
+import 'package:teacher_antoree/src/fcm/receive_fcm.dart';
 
 import 'const/sharedPreferences.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await StorageUtil.getInstance();
-//  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-//    statusBarColor: Colors.transparent, // transparent status bar
-//  ));
-//  SystemChrome.setEnabledSystemUIOverlays([]);
-  setupLocator();
-  runApp(App());
-}
-
 class App extends StatefulWidget {
-
   @override
   _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final DialogService _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
@@ -44,16 +34,14 @@ class _AppState extends State<App> {
         print("onMessage: $message");
         Item item = itemForMessage(message);
         var dialogResponse = await _dialogService.showConfirmationDialog(
-          title: item.title,
-          description: item.body,
-          confirmationTitle: "Open",
-          cancelTitle: "Close"
-        );
+            title: item.title,
+            description: item.body,
+            confirmationTitle: "Open",
+            cancelTitle: "Close");
 
         if (dialogResponse.confirmed) {
           _navigationService.navigateTo(item.pageName);
         }
-
       },
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
@@ -81,13 +69,11 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       builder: (context, child) => Navigator(
         key: locator<DialogService>().dialogNavigationKey,
         onGenerateRoute: (settings) => MaterialPageRoute(
-
             builder: (context) => DialogManager(child: child)),
       ),
       navigatorKey: locator<NavigationService>().navigationKey,
@@ -96,9 +82,6 @@ class _AppState extends State<App> {
         'HomeView': (context) => HomeView(),
       },
       onGenerateRoute: generateRoute,
-
     );
   }
 }
-
-
