@@ -14,6 +14,7 @@ import 'package:teacher_antoree/app_config.dart';
 part 'api_event.dart';
 part 'api_state.dart';
 
+
 class APIConnect extends Bloc<ApiEvent, ApiState>{
   //Creating Singleton
   final ConnectionAPI _connectionAPI = ConnectionAPI();
@@ -111,7 +112,8 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         for(Map i in result.value){
           ts.add(TimeSheet.fromJson(i));
         }
-        StorageUtil.storeTimeSheetListToSF(result.value);
+
+        StorageUtil.storeTimeSheetListToSF(result.value, event.date);
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );
@@ -131,9 +133,10 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     else if(event is SetTimeSheet){
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.postTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, event.status, event.startTime, event.endTime);
-      if (result is SuccessState){
-        SuccessState success = SuccessState('Set');
-        yield ApiState(result: success );
+      if (result is ParseJsonToObject){
+        TimeSheet timeSheet = TimeSheet.fromJson(result.value);
+        StorageUtil.addTimeSheetToList(event.startTime, timeSheet);
+        yield ApiState(result: result );
       }else{
         ErrorState error = ErrorState("Set");
         yield ApiState(result: error );

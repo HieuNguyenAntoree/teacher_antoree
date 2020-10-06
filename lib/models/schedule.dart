@@ -81,7 +81,7 @@ class Schedule {
     status: json["status"],
     createdAt: DateTime.parse(json["createdAt"]),
     modifiedAt: DateTime.parse(json["modifiedAt"]),
-    users: List<User>.from(json["users"].map((x) => User.fromJson(x))),
+    users: json["users"] != null ? List<User>.from(json["users"].map((x) => User.fromJson(x))) : null,
     scheduleType: json["scheduleType"],
   );
 
@@ -124,7 +124,7 @@ class User {
   dynamic phoneNumber;
   Address address;
   String email;
-  String status;
+  int status;
   dynamic phoneVerified;
   dynamic emailVerified;
   String role;

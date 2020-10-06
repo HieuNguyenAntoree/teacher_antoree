@@ -8,9 +8,9 @@ Item itemForMessage(Map<String, dynamic> message) {
   final String title = notification['title'];
   final String body = notification['body'];
   final dynamic data = message['data'] ?? message;
-  final String itemId = data['id'];
+  final String itemId = data['idSchedule'];
   final Item item = _items.putIfAbsent(itemId, () => Item(itemId: itemId, title: title, body: body))
-    .._pageName = data['pageName'];
+    .._pageName = data['screen'];
   return item;
 }
 

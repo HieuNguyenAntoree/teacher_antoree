@@ -4,6 +4,7 @@ import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/models/teacher.dart';
 import 'package:teacher_antoree/models/timesheet.dart';
 import 'package:teacher_antoree/models/token.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'dart:convert';
 
 import 'key.dart';
@@ -229,21 +230,25 @@ class StorageUtil {
   }
 
   /*----------------------------TIMESHEET------------------------------*/
-  static storeTimeSheetListToSF( List<dynamic> value) async{
+  static storeTimeSheetListToSF( List<dynamic> value, String date) async{
 //    Map decodeOptions = jsonDecode(value);
+    DateTime dateTime = DateTime.parse(date);
+    String selectDate = DateFormat("yyyy-MM-dd").format(dateTime);
     String jsonObject = jsonEncode(value);
     if (_preferences != null) {
-      _preferences.setString(KEY.TIMESHEET, jsonObject);
+      _preferences.setString(KEY.TIMESHEET + "_" + selectDate, jsonObject);
     }
     else {
       await StorageUtil.getInstance();
-      _preferences.setString(KEY.TIMESHEET, jsonObject);
+      _preferences.setString(KEY.TIMESHEET + "_" + selectDate, jsonObject);
     }
   }
 
-  static List<TimeSheet> getTimeSheetList()  {
+  static List<TimeSheet> getTimeSheetList(String date)  {
+    DateTime dateTime = DateFormat("yyyy-MM-dd").parse(date);
+    String selectDate = DateFormat("yyyy-MM-dd").format(dateTime);
     if (_preferences != null) {
-      String courseStr = _preferences.getString(KEY.TIMESHEET);
+      String courseStr = _preferences.getString(KEY.TIMESHEET + "_" + selectDate);
       if(courseStr != null){
         var value = jsonDecode(courseStr);
         List<TimeSheet> ts = List<TimeSheet>();
@@ -255,6 +260,50 @@ class StorageUtil {
       return null;
     }else{
       return null;
+    }
+  }
+
+  static addTimeSheetToList(String date, TimeSheet timeSheet)  {
+    DateTime dateTime = DateFormat("yyyy-MM-dd").parse(date);
+    String selectDate = DateFormat("yyyy-MM-dd").format(dateTime);
+    if (_preferences != null) {
+      String courseStr = _preferences.getString(KEY.TIMESHEET + "_" + selectDate);
+      if(courseStr != null){
+        var value = jsonDecode(courseStr);
+        List<TimeSheet> ts = List<TimeSheet>();
+        for(Map i in value){
+          ts.add(TimeSheet.fromJson(i));
+        }
+        ts.add(timeSheet);
+        storeTimeSheetListToSF(ts, date);
+      }
+      else{
+        List<TimeSheet> ts = List<TimeSheet>();
+        ts.add(timeSheet);
+        storeTimeSheetListToSF(ts, date);
+      }
+    }else{
+      return;
+    }
+  }
+
+  static removeTimeSheetToList(String date, String idTimeSheet)  {
+    DateTime dateTime = DateFormat("yyyy-MM-dd").parse(date);
+    String selectDate = DateFormat("yyyy-MM-dd").format(dateTime);
+    if (_preferences != null) {
+      String courseStr = _preferences.getString(KEY.TIMESHEET + "_" + selectDate);
+      if(courseStr != null){
+        var value = jsonDecode(courseStr);
+        List<TimeSheet> ts = List<TimeSheet>();
+        for(Map i in value){
+          ts.add(TimeSheet.fromJson(i));
+        }
+        ts.removeWhere((element) => element.id == idTimeSheet);
+        storeTimeSheetListToSF(ts, date);
+      }
+      return;
+    }else{
+      return;
     }
   }
 }

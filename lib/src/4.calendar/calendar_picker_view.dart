@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:connect_api/connection/model/result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -21,7 +22,7 @@ class TimeSlotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String selectDateTime = VALUES.FORMAT_DATE_yyyy_mm_ddd.format(DateTime.now());
+    String selectDateTime = VALUES.FORMAT_DATE_API.format(DateTime.now());
     return new WillPopScope(
       child: Scaffold(
         backgroundColor: const Color(0xffffffff),
@@ -101,13 +102,14 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   List<String> timeSlots;
   int timelotsCount = 0;
   int indexSelected = -1;
+  String cancelIdTimeSheet = "";
 
   TimeSlotUIState();
 
   @override
   void initState() {
     super.initState();
-
+    timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
     Future.delayed(Duration.zero, () {
       setState(() {
         timeSlots = _caculatorTimeSlots(DateTime.now());
@@ -159,6 +161,11 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                   fontSize: 14.0
               ),),
               onPressed: () {
+                setState(() {
+                  _isLoading = false;
+                  indexSelected = -1;
+                  cancelIdTimeSheet = "";
+                });
                 Navigator.of(context).pop();
               },
             )]
@@ -197,19 +204,18 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   }
 
   Color getTimeSheetWithTime(String time){
-    String timeStr = time + ":00";
+    String timeStr = (time.length == 5 ? time : "0" + time) + ":00";
     String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + timeStr;
     DateTime currentTime = DateTime.parse(exdateTimeString);
-    DateTime next20Time = currentTime.add(new Duration(minutes: 20));
-    timeSheetList = StorageUtil.getTimeSheetList();
+
     if(timeSheetList != null) {
       if (timeSheetList.length == 0) {
         return Colors.white;
       }
       for (TimeSheet ts in timeSheetList) {
         int hour = ts.timeStart.hour - currentTime.hour;
-        int minutes = ts.timeStart.minute - next20Time.minute;
-        if (hour == 0 && minutes < 0) {
+        int minutes = ts.timeStart.minute - currentTime.minute;
+        if (hour == 0 && minutes <= 0 && minutes > -20) {
           if (ts.status == 3) {
             return Color(0xffFF5600);
           } else if (ts.status == 4) {
@@ -226,11 +232,38 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     return Colors.white;
   }
 
+  int getIndexTimeSheetWithTime(String time){
+    String timeStr = (time.length == 5 ? time : "0" + time) + ":00";
+    String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + timeStr;
+    DateTime currentTime = DateTime.parse(exdateTimeString);
+
+    if(timeSheetList != null) {
+      if (timeSheetList.length == 0) {
+        return -1;
+      }
+      for (var i = 0; i < timeSheetList.length; i++) {
+        TimeSheet ts = timeSheetList[i];
+        int hour = ts.timeStart.hour - currentTime.hour;
+        int minutes = ts.timeStart.minute - currentTime.minute;
+        if (hour == 0 && minutes <= 0 && minutes > -20) {
+          if (ts.status == 3 || ts.status == 4 || ts.status == 1) {
+            return i;
+          } else {
+            return -1;
+          }
+        }
+      }
+      return -1;
+    }
+    return -1;
+  }
+
   setTimeSheetConnectAPI(){
 
     setState(() {
       _isLoading = true;
     });
+
     String time = timeSlots[indexSelected] + ":00";
     String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + time;
     DateTime selectDateTime = DateTime.parse(exdateTimeString);
@@ -245,18 +278,18 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     setState(() {
       _isLoading = true;
     });
-    DateTime currentTime = DateTime.parse(time);
-    DateTime next20Time = DateTime.parse(time).add(new Duration(minutes: 20));
-    TimeSheet ts = timeSheetList.firstWhere((element) => element.timeStart.compareTo(currentTime) >= 0 && element.timeStart.compareTo(next20Time) < 0);
+    TimeSheet ts = timeSheetList.firstWhere((element) => element.id == cancelIdTimeSheet);
     context.bloc<APIConnect>().add(CancelTimeSheet(ts.id));
   }
 
   getTimeLots(DateTime date){
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        timeSlots = _caculatorTimeSlots(date);
-        timelotsCount = timeSlots.length;
-      });
+    String selectDateTime = VALUES.FORMAT_DATE_API.format(_selectDate);
+    context.bloc<APIConnect>().add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime))));
+    setState(() {
+      indexSelected = -1;
+      timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
+      timeSlots = _caculatorTimeSlots(date);
+      timelotsCount = timeSlots.length;
     });
   }
 
@@ -264,7 +297,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   {
     List<String> slots = List<String>();
     int difference = date.day - DateTime.now().day;
-    if(difference > 0){
+    if(difference > 0 || difference < 0){
       int minute = 0;
       int hour = 5;
       int maxHour = 22;
@@ -311,8 +344,11 @@ class TimeSlotUIState extends State<TimeSlotUI>{
       var i = (minute == 0 ? hour + 1 :hour);
       if(minute - date.minute < VALUES.DELAY_TIME){
         int ms = minute;
-        minute = ms == 0 ? VALUES.DELAY_TIME : (ms == VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : 0);
+        minute = (ms == 0 ? VALUES.DELAY_TIME : (ms == VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : 0));
         i = (minute == 0 ? hour + 1 : (ms > 2*VALUES.DELAY_TIME ? hour + 1 : hour ));
+        if(i < hour){
+          i = hour;
+        }
       }
 
       do{
@@ -361,22 +397,42 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             _isLoading = false;
           });
         }else if (state.result is LoadingState) {
-          setState(() {
-            _isLoading = true;
-          });
+//          setState(() {
+//            if(timeSheetList.length == 0) {
+//              _isLoading = true;
+//            }else{
+//              _isLoading = false;
+//            }
+//          });
         }else if (state.result is SuccessState) {
+          SuccessState result = state.result;
+          if(result.msg == "Cancel"){
+            TimeSheet ts = timeSheetList.firstWhere((element) => element.id == cancelIdTimeSheet);
+            DateFormat formatterAPI = VALUES.FORMAT_DATE_yyyy_mm_dd;
+            String date = formatterAPI.format(_selectDate);
+            StorageUtil.removeTimeSheetToList(date, cancelIdTimeSheet);
+          }
           setState(() {
             _isLoading = false;
             indexSelected = -1;
+            cancelIdTimeSheet = "";
           });
+
         }else if (state.result is ParseJsonToObject) {
           setState(() {
             _isLoading = false;
+          });
+
+          setState(() {
+            indexSelected = -1;
+            timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
           });
         }
         else {
           setState(() {
             _isLoading = false;
+            indexSelected = -1;
+            cancelIdTimeSheet = "";
           });
           ErrorState error = state.result;
           if(error.msg == "Cancel"){
@@ -488,7 +544,6 @@ class TimeSlotUIState extends State<TimeSlotUI>{
       )
     );
   }
-
 
   _calendar(){
     _calendarItem = Calendarro(
@@ -626,14 +681,28 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             onTap: () {
               if(indexMeeting == -1){
                 setState(() {
-                  indexSelected = index;
-                  if(indexSelected == 1){
-                    indexMeeting = 1;
+                  int indexTimeSheet = getIndexTimeSheetWithTime(timeSlots[index]);
+                  if(indexTimeSheet != -1){
+                    TimeSheet ts = timeSheetList[indexTimeSheet];
+                    if(ts.status == 4){//meeting
+                      indexMeeting = 1;
+                      indexSelected = -1;
+                    }else if(ts.status == 1){//available
+                      indexSelected = -1;
+                      cancelIdTimeSheet = ts.id;
+                      cancelTimeSheetConnectAPI(timeSlots[index]);
+                    }else if(ts.status == 2){//un
+                      indexSelected = index;
+                      setTimeSheetConnectAPI();
+                    }else{//cancel
+                    }
+                  }
+                  else{
+                    indexSelected = index;
+                    setTimeSheetConnectAPI();
                   }
                 });
-                setTimeSheetConnectAPI();
               }
-
             },
             child: Center(
               child: _timeItem(itemWidth, itemHeight, index, gridViewCrossAxisCount, total),
