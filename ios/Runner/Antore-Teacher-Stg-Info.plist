@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>20201007.1041</string>
+	<string>20201007.1047</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>FirebaseScreenReportingEnabled</key>
@@ -32,6 +32,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) MyApp needs access to your camera for meetings.</string>
 	<key>NSMicrophoneUsageDescription</key>

@@ -74,5 +74,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
 </dict>
 </plist>
