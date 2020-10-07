@@ -21,29 +21,33 @@ platform :ios do
   lane :release_staging do
     match(
       app_identifier: "com.antoree.teacher.stg",
-      type: "adhoc", force_for_new_devices: true
+      type: "appstore", force_for_new_devices: true
     )
     clear_derived_data
     increment_build_number_in_plist(
       target: 'Antoree-Teacher-Staging',
       build_number: Time.now.strftime("%Y%m%d.%H%M")
     )
+    Dir.chdir "../.." do
+      sh("flutter", "packages", "get")
+      sh("flutter", "clean")
+      sh("flutter", "build", "ios", "--release", "--no-codesign", "-t", "lib/main_staging.dart", "--flavor", "staging")
+    end
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "staging",
       export_method: "ad-hoc",
       export_options: {
-        method: "ad-hoc",
+        method: "appstore",
         iCloudContainerEnvironment: 'Production',
         provisioningProfiles: {
-          "com.antoree.teacher.stg" => "match AdHoc com.antoree.teacher.stg"
+          "com.antoree.teacher.stg" => "match Appstore com.antoree.teacher.stg"
         },
         signingStyle: "manual"
       },
       export_xcargs: "-allowProvisioningUpdates"
     )
     commit_version_bump(force: true, xcodeproj: "Runner.xcodeproj", no_verify: true)
-
     version = get_version_number(xcodeproj: "Runner.xcodeproj", target: 'Antoree-Teacher-Staging')
     build_number = get_build_number_from_plist(xcodeproj: 'Runner.xcodeproj', # optional
       target: 'Antoree-Teacher-Staging', # optional, or `scheme`
@@ -57,11 +61,12 @@ platform :ios do
       match_lightweight_tag: false,  # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
       merge_commit_filtering: "exclude_merges" # Optional, lets you filter out merge commits
     )
-    firebase_app_distribution(
-      app: "1:68569391172:ios:2220e8f2741c38a3d65c11",
-      release_notes: change_logs,
-      groups: "internal-testers"
-    )
+    upload_to_testflight
+    # firebase_app_distribution(
+    #   app: "1:68569391172:ios:2220e8f2741c38a3d65c11",
+    #   release_notes: change_logs,
+    #   groups: "internal-testers"
+    # )
     add_git_tag(
       grouping: "Ant-Teacher",
       prefix: "v",
