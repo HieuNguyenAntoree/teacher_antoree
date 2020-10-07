@@ -60,8 +60,8 @@ platform :ios do
       merge_commit_filtering: "exclude_merges" # Optional, lets you filter out merge commits
     )
     upload_to_testflight(
-      username: "tr.kimhieu@gmail.com",
-      app_identifier: "com.antoree.teacher.stg",
+      username: "apps.dev@antoree.com",
+      app_identifier: "com.antoree.student.stg",
     )
     # firebase_app_distribution(
     #   app: "1:68569391172:ios:2220e8f2741c38a3d65c11",

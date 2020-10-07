@@ -13,7 +13,7 @@ app_identifier(["com.antoree.student.stg",
                 "com.antoree.teacher.dev",
                 "com.antoree.teacher"])
 
-username("tr.kimhieu@gmail.com") # Your Apple Developer Portal username
+username("apps.dev@antoree.com") # Your Apple Developer Portal username
 
 # For all available options run `fastlane match --help`
 # Remove the # in the beginning of the line to enable the other options
