@@ -1,5 +1,5 @@
 app_identifier("com.antoree.teacher") # The bundle identifier of your app
-apple_id("tr.kimhieu@gmail.com") # Your Apple email address
+apple_id("apps.dev@antoree.com") # Your Apple email address
 
 itc_team_id("119212861") # App Store Connect Team ID
 team_id("XDWYRY9TB5") # Developer Portal Team ID

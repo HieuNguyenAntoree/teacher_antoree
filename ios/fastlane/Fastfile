@@ -29,19 +29,17 @@ platform :ios do
       build_number: Time.now.strftime("%Y%m%d.%H%M")
     )
     Dir.chdir "../.." do
-      sh("flutter", "packages", "get")
-      sh("flutter", "clean")
       sh("flutter", "build", "ios", "--release", "--no-codesign", "-t", "lib/main_staging.dart", "--flavor", "staging")
     end
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "staging",
-      export_method: "ad-hoc",
+      export_method: "app-store",
       export_options: {
         method: "appstore",
         iCloudContainerEnvironment: 'Production',
         provisioningProfiles: {
-          "com.antoree.teacher.stg" => "match Appstore com.antoree.teacher.stg"
+          "com.antoree.teacher.stg" => "match AppStore com.antoree.teacher.stg"
         },
         signingStyle: "manual"
       },
@@ -61,7 +59,10 @@ platform :ios do
       match_lightweight_tag: false,  # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
       merge_commit_filtering: "exclude_merges" # Optional, lets you filter out merge commits
     )
-    upload_to_testflight
+    upload_to_testflight(
+      username: "apps.dev@antoree.com",
+      app_identifier: "com.antoree.student.stg",
+    )
     # firebase_app_distribution(
     #   app: "1:68569391172:ios:2220e8f2741c38a3d65c11",
     #   release_notes: change_logs,
