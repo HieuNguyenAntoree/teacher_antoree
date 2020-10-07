@@ -107,6 +107,7 @@ class CalendarUIState extends State<CalendarUI> {
   CalendarUIState(this.idSchedule);
 
   bool _isLoading = false;
+  bool _isCancel = false;
   String nextButton = IMAGES.CALENDAR_NEXT_UN;
   String backButton = IMAGES.CALENDAR_BACK_UN;
   DateTime _currentDate = DateTime.now().subtract(Duration(days: (DateTime.now().day - 1) ));
@@ -153,9 +154,9 @@ class CalendarUIState extends State<CalendarUI> {
   }
   cancelAction(value){
     setState(() {
-      _isLoading = true;
+      _isCancel = true;
     });
-    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, '', ''));
+//    context.bloc<APIConnect>().add(CancelSchedule( this.idSchedule, '', ''));
   }
 
   Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
@@ -260,7 +261,7 @@ class CalendarUIState extends State<CalendarUI> {
             _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "", null);
           }
         },
-        child: LoadingOverlay(
+        child: _isCancel ? _cancelPopupView() : LoadingOverlay(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -440,6 +441,93 @@ class CalendarUIState extends State<CalendarUI> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  _cancelPopupView(){
+    return GestureDetector(
+        onTap: ()=>
+        {
+          setState(() {
+            _isCancel = !_isCancel;
+          }),
+        },
+        child: Container(
+            color: const Color(0xffd8d8d8).withOpacity(0.9),
+//          height:  MediaQuery.of(context).size.height - kToolbarHeight - 25 - kBottomNavigationBarHeight,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(30),
+                  bottomLeft: Radius.circular(5),
+                ),
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  new GestureDetector(
+                    onTap: ()=> {
+                      launch("tel://21213123123"),
+                    },
+                    child: Container(
+                      width: 150,
+                      alignment: Alignment.center,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(5),
+                        ),
+                        color: COLOR.COLOR_00C081,
+                      ),
+                      child: Text('Call center',
+                        style: TextStyle(
+                            color: const Color(0xffffffff),
+                            fontSize: 18,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold
+                        ),),
+                    ),
+                  ),
+                  SizedBox(height: 15,),
+                  new GestureDetector(
+                    onTap: ()=> {},
+                    child: Container(
+                      width: 150,
+                      alignment: Alignment.center,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(5),
+                        ),
+                        color: Colors.white,
+                        border: Border.all(
+                            color: COLOR.COLOR_00C081,
+                            width: 4
+                        ),
+                      ),
+                      child: Text('back',
+                        style: TextStyle(
+                            color: COLOR.COLOR_00C081,
+                            fontSize: 18,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold
+                        ),),
+                    ),
+                  )
+                ],
+              ),
+            )
+        )
+    );
   }
 }
 

@@ -60,7 +60,7 @@ class IMAGES{
   static const String CALENDAR_CANCEL_ACTIVE = "assets/images/4.calendar/calendar_cancel_green.png";
   static const String CALENDAR_CALL_UNACTIVE = "assets/images/4.calendar/calendar_call_grey.png";
   static const String CALENDAR_CALL_ACTIVE = "assets/images/4.calendar/calendar_call_white.png";
-  static const String CALENDAR_CALL_BACK = "assets/images/4.calendar/calendar_back.png";
+  static const String CALENDAR_CALL_BACK = "assets/images/4.calendar/calendar_call_back.png";
 
   static const String ARROW_DOWN = "assets/images/9.teacher/arrowdown.png";
   static const String ARROW_UP = "assets/images/9.teacher/arrowup.png";
