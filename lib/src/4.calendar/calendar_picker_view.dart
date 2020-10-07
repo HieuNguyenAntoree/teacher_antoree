@@ -13,6 +13,7 @@ import 'package:teacher_antoree/models/timesheet.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
 import 'package:teacher_antoree/src/7.video/video_view.dart';
 import 'package:ui_libraries/calendar/calendarro.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TimeSlotView extends StatelessWidget {
   const TimeSlotView();
@@ -313,7 +314,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             slots.add(str);
           }
           minute = VALUES.DELAY_TIME;
-        }else if (minute != VALUES.DELAY_TIME){
+        }else if (minute != VALUES.DELAY_TIME && i < maxHour){
           if(i > 9) {
             String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
             slots.add(str);
@@ -324,7 +325,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           minute = 0;
           i++;
         }
-        else{
+        else if(i < maxHour){
           if(i > 9) {
             String str = (i).toString() + ":${VALUES.DELAY_TIME}";
             slots.add(str);
@@ -333,22 +334,22 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             slots.add(str);
           }
           minute = 2*VALUES.DELAY_TIME;
+        }else{
+          i++;
         }
       }while(i <= maxHour);
       return slots;
     }else if (difference == 0){
       DateTime date = DateTime.now();
-      int minute = date.minute > 2*VALUES.DELAY_TIME ? 0 : (date.minute > VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : VALUES.DELAY_TIME);
-      int hour = date.hour;
+      int i = date.hour;
+      int minute = 0;
       int maxHour = 22;
-      var i = (minute == 0 ? hour + 1 :hour);
-      if(minute - date.minute < VALUES.DELAY_TIME){
-        int ms = minute;
-        minute = (ms == 0 ? VALUES.DELAY_TIME : (ms == VALUES.DELAY_TIME ? 2*VALUES.DELAY_TIME : 0));
-        i = (minute == 0 ? hour + 1 : (ms > 2*VALUES.DELAY_TIME ? hour + 1 : hour ));
-        if(i < hour){
-          i = hour;
-        }
+      if(date.minute < VALUES.DELAY_TIME){
+        i = date.hour;
+        minute = 2 * VALUES.DELAY_TIME;
+      }else {
+        i = date.hour + 1;
+        minute = 0;
       }
 
       do{
@@ -361,7 +362,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             slots.add(str);
           }
           minute = VALUES.DELAY_TIME;
-        }else if (minute != VALUES.DELAY_TIME){
+        }else if (minute != VALUES.DELAY_TIME && i < maxHour){
           if(i > 9) {
             String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
             slots.add(str);
@@ -372,7 +373,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           minute = 0;
           i++;
         }
-        else{
+        else if(i < maxHour){
           if(i > 9) {
             String str = (i).toString() + ":${VALUES.DELAY_TIME}";
             slots.add(str);
@@ -381,6 +382,8 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             slots.add(str);
           }
           minute = 2*VALUES.DELAY_TIME;
+        }else{
+          i++;
         }
       }while(i <= maxHour);
       return slots;
@@ -416,6 +419,9 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             _isLoading = false;
             indexSelected = -1;
             cancelIdTimeSheet = "";
+            if(result.msg == "Cancel") {
+              timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
+            }
           });
 
         }else if (state.result is ParseJsonToObject) {
@@ -679,30 +685,29 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         children: List.generate(total, (index) {
           return GestureDetector(
             onTap: () {
-              if(indexMeeting == -1){
-                setState(() {
-                  int indexTimeSheet = getIndexTimeSheetWithTime(timeSlots[index]);
-                  if(indexTimeSheet != -1){
-                    TimeSheet ts = timeSheetList[indexTimeSheet];
-                    if(ts.status == 4){//meeting
-                      indexMeeting = 1;
-                      indexSelected = -1;
-                    }else if(ts.status == 1){//available
-                      indexSelected = -1;
-                      cancelIdTimeSheet = ts.id;
-                      cancelTimeSheetConnectAPI(timeSlots[index]);
-                    }else if(ts.status == 2){//un
-                      indexSelected = index;
-                      setTimeSheetConnectAPI();
-                    }else{//cancel
-                    }
-                  }
-                  else{
+              setState(() {
+                indexMeeting = -1;
+                int indexTimeSheet = getIndexTimeSheetWithTime(timeSlots[index]);
+                if(indexTimeSheet != -1){
+                  TimeSheet ts = timeSheetList[indexTimeSheet];
+                  if(ts.status == 4){//meeting
+                    indexMeeting = index;
+                    indexSelected = -1;
+                  }else if(ts.status == 1){//available
+                    indexSelected = -1;
+                    cancelIdTimeSheet = ts.id;
+                    cancelTimeSheetConnectAPI(timeSlots[index]);
+                  }else if(ts.status == 2){//un
                     indexSelected = index;
                     setTimeSheetConnectAPI();
+                  }else{//cancel
                   }
-                });
-              }
+                }
+                else{
+                  indexSelected = index;
+                  setTimeSheetConnectAPI();
+                }
+              });
             },
             child: Center(
               child: _timeItem(itemWidth, itemHeight, index, gridViewCrossAxisCount, total),
@@ -720,7 +725,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         width: itemWidth,
         height: itemHeight,
         decoration: BoxDecoration(
-          color: (indexSelected == index && indexMeeting != index) ? COLOR.COLOR_00C081 : getTimeSheetWithTime(timeSlots[index]),
+          color: (indexSelected == index) ? COLOR.COLOR_00C081 : ((indexMeeting != -1 && indexMeeting == index) ? Colors.white : getTimeSheetWithTime(timeSlots[index])),
           border: Border(
             top:  BorderSide(color: const Color(0xffd8d8d8), width: 1),
             right: BorderSide(color: const Color(0xffd8d8d8), width: 1),
@@ -733,7 +738,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             ),
           ),
         ),
-        child: (indexMeeting == index && indexSelected == indexMeeting) ? _timeMeetingItem(itemWidth, itemHeight,'') : _timeNormalItem(index),
+        child: (indexMeeting == index) ? _timeMeetingItem(itemWidth, itemHeight,'') : _timeNormalItem(index),
     );
   }
 
@@ -773,8 +778,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _callButton(double widthButton, double height, String idSchedule){
     return GestureDetector(
         onTap: () {
-          context.bloc<APIConnect>().add(CallVideo(idSchedule,  "teacher"));
-           VideoState(context, idSchedule).initState() ;
+          launch("tel://21213123123");
         },
         child: Container(
           width: widthButton,
