@@ -552,7 +552,7 @@ class BottomLoader extends StatelessWidget {
 class TimeSheetItem extends StatefulWidget {
   final Schedule scheduleItem;
   final Function cancelAction;
-  final isCurrentDay;
+  final int isCurrentDay;
 
   TimeSheetItem({Key key, this.scheduleItem, this.cancelAction, this.isCurrentDay})
       : super(key: key);
@@ -700,7 +700,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                   )
                 ),
 //                SizedBox(height: 10,),
-                ((isCurrentDay >= 0 && isOnTime >= 0) ||  scheduleItem.status != SCHEDULE_STATUS.ACTIVE)? _bottomButton(context, widthCell) : SizedBox(height: 0,),
+                ((isCurrentDay >= 0 && isOnTime >= 0) &&  scheduleItem.status == SCHEDULE_STATUS.ACTIVE)? _bottomButton(context, widthCell) : SizedBox(height: 0,),
               ],
             ),
         )

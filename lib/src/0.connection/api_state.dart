@@ -11,5 +11,5 @@ class ApiState extends Equatable{
   }
 
   @override
-  List<Object> get props => [result];
+  List<dynamic> get props => [result];
 }

@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
 import 'package:intl/intl.dart';  //for date format
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeView extends StatelessWidget {
 
@@ -331,21 +332,45 @@ class HomeUIState extends State<HomeUI> {
         child: Container(
           height: 125,
           width: 137,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(80),
-                bottomRight: Radius.circular(80),
-              ),
-              border: Border.all(width: 5.0, color: COLOR.COLOR_00C081),
-              color: Colors.white,
-              image: (teacher != null && teacher.avatar.url != null) ? new DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(teacher.avatar.url)
-              ) : new DecorationImage(
-                  fit: BoxFit.none, image: new AssetImage(IMAGES
-                  .HOME_AVATAR), scale: 2)
-          ),
+          child: (teacher != null && teacher.avatar != null ) ? CachedNetworkImage(
+            imageUrl: teacher.avatar.url,
+            imageBuilder:
+                (context, imageProvider) =>
+                Container(
+                  decoration: _borderAvatar(imageProvider, 3),
+                ),
+            placeholder: (context, url) =>
+                Container(
+                  decoration: _borderAvatar(new AssetImage(IMAGES
+                      .HOME_AVATAR), 3),
+                ),
+            errorWidget: (context, url, error)
+            => Container(
+                decoration: _borderAvatar(new AssetImage(IMAGES
+                    .HOME_AVATAR), 3)
+            ),
+
+          ) :
+          SizedBox(width: 0,),
+          decoration: (teacher == null || teacher.avatar == null || teacher.avatar.url == null) ? _borderAvatar(new AssetImage(IMAGES
+              .HOME_AVATAR), 3) : BoxDecoration(),
         )
+    );
+  }
+
+  _borderAvatar(ImageProvider image, double scale) {
+    return BoxDecoration(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(80),
+        bottomRight: Radius.circular(80),
+      ),
+      border: Border.all(width: 5.0, color: COLOR.COLOR_00C081),
+      color: Colors.white,
+      image: new DecorationImage(
+        fit: BoxFit.none,
+        image: image,
+        scale: scale,
+      ),
     );
   }
 
