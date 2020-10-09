@@ -619,7 +619,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _timelineField(){
     final double itemHeight = 40;
     final int total = timelotsCount;
-    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight -  80 - 70 - 10;
+    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight -  80 - 70 - 120;
     double girdHeight = (itemHeight * ((total/4).floor() + (total%4 > 0 ? 1 : 0)));
     double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
     double width = MediaQuery.of(context).size.width;
