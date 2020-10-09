@@ -88,7 +88,7 @@ class HomeUIState extends State<HomeUI> {
   DateTime timerDate;
 
   static final DateFormat formatDateForTimer = DateFormat('yyyy-MM-dd HH:mm:ss');
-  static final DateFormat formatDateForUI = DateFormat('hh:mm a EEEE  dd | MM | yyyy');
+  static final DateFormat formatDateForUI = DateFormat("hh:mm a 'on' EEEE  dd | MM | yyyy");
   final interval = const Duration(seconds: 1);
 
   startTimeout([int milliseconds]) {
@@ -113,8 +113,15 @@ class HomeUIState extends State<HomeUI> {
               seconds = 60;
             }
           } else if (minutes < 0) {
-            minutes = 0;
-            seconds = 60;
+            if (hours <= 0) {
+              minutes = 0;
+              seconds = 60;
+            } else {
+              hours = hours - 1;
+              seconds = 60;
+              minutes = 60;
+            }
+
           }else  {
             seconds = 60;
           }
@@ -143,8 +150,8 @@ class HomeUIState extends State<HomeUI> {
   @override
   void initState() {
     super.initState();
-    Intl.defaultLocale = 'vi_VN';
-    initializeDateFormatting();
+//    Intl.defaultLocale = 'vi_VN';
+//    initializeDateFormatting();
     loadDataFromLocal();
   }
 
@@ -314,11 +321,11 @@ class HomeUIState extends State<HomeUI> {
               SizedBox(height: 20),
               _helloUserText(),
               SizedBox(height: 40),
-              _textTimeSheet('Còn'),
+              _textTimeSheet('we have'),
               SizedBox(height: 5),
               _timeDownField(),
               SizedBox(height: 5,),
-              _textTimeSheet('đến giờ hẹn'),
+              _textTimeSheet('testing is comming'),
               Expanded(child: Container()),
               _bottomButton(),
             ],
@@ -375,25 +382,18 @@ class HomeUIState extends State<HomeUI> {
   }
 
   _helloUserText() {
-    String studentName = 'Xin chào bạn\n';
-    String content1 = "Hiện tại bạn không có cuộc hẹn nào với giáo viên\n";
+    String studentName = 'Hi you\n';
+    String content1 = "You don't have course now\n";
     String content2 = "";
     if(currentSchedule != null){
-      studentName = student != null && student.lastName != null ? student.lastName : "bạn";
-      studentName = 'Xin chào $studentName\n';
+      studentName = teacher != null && teacher.lastName != null ? teacher.lastName : "you";
+      studentName = 'Hi $studentName\n';
 
-      var teacherName = teacher != null && teacher.lastName != null ? (" " + teacher.lastName) : "";
-      content1 = "Bạn có cuộc hẹn với giáo viên$teacherName lúc\n";
+      var teacherName = student != null && student.lastName != null ? (" " + student.lastName) : "";
+      content1 = "You will have a test with$teacherName at\n";
 
-      DateFormat formatAMPM = DateFormat('a');
-      String ampm = formatAMPM.format(timerDate);
-      if(ampm.toLowerCase() == 'ch'){
-        ampm = "chiều";
-      }else{
-        ampm = 'sáng';
-      }
       String formattedDate = formatDateForUI.format(timerDate);
-      content2 = formattedDate.toLowerCase().replaceRange(6, 8, ampm);
+      content2 = formattedDate;
     }
 
     return Center(
@@ -468,11 +468,11 @@ class HomeUIState extends State<HomeUI> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _timeField(hours, 'giờ'),
+          _timeField(hours, 'hr'),
           SizedBox(width: 10,),
-          _timeField(minutes, 'phút'),
+          _timeField(minutes, 'min'),
           SizedBox(width: 10,),
-          _timeField(seconds, 'giây')
+          _timeField(seconds, 'nd')
         ],
       ),
     );

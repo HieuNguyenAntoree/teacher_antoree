@@ -204,36 +204,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     );
   }
 
-  Color getTimeSheetWithTime(String time){
-    String timeStr = (time.length == 5 ? time : "0" + time) + ":00";
-    String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + timeStr;
-    DateTime currentTime = DateTime.parse(exdateTimeString);
-
-    if(timeSheetList != null) {
-      if (timeSheetList.length == 0) {
-        return Colors.white;
-      }
-      for (TimeSheet ts in timeSheetList) {
-        int hour = ts.timeStart.hour - currentTime.hour;
-        int minutes = ts.timeStart.minute - currentTime.minute;
-        if (hour == 0 && minutes <= 0 && minutes > -20) {
-          if (ts.status == 3) {
-            return Color(0xffFF5600);
-          } else if (ts.status == 4) {
-            return Color(0xffFF9900);
-          } else if (ts.status == 1) {
-            return Color(0xff00C081);
-          } else {
-            return Colors.white;
-          }
-        }
-      }
-      return Colors.white;
-    }
-    return Colors.white;
-  }
-
-  int getIndexTimeSheetWithTime(String time){
+  int getTimeSheetWithTime(String time){
     String timeStr = (time.length == 5 ? time : "0" + time) + ":00";
     String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + timeStr;
     DateTime currentTime = DateTime.parse(exdateTimeString);
@@ -242,19 +213,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
       if (timeSheetList.length == 0) {
         return -1;
       }
-      for (var i = 0; i < timeSheetList.length; i++) {
-        TimeSheet ts = timeSheetList[i];
-        int hour = ts.timeStart.hour - currentTime.hour;
-        int minutes = ts.timeStart.minute - currentTime.minute;
-        if (hour == 0 && minutes <= 0 && minutes > -20) {
-          if (ts.status == 3 || ts.status == 4 || ts.status == 1) {
-            return i;
-          } else {
-            return -1;
-          }
-        }
-      }
-      return -1;
+      return timeSheetList.indexWhere((element) => element.timeStart.hour - currentTime.hour == 0 && element.timeStart.minute - currentTime.minute <= 0 && element.timeStart.minute - currentTime.minute > -20);
     }
     return -1;
   }
@@ -561,7 +520,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
           print("onTap: $start_page");
           print("onTap: $end_page");
           setState(() {
-            _currentMonth = DateFormat.yMMM().format(start_page);
+            _currentMonth = formatMonth.format(start_page);
           });
         },
         onTap: (date) {
@@ -660,13 +619,12 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _timelineField(){
     final double itemHeight = 40;
     final int total = timelotsCount;
-    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 30 - 50 - 70 - 30 - kBottomNavigationBarHeight - 100 - 10;
+    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight -  80 - 70 - 10;
     double girdHeight = (itemHeight * ((total/4).floor() + (total%4 > 0 ? 1 : 0)));
     double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
     double width = MediaQuery.of(context).size.width;
     final double itemWidth = (width - 32)/4;
     final int gridViewCrossAxisCount = 4;
-
     return Container(
       height: height,
       margin: EdgeInsets.only(
@@ -683,12 +641,26 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         mainAxisSpacing: 0,
         // Generate 100 widgets that display their index in the List.
         children: List.generate(total, (index) {
+          int indexTimeSheet = getTimeSheetWithTime(timeSlots[index]);
+          Color tsColor = Colors.white;
+          if(indexTimeSheet != -1){
+            TimeSheet ts = timeSheetList[indexTimeSheet];
+            if (ts.status == 3) {
+              tsColor = Color(0xffFF5600);
+            } else if (ts.status == 4) {
+              tsColor = Color(0xffFF9900);
+            } else if (ts.status == 1) {
+              tsColor = Color(0xff00C081);
+            } else {
+              tsColor = Colors.white;
+            }
+          }
+
           return GestureDetector(
             onTap: () {
               setState(() {
                 indexMeeting = -1;
-                int indexTimeSheet = getIndexTimeSheetWithTime(timeSlots[index]);
-                if(indexTimeSheet != -1){
+                if(indexTimeSheet != -1 && indexSelected == -1){
                   TimeSheet ts = timeSheetList[indexTimeSheet];
                   if(ts.status == 4){//meeting
                     indexMeeting = index;
@@ -710,7 +682,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
               });
             },
             child: Center(
-              child: _timeItem(itemWidth, itemHeight, index, gridViewCrossAxisCount, total),
+              child: _timeItem(itemWidth, itemHeight, index, gridViewCrossAxisCount, total, tsColor),
 
             ),
           );
@@ -720,12 +692,12 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   }
 
   int indexMeeting = -1;
-  _timeItem(double itemWidth, double itemHeight, int index, int count, int total){
+  _timeItem(double itemWidth, double itemHeight, int index, int count, int total, Color color){
     return Container(
         width: itemWidth,
         height: itemHeight,
         decoration: BoxDecoration(
-          color: (indexSelected == index) ? COLOR.COLOR_00C081 : ((indexMeeting != -1 && indexMeeting == index) ? Colors.white : getTimeSheetWithTime(timeSlots[index])),
+          color: (indexSelected == index) ? COLOR.COLOR_00C081 : ((indexMeeting != -1 && indexMeeting == index) ? Colors.white : color),
           border: Border(
             top:  BorderSide(color: const Color(0xffd8d8d8), width: 1),
             right: BorderSide(color: const Color(0xffd8d8d8), width: 1),
@@ -738,16 +710,16 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             ),
           ),
         ),
-        child: (indexMeeting == index) ? _timeMeetingItem(itemWidth, itemHeight,'') : _timeNormalItem(index),
+        child: (indexMeeting == index) ? _timeMeetingItem(itemWidth, itemHeight,'') : _timeNormalItem(index, color == Colors.white ? Color(0xff4B5B53) : Colors.white),
     );
   }
 
-  _timeNormalItem(int index){
+  _timeNormalItem(int index, Color color){
     return Center(
       child: Text(
         timeSlots[index],
         style: TextStyle(
-            color:  const Color(0xff4B5B53),
+            color:  color,
             fontWeight: FontWeight.w400,
             fontFamily: "Montserrat",
             fontStyle:  FontStyle.normal,

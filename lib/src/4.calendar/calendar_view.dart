@@ -367,7 +367,7 @@ class CalendarUIState extends State<CalendarUI> {
           print("onTap: $start_page");
           print("onTap: $end_page");
           setState(() {
-            _currentMonth = DateFormat.yMMM().format(start_page);
+            _currentMonth = formatMonth.format(start_page);
           });
         },
         onTap: (date) {
@@ -384,7 +384,7 @@ class CalendarUIState extends State<CalendarUI> {
 
   _timeSheet(BuildContext context){
 
-    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 10 - 320 - 55;
+    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 320 - 80;
     return schedulesInDay.length == 0 ? SizedBox(height: 0,) :
     NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
@@ -638,7 +638,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
       children: [
         Container(
           padding: EdgeInsets.only(left: 15, right: 15),
-//            height: heightCell,
+            width: 90,
             child: isOnTime == 0 ? new Text(
                 _getHourAndMinutes(),
                 style: const TextStyle(
