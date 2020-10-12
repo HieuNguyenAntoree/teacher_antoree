@@ -310,9 +310,9 @@ packages:
   flutter_launcher_icons:
     dependency: "direct main"
     description:
-      name: flutter_launcher_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: assets
+      relative: true
+    source: path
     version: "0.8.1"
   flutter_rating_bar:
     dependency: "direct main"

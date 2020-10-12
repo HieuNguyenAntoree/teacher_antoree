@@ -34,16 +34,8 @@ dependencies:
     path: ../connect_api/
   ui_libraries:
     path: ../ui_libraries/
-  flutter_launcher_icons: "^0.8.0"
-
-
-
-flutter_icons:
-  ios: true
-  android: true
-  image_path_ios: "assets/launcher/icon_staging.png"
-  image_path_android: "assets/launcher/icon_staging.png"
-
+  flutter_launcher_icons:
+    path: assets/
 
 dev_dependencies:
   flutter_test:
