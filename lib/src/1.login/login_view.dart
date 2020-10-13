@@ -16,15 +16,14 @@ class LoginView extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-          padding: const EdgeInsets.only(top: 35),
-          child: BlocProvider(
-            create: (context){
-              return APIConnect(context);
-            },
-            child: LoginUI(),
-          )
+      backgroundColor: COLOR.BG_COLOR,
+      body: BlocProvider(
+        create: (context){
+          return APIConnect(context);
+        },
+        child: Center(
+          child: LoginUI(),
+        ),
       ),
     );
   }
@@ -47,6 +46,12 @@ class LoginUIState extends State<LoginUI>{
     super.initState();
     emailController..text = 'admin@antoree.com';
     passController..text = 'Antor33rotnA';
+  }
+
+  // ignore: missing_return
+  VoidCallback _loginAction(){
+    context.bloc<APIConnect>().add(
+        LoginSubmitted(emailController.text, passController.text));
   }
 
   Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
@@ -146,26 +151,7 @@ class LoginUIState extends State<LoginUI>{
       },
       child: LoadingOverlay(
         child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const Padding(padding: EdgeInsets.all(40)),
-                _topImage(),
-                SizedBox(height: 20),
-                _textSection(),
-                SizedBox(height: 30),
-                _email(),
-                SizedBox(height: 20),
-                _password(),
-                SizedBox(height: 30,),
-                _statusLogin(),
-                SizedBox(height: 40,),
-                _loginButton(),
-              ],
-            ),
-          ),
+            child: _containerView()
         ),
         isLoading: _isLoading,
         // demo of some additional parameters
@@ -175,9 +161,38 @@ class LoginUIState extends State<LoginUI>{
     );
   }
 
+  _containerView(){
+    double statusBarHeight = MediaQuery.of(context).padding.top;
+    double marginLeftRight = (MediaQuery.of(context).size.width*10)/100;
+    return Container(
+      color: COLOR.BG_COLOR,
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: statusBarHeight),
+          _topImage(),
+          SizedBox(height: 20),
+          _textSection(),
+          SizedBox(height: 30),
+          _email(),
+          SizedBox(height: 20),
+          _password(),
+          SizedBox(height: 30,),
+          _statusLogin(),
+          SizedBox(height: 40,),
+          _loginButton(),
+        ],
+      ),
+    );
+  }
+
   _topImage(){
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20),
+        padding: EdgeInsets.all(0),
         alignment: Alignment.center,
         child: Image.asset(IMAGES.LOGIN_TOPIMAGE)
     );
@@ -189,7 +204,7 @@ class LoginUIState extends State<LoginUI>{
         child: Text(STRINGS.LOGIN_TEXT,
           style: TextStyle(
               color: COLOR.COLOR_00C081,
-              fontSize: 18,
+              fontSize: 17,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.bold
           ),
@@ -199,7 +214,7 @@ class LoginUIState extends State<LoginUI>{
 
   _email(){
     return Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
+      margin: EdgeInsets.all(0),
       alignment: Alignment.center,
       height: 64,
       decoration: BoxDecoration(
@@ -218,7 +233,7 @@ class LoginUIState extends State<LoginUI>{
         controller: emailController,
         style: TextStyle(
             color: COLOR.COLOR_00C081,
-            fontSize: 14,
+            fontSize: 13,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.bold
         ),
@@ -236,7 +251,7 @@ class LoginUIState extends State<LoginUI>{
           errorText: validateEmail(),
           hintStyle: TextStyle(
               color: COLOR.COLOR_D8D8D8,
-              fontSize: 14,
+              fontSize: 13,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.normal
           ),
@@ -247,7 +262,7 @@ class LoginUIState extends State<LoginUI>{
 
   _password(){
     return Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
+      margin: EdgeInsets.all(0),
       alignment: Alignment.center,
       height: 64,
       decoration: BoxDecoration(
@@ -266,7 +281,7 @@ class LoginUIState extends State<LoginUI>{
         controller: passController,
         style: TextStyle(
             color: COLOR.COLOR_00C081,
-            fontSize: 14,
+            fontSize: 13,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.bold
         ),
@@ -278,13 +293,13 @@ class LoginUIState extends State<LoginUI>{
           disabledBorder: InputBorder.none,
           contentPadding: EdgeInsets.only(right: 10, top: 15, left: 10, bottom: 15),
           prefixIcon: new IconButton(
-            icon: new Image.asset(IMAGES.LOGIN_PASS, width: 24, height: 27,),
+            icon: new Image.asset(IMAGES.LOGIN_PASS, width: 20, height: 20,),
           ),
           hintText: STRINGS.LOGIN_PASS_HINT,
           errorText: validatePassword(),
           hintStyle: TextStyle(
               color: COLOR.COLOR_D8D8D8,
-              fontSize: 14,
+              fontSize: 13,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.normal
           ),
@@ -300,55 +315,53 @@ class LoginUIState extends State<LoginUI>{
         StorageUtil.storeBoolToSF(KEY.LOGIN_STATUS, _isStatusLogin);
       }),
       child: Container(
-        margin: EdgeInsets.only(left: 20, right: 20),
-        alignment: Alignment.centerLeft,
-        height: 25,
-        child: Row(
-          children: [
-            _isStatusLogin ? Image.asset(IMAGES.LOGIN_CHECKBOX, width: 24, height: 24,) : Image.asset(IMAGES.LOGIN_UNCHECKBOX, width: 24, height: 24,),
-            SizedBox(width: 10),
-            Text(STRINGS.LOGIN_LOGIN_STATUS,
-              style: TextStyle(
-                  color: const Color(0xff4B5B53),
-                  fontSize: 12,
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.normal
-              ),),
-          ],
-        )
+          margin: EdgeInsets.all(0),
+          alignment: Alignment.centerLeft,
+          height: 25,
+          child: Row(
+            children: [
+              _isStatusLogin ? Image.asset(IMAGES.LOGIN_CHECKBOX, width: 24, height: 24,) : Image.asset(IMAGES.LOGIN_UNCHECKBOX, width: 24, height: 24,),
+              SizedBox(width: 10),
+              Text(STRINGS.LOGIN_LOGIN_STATUS,
+                style: TextStyle(
+                    color: const Color(0xff4B5B53),
+                    fontSize: 12,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.normal
+                ),),
+            ],
+          )
       ),
     );
   }
 
-   _loginButton(){
+  _loginButton(){
     return new GestureDetector(
-      onTap: ()=> context.bloc<APIConnect>().add(LoginSubmitted( emailController.text, passController.text)),
+      onTap: ()=> {
+        _loginAction(),
+      },
       child: Container(
-          margin: EdgeInsets.only(left: 40, right: 40),
-          alignment: Alignment.center,
-          height: 48,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(5),
-                bottomRight: Radius.circular(30),
-                bottomLeft: Radius.circular(5),
-              ),
-              color: COLOR.COLOR_00C081,
+        margin: EdgeInsets.all(0),
+        alignment: Alignment.center,
+        height: 48,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(5),
+            bottomRight: Radius.circular(30),
+            bottomLeft: Radius.circular(5),
           ),
-          child: Text(STRINGS.LOGIN_BUTTON,
-            style: TextStyle(
-                color: const Color(0xffffffff),
-                fontSize: 18,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.bold
-            ),),
+          color: COLOR.COLOR_00C081,
+        ),
+        child: Text(STRINGS.LOGIN_BUTTON,
+          style: TextStyle(
+              color: const Color(0xffffffff),
+              fontSize: 18,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.bold
+          ),),
       ),
     );
-  }
-
-  VoidCallback _loginAction(){
-    context.bloc<APIConnect>().add(LoginSubmitted( emailController.text, passController.text));
   }
 
   String validatePassword() {

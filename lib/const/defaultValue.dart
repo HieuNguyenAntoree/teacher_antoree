@@ -18,15 +18,15 @@ class VALUES {
 
 class STRINGS{
   static const ERROR_TITLE = "ERORR";
-  static const LOGIN_TEXT = "Tiếng Anh 1 kèm 1 cùng Antoree";
-  static const LOGIN_EMAIL_HINT = "Nhập email / số điện thoại của bạn";
-  static const LOGIN_PASS_HINT = "Nhập Test Code đã nhận qua email";
-  static const LOGIN_LOGIN_STATUS = "Duy trì đăng nhập";
-  static const LOGIN_BUTTON = "Đăng nhập";
-  static const LOGIN_PASS_VALID = "Password should contains more then 5 characters";
+  static const LOGIN_TEXT = "Learning English online 1 on 1";
+  static const LOGIN_EMAIL_HINT = "Your Email / cell-phone number";
+  static const LOGIN_PASS_HINT = "Your Password";
+  static const LOGIN_LOGIN_STATUS = "Remember me";
+  static const LOGIN_BUTTON = "Login";
+  static const LOGIN_PASS_VALID = "Password should contain more 5 characters";
   static const LOGIN_EMAIL_VALID = "Email is invalid";
   static const EMPTY_LIST = "List is empty";
-  static const TEACHER_STRING = "Giáo viên";
+  static const TEACHER_STRING = "Teacher";
   static const NO_SCHEDULE = "You don't' have schedule in next 30 days, so you can't' connect the feature.";
 }
 
