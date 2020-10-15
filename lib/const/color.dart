@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class COLOR {
   static const Color COLOR_00C081 = Color(0xFF00C081);
-  static const Color COLOR_D8D8D8 = Color(0xFF9CAAA2);
+  static const Color COLOR_D8D8D8 = Color(0xFFD8D8D8);
   static const Color COLOR_9CAAA2 = Color(0xFF9CAAA2);
   static const Color BG_COLOR = Color(0xFFFDFDFD);
+  static const Color COLOR_B6D6CB = Color(0xFFB6D6CB);
 
 
   static const Color COLOR_14B24C = Color(0xFF00C081);

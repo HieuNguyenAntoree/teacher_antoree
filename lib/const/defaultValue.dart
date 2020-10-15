@@ -11,7 +11,7 @@ class VALUES {
   static const COURSE_STATUSES_ALL_STR = "All";
 
   static const DELAY_TIME = 20;
-  static const SCHEDULE_DAYS = 7;
+  static const SCHEDULE_DAYS = 3;
   static DateFormat FORMAT_DATE_API = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   static DateFormat FORMAT_DATE_yyyy_mm_dd = DateFormat("yyyy-MM-dd");
 }
@@ -40,6 +40,8 @@ class IMAGES{
 
   static const String HOME_CALL_GRAY = "assets/images/2.home/call_gray.png";
   static const String HOME_CALL_GREEN = "assets/images/2.home/call_green.png";
+  static const String HOME_CALL_WAIT = "assets/images/2.home/call_wait.png";
+  static const String HOME_CALL_ICON = "assets/images/2.home/call_icon.png";
   static const String HOME_CANCEL = "assets/images/2.home/home_cancel.png";
   static const String HOME_LOGO = "assets/images/2.home/home_logo.png";
   static const String HOME_LOGOUT = "assets/images/2.home/home_logout.png";
@@ -47,6 +49,7 @@ class IMAGES{
   static const String HOME_NOTI_OFF = "assets/images/2.home/home_noti_off.png";
   static const String HOME_PENCIL = "assets/images/2.home/home_pencil.png";
   static const String HOME_AVATAR = "assets/images/2.home/home_avatar.png";
+  static const String HOME_NOTI_ACTIVE = "assets/images/2.home/home_noti_active.png";
 
   static const String RATING_TOPIMAGE = "assets/images/6.rating/rating_topimage.png";
 
@@ -56,6 +59,7 @@ class IMAGES{
   static const String CALENDAR_NEXT_UN = "assets/images/4.calendar/calendar_back_unactive.png";
   static const String CALENDAR_BACK = "assets/images/4.calendar/calendar_next_active.png";
   static const String CALENDAR_BACK_UN = "assets/images/4.calendar/calendar_next_unactive.png";
+  static const String BACK_ICON = "assets/images/4.calendar/back_button.png";
   static const String CALENDAR_CANCEL_UNACTIVE = "assets/images/4.calendar/calendar_cancel_grey.png";
   static const String CALENDAR_CANCEL_ACTIVE = "assets/images/4.calendar/calendar_cancel_green.png";
   static const String CALENDAR_CALL_UNACTIVE = "assets/images/4.calendar/calendar_call_grey.png";

@@ -26,20 +26,33 @@ class TimeSlotView extends StatelessWidget {
     String selectDateTime = VALUES.FORMAT_DATE_API.format(DateTime.now());
     return new WillPopScope(
       child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: COLOR.BG_COLOR,
         appBar: AppBar(
-            title:_customeHeaderBar(),
-            leading: addLeadingIcon(context),
-            centerTitle: true,
-            backgroundColor: const Color(0xffffffff)
+          title:_customeHeaderBar(context),
+          centerTitle: true,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          backgroundColor: COLOR.BG_COLOR,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 29, height: 25,),
+              onPressed: () {
+
+              },
+            ),
+          ],
+          leading: IconButton(
+            icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
-        body: Padding(
-            padding: const EdgeInsets.only(top: 0),
-            child: BlocProvider(
-              create: (context) => APIConnect(context)..add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime)))),
-              child: TimeSlotUI(),
-            )
-        ),
+        body: BlocProvider(
+          create: (context) => APIConnect(context)..add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime)))),
+          child: TimeSlotUI(),
+        )
       ),
       onWillPop: () async {
         return false;
@@ -47,46 +60,14 @@ class TimeSlotView extends StatelessWidget {
     );
   }
 
-  addLeadingIcon(BuildContext context){
-    return new Container(
-      height: 30.0,
-      width: 26.0,
-      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      child: new Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          new Image.asset(
-            IMAGES.HOME_LOGOUT,
-            width: 30.0,
-            height: 26.0,
-          ),
-          new FlatButton(
-              onPressed: (){
-                Navigator.of(context).pop();
-              }
-          )
-        ],
-      ),
-    );
-  }
-  _customeHeaderBar() {
-    return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          new Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: 10),
-              child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-            ),
-          ),
-          GestureDetector(
-              child: Image.asset(IMAGES.HOME_NOTI_OFF, width: 41, height: 35,)
-          ),
-        ],
-      ),
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+        ),
+      ],
     );
   }
 }
@@ -416,6 +397,10 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
+                height: 1.0,
+                color: COLOR.COLOR_D8D8D8,
+              ),
+              Container(
                 color: const Color(0xfff8f8f8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -491,11 +476,11 @@ class TimeSlotUIState extends State<TimeSlotUI>{
                       margin: EdgeInsets.symmetric(horizontal: 15.0),
                       child: _calendar(),//_calendarField(),
                     ),
-                    SizedBox(height: 20,)
+                    SizedBox(height: 10,)
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 10,),
               _statusField(),
               SizedBox(height: 0,),
               _timelineField(),//
@@ -619,7 +604,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _timelineField(){
     final double itemHeight = 40;
     final int total = timelotsCount;
-    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight -  80 - 70 - 120;
+    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 -  80 - 130 - 60 - 10;
     double girdHeight = (itemHeight * ((total/4).floor() + (total%4 > 0 ? 1 : 0)));
     double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
     double width = MediaQuery.of(context).size.width;

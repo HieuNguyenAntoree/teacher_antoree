@@ -19,21 +19,35 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context).settings.name;
     return new WillPopScope(
       child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: COLOR.BG_COLOR,
         appBar: AppBar(
-            title:_customeHeaderBar(),
-            centerTitle: true,
-            backgroundColor: const Color(0xffffffff)
+          title:_customeHeaderBar(context),
+          centerTitle: true,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          backgroundColor: COLOR.BG_COLOR,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 29, height: 25,),
+              onPressed: () {
+
+              },
+            ),
+          ],
+          leading: IconButton(
+            icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
+            onPressed: () {
+              StorageUtil.removeAllCache();
+              Navigator.of(context).popAndPushNamed('LoginView');
+            },
+          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 0),
-          child: BlocProvider(
-            create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
-            child: HomeUI(),
-          )
+        body: BlocProvider(
+          create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+          child: HomeUI(),
         ),
       ),
       onWillPop: () async {
@@ -42,23 +56,14 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  _customeHeaderBar() {
-    return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-        new Expanded(
-          child: Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-          ),
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
         ),
-        GestureDetector(
-            child: Image.asset(IMAGES.HOME_NOTI_OFF, width: 41, height: 35,)
-        ),
-        ],
-      ),
+      ],
     );
   }
 }
@@ -101,6 +106,11 @@ class HomeUIState extends State<HomeUI> {
         if (hours == 0 && minutes == 0 && seconds == 0) {
           _isStartVideoCall = true;
           timer.cancel();
+          Timer(Duration(minutes: 5),(){
+            setState(() {
+              _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+            });
+          });
         } else if (seconds <= 0) {
           minutes = minutes - 1;
           if (minutes == 0) {
@@ -286,7 +296,12 @@ class HomeUIState extends State<HomeUI> {
             setState(() {
               _isLoading = true;
             });
-          }else if (state.result is ParseJsonToObject) {
+          }else if (state.result is SuccessState) {
+            setState(() {
+              _isLoading = true;
+            });
+          }
+          else if (state.result is ParseJsonToObject) {
             setState(() {
               _isLoading = false;
             });
@@ -316,21 +331,55 @@ class HomeUIState extends State<HomeUI> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              const Padding(padding: EdgeInsets.all(40)),
-              _avatarImage(),
-              SizedBox(height: 20),
-              _helloUserText(),
-              SizedBox(height: 40),
-              _textTimeSheet('we have'),
-              SizedBox(height: 5),
-              _timeDownField(),
-              SizedBox(height: 5,),
-              _textTimeSheet('testing is comming'),
-              Expanded(child: Container()),
+              Container(
+                height: 1.0,
+                color: COLOR.COLOR_D8D8D8,
+              ),
+              _containerTop(),
+              Expanded(
+                  child:  currentSchedule != null ? Center(
+                      child: _containerView()
+                  ) : Container(
+
+                  )
+              ),
               _bottomButton(),
             ],
           ),
         )
+    );
+  }
+
+  _containerTop(){
+    return Container(
+      height: 250,
+      child: Column(
+        children: [
+          SizedBox(height: 50,),
+          _avatarImage(),
+          SizedBox(height: 12),
+          _helloUserText(),
+        ],
+      ),
+    );
+  }
+
+  _containerView(){
+    double marginLeftRight = (MediaQuery.of(context).size.width*4.8)/100;
+    return Container(
+      height: 110,
+      color: COLOR.BG_COLOR,
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
+      child: Column(
+        children: [
+          _textTimeSheet('we have'),
+          SizedBox(height: 5),
+          _timeDownField(),
+          SizedBox(height: 5,),
+          _textTimeSheet('testing is comming'),
+        ],
+      ),
     );
   }
 
@@ -344,23 +393,23 @@ class HomeUIState extends State<HomeUI> {
             imageBuilder:
                 (context, imageProvider) =>
                 Container(
-                  decoration: _borderAvatar(imageProvider, 3),
+                  decoration: _borderAvatar(imageProvider, 2),
                 ),
             placeholder: (context, url) =>
                 Container(
                   decoration: _borderAvatar(new AssetImage(IMAGES
-                      .HOME_AVATAR), 3),
+                      .HOME_AVATAR), 2),
                 ),
             errorWidget: (context, url, error)
             => Container(
                 decoration: _borderAvatar(new AssetImage(IMAGES
-                    .HOME_AVATAR), 3)
+                    .HOME_AVATAR), 2)
             ),
 
           ) :
           SizedBox(width: 0,),
           decoration: (teacher == null || teacher.avatar == null || teacher.avatar.url == null) ? _borderAvatar(new AssetImage(IMAGES
-              .HOME_AVATAR), 3) : BoxDecoration(),
+              .HOME_AVATAR), 2) : BoxDecoration(),
         )
     );
   }
@@ -450,6 +499,7 @@ class HomeUIState extends State<HomeUI> {
   }
 
   _timeDownField() {
+    double width = (MediaQuery.of(context).size.width - 2*((MediaQuery.of(context).size.width*4.8)/100))/3 - 2;
     return Container(
       width: 375,
       height: 64,
@@ -468,30 +518,38 @@ class HomeUIState extends State<HomeUI> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _timeField(hours, 'hr'),
-          SizedBox(width: 10,),
-          _timeField(minutes, 'min'),
-          SizedBox(width: 10,),
-          _timeField(seconds, 'nd')
+          _timeField(hours, 'hr', width),
+          _timeField(minutes, 'min', width),
+          _timeField(seconds, 'nd', width),
         ],
       ),
     );
   }
 
-  _timeField(int time, String timeText) {
-    return RichText(
-        text: TextSpan(
-            children: [
-              TextSpan(
-                  style: const TextStyle(
-                      color: const Color(0xff00c081),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: "Montserrat",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 50.0
-                  ),
-                  text: '$time'),
-              TextSpan(
+  _timeField(int time, String timeText, double width) {
+    return Container(
+        width: width,
+        child: Center(
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                    child: Center(
+                      child: Text(
+                        time > 9 ? '$time' : '  $time',
+                        style: const TextStyle(
+                            color: const Color(0xff00c081),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Montserrat",
+                            fontStyle: FontStyle.normal,
+                            fontSize: 48.0
+                        ),
+                      ),
+                    )
+                ),
+                Text(
+                  '$timeText',
                   style: const TextStyle(
                       color: const Color(0xff4B5B53),
                       fontWeight: FontWeight.w400,
@@ -499,21 +557,17 @@ class HomeUIState extends State<HomeUI> {
                       fontStyle: FontStyle.normal,
                       fontSize: 18.0
                   ),
-                  text: timeText)
-            ]
+                ),
+                SizedBox(width: 8,)
+              ]
+          ),
         )
     );
   }
 
   _bottomButton() {
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    double height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Container(
       height: 140,
       child: new Stack(
@@ -527,68 +581,35 @@ class HomeUIState extends State<HomeUI> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(onTap: () =>
-                  {
-                    setState(() {
-                      leftbuttonColor = COLOR.COLOR_00C081;
-                    }),
-
-                    Timer(Duration(seconds: 1), () {
-                      setState(() {
-                        leftbuttonColor = Color(0xffb6d6cb);
-                      });
-                    }),
-
-                    if(currentSchedule != null){
-                      Navigator.of(context).push(CalendarView.route(currentSchedule.id)),
-                    }else{
-                      _handleClickMe("", STRINGS.NO_SCHEDULE, 'OK', '', null)
-                    }
-                  },
-                    child: Container(
-                      width: width / 2 - 10,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(80),),
-                          //border: Border.all(width: 5.0,color: COLOR.COLOR_00C081),
-                          color: leftbuttonColor,
-                          image: new DecorationImage(
-                              fit: BoxFit.none, image: new AssetImage(IMAGES
-                              .HOME_CANCEL), scale: 2)
-                      ),
+                  Container(
+                    width: width / 2 - 10,
+                    child: RaisedButton(
+                        color: currentSchedule == null  ? COLOR.COLOR_D8D8D8 : leftbuttonColor,
+                        highlightColor: currentSchedule != null  ? COLOR.COLOR_00C081 : COLOR.COLOR_D8D8D8,
+                        splashColor: currentSchedule != null  ? COLOR.COLOR_00C081 : Colors.transparent,
+                        onPressed: () {
+                          if(currentSchedule != null){
+                            Navigator.of(context).push(CalendarView.route(currentSchedule.id));
+                          }
+                        },
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(80),)),
+                        child: Image.asset(IMAGES.HOME_CANCEL, width: 40, height: 70,)
                     ),
                   ),
                   SizedBox(width: 10,),
-                  GestureDetector(
-                    onTap: () =>
-                    {
-                      setState(() {
-                        rightbuttonColor = COLOR.COLOR_00C081;
-                      }),
-
-                      Timer(Duration(seconds: 1), () {
-                        setState(() {
-                          rightbuttonColor = Color(0xffb6d6cb);
-                        });
-                      }),
-
-                      if(currentSchedule != null){
-                        Navigator.of(context).push(TimeSlotView.route()),
-                      }else{
-                        _handleClickMe("", STRINGS.NO_SCHEDULE, 'OK', '', null)
-                      }
-                    },
-                    child: Container(
-                      width: width / 2 - 10,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(80),),
-                          //border: Border.all(width: 5.0,color: COLOR.COLOR_00C081),
-                          color: rightbuttonColor,
-                          image: new DecorationImage(
-                              fit: BoxFit.none, image: new AssetImage(IMAGES
-                              .HOME_PENCIL), scale: 2)
-                      ),
+                  Container(
+                    width: width / 2 - 10,
+                    child: RaisedButton(
+                        color: currentSchedule == null  ? COLOR.COLOR_D8D8D8 : leftbuttonColor,
+                        highlightColor: currentSchedule != null  ? COLOR.COLOR_00C081 : COLOR.COLOR_D8D8D8,
+                        splashColor: currentSchedule != null  ? COLOR.COLOR_00C081 : Colors.transparent,
+                        onPressed: () {
+                          if(currentSchedule != null){
+                            Navigator.of(context).push(TimeSlotView.route());
+                          }
+                        },
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(80),)),
+                        child: Image.asset(IMAGES.HOME_PENCIL, width: 40, height: 70,)
                     ),
                   ),
                 ],
@@ -598,22 +619,36 @@ class HomeUIState extends State<HomeUI> {
           Positioned(
             top: 0,
             child: Container(
-              width: 100,
-              height: 100,
-              child: GestureDetector(
-                onTap: () =>
-                {
-                  if(currentSchedule != null){
-                    context.bloc<APIConnect>().add(CallVideo(currentSchedule.id,  "teacher")),
-                    _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "",
-                  }else{
-                    _handleClickMe("", STRINGS.NO_SCHEDULE, 'OK', '', null)
-                  }
-                },
-                child: !_isStartVideoCall ? Image.asset(
-                  IMAGES.HOME_CALL_GRAY, width: 100, height: 100,) : Image
-                    .asset(IMAGES.HOME_CALL_GREEN, width: 100, height: 100,),
-              ),
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(60)),
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                    ),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                      color: _isStartVideoCall ? COLOR.COLOR_00C081 : (
+                          !_isStartVideoCall && currentSchedule == null ? COLOR.COLOR_D8D8D8 : COLOR.COLOR_B6D6CB
+                      ),
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      child: Image.asset(IMAGES.HOME_CALL_ICON, width: 40, height: 40,),
+                      onPressed: () {
+                        if(currentSchedule != null && teacher != null){
+                          context.bloc<APIConnect>().add(CallVideo(currentSchedule.id,  "teacher"));
+                        _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "";
+                        }
+                      },
+                    ),
+                  ),
+                )
             ),
           ),
         ],

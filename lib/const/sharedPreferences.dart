@@ -83,6 +83,15 @@ class StorageUtil {
     if (_preferences != null) return _preferences.remove(key);
   }
 
+  static removeAllCache() {
+    if (_preferences != null) {
+      _preferences.remove(KEY.TOKEN);
+      _preferences.remove(KEY.SCHEDULE);
+      _preferences.remove(KEY.TEACHER);
+      _preferences.remove(KEY.TIMESHEET);
+      _preferences.clear();
+    }
+  }
  /*----------------------------TOKEN ITEM------------------------------*/
   static storeTokenObjectToSF(Map<String, dynamic> value) async{
 //    Map<String, dynamic> decodeOptions = jsonDecode(jsonString);

@@ -78,6 +78,10 @@ flutter:
     - assets/images/9.teacher/arrowup.png
     - assets/images/9.teacher/iconsquare.png
     - assets/images/4.calendar/calendar_call_back.png
+    - assets/images/4.calendar/back_button.png
+    - assets/images/2.home/home_noti_active.png
+    - assets/images/2.home/call_wait.png
+    - assets/images/2.home/call_icon.png
 
     - assets/images/ic_launcher.png
     - assets/images/login/ic_white_logo.png

@@ -66,7 +66,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     else if(event is ChangeSchedule){
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.changeSchedule(AppConfig.of(context).apiBaseUrl, accessToken, event.idSchedule, event.datetime);
-      if (result is SuccessState){
+      if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );
@@ -89,7 +89,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     else if(event is ChangeTeacher){
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.changeTeacher(AppConfig.of(context).apiBaseUrl, accessToken, event.idSchedule, event.datetime, event.idTeacher, event.role);
-      if (result is SuccessState){
+      if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );

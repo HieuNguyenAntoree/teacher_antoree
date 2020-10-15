@@ -27,19 +27,32 @@ class CalendarView extends StatelessWidget {
   Widget build(BuildContext context) {
     return new WillPopScope(
       child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: COLOR.BG_COLOR,
         appBar: AppBar(
-            title:_customeHeaderBar(),
-            leading: addLeadingIcon(context),
-            centerTitle: true,
-            backgroundColor: const Color(0xffffffff)
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 0),
-          child: BlocProvider(
-            create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
-            child: CalendarUI(this.idSchedule),
+          title:_customeHeaderBar(context),
+          centerTitle: true,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          backgroundColor: COLOR.BG_COLOR,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 29, height: 25,),
+              onPressed: () {
+
+              },
+            ),
+          ],
+          leading: IconButton(
+            icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
+        ),
+        body: BlocProvider(
+          create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+          child: CalendarUI(this.idSchedule),
         ),
       ),
       onWillPop: () async {
@@ -48,46 +61,14 @@ class CalendarView extends StatelessWidget {
     );
   }
 
-  addLeadingIcon(BuildContext context){
-    return new Container(
-      height: 30.0,
-      width: 26.0,
-      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      child: new Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          new Image.asset(
-            IMAGES.HOME_LOGOUT,
-            width: 30.0,
-            height: 26.0,
-          ),
-          new FlatButton(
-              onPressed: (){
-                Navigator.of(context).pop();
-              }
-          )
-        ],
-      ),
-    );
-  }
-  _customeHeaderBar() {
-    return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          new Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: 10),
-              child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-            ),
-          ),
-          GestureDetector(
-              child: Image.asset(IMAGES.HOME_NOTI_OFF, width: 41, height: 35,)
-          ),
-        ],
-      ),
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+        ),
+      ],
     );
   }
 }
@@ -267,6 +248,10 @@ class CalendarUIState extends State<CalendarUI> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
+                height: 1.0,
+                color: COLOR.COLOR_D8D8D8,
+              ),
+              Container(
                 color: const Color(0xfff8f8f8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,7 +369,7 @@ class CalendarUIState extends State<CalendarUI> {
 
   _timeSheet(BuildContext context){
 
-    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight  - kBottomNavigationBarHeight - 320 - 80;
+    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 - 320 - 80 - 10;
     return schedulesInDay.length == 0 ? SizedBox(height: 0,) :
     NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
