@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
 import 'package:intl/intl.dart' show DateFormat;
-import 'package:teacher_antoree/src/customViews/route_names.dart';
+import 'dart:io' show Platform;
 import 'package:ui_libraries/calendar/calendarro.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -331,7 +331,7 @@ class CalendarUIState extends State<CalendarUI> {
                 ),
               ),
               SizedBox(height: 10,),
-              _timeSheet(context), //
+             Expanded(child:  _timeSheet(context),)//
             ],
           ),
           isLoading: _isLoading,
@@ -369,7 +369,7 @@ class CalendarUIState extends State<CalendarUI> {
 
   _timeSheet(BuildContext context){
 
-    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 - 320 - 80 - 10;
+//    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 - 320 - 80 - 10 - (Platform.isAndroid ? kBottomNavigationBarHeight : 0);
     return schedulesInDay.length == 0 ? SizedBox(height: 0,) :
     NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
@@ -390,7 +390,7 @@ class CalendarUIState extends State<CalendarUI> {
       return true;
     },
       child: Container(
-        height: maxHeight,
+//        height: maxHeight,
         child: ListView.builder(
           itemBuilder: (context, int index) {
             return  TimeSheetItem(scheduleItem: schedulesInDay[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);

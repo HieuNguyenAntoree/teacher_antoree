@@ -61,7 +61,7 @@ platform :ios do
     )
     upload_to_testflight(
       username: "apps.dev@antoree.com",
-      app_identifier: "com.antoree.student.stg",
+      app_identifier: "com.antoree.teacher.stg",
     )
     # firebase_app_distribution(
     #   app: "1:68569391172:ios:2220e8f2741c38a3d65c11",

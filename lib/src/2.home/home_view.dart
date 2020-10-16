@@ -16,7 +16,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
@@ -41,6 +40,7 @@ class HomeView extends StatelessWidget {
             icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
             onPressed: () {
               StorageUtil.removeAllCache();
+
               Navigator.of(context).popAndPushNamed('LoginView');
             },
           ),
@@ -100,6 +100,9 @@ class HomeUIState extends State<HomeUI> {
     var duration = interval;
     timer = Timer.periodic(duration, (timer) {
       setState(() {
+        if(StorageUtil.getAccessToken() == ''){
+          timer.cancel();
+        }
         print(timer.tick);
 
         seconds = seconds - 1;
@@ -367,7 +370,7 @@ class HomeUIState extends State<HomeUI> {
   _containerView(){
     double marginLeftRight = (MediaQuery.of(context).size.width*4.8)/100;
     return Container(
-      height: 110,
+      height: 120,
       color: COLOR.BG_COLOR,
       alignment: Alignment.center,
       padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),

@@ -11,7 +11,7 @@ import 'package:teacher_antoree/const/constant.dart';
 import 'package:teacher_antoree/const/defaultValue.dart';
 import 'package:teacher_antoree/models/timesheet.dart';
 import 'package:teacher_antoree/src/0.connection/api_connection.dart';
-import 'package:teacher_antoree/src/7.video/video_view.dart';
+import 'dart:io' show Platform;
 import 'package:ui_libraries/calendar/calendarro.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -391,7 +391,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
         }
       },
       child: LoadingOverlay(
-        child: SingleChildScrollView(
+//        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -483,10 +483,10 @@ class TimeSlotUIState extends State<TimeSlotUI>{
               SizedBox(height: 10,),
               _statusField(),
               SizedBox(height: 0,),
-              _timelineField(),//
+              Expanded(child:_timelineField()),//
             ],
           ),
-        ),
+//        ),
         isLoading: _isLoading,
         // demo of some additional parameters
         opacity: 0.2,
@@ -604,17 +604,18 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _timelineField(){
     final double itemHeight = 40;
     final int total = timelotsCount;
-    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 -  80 - 130 - 60 - 10;
+    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 -  80 - 130 - 60 - 10 - (Platform.isAndroid ? kBottomNavigationBarHeight : 0);
     double girdHeight = (itemHeight * ((total/4).floor() + (total%4 > 0 ? 1 : 0)));
-    double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
+//    double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
     double width = MediaQuery.of(context).size.width;
     final double itemWidth = (width - 32)/4;
     final int gridViewCrossAxisCount = 4;
     return Container(
-      height: height,
+//      height: height,
       margin: EdgeInsets.only(
         right: 15.0,
         left: 15.0,
+        bottom: 15.0,
       ),
       child: GridView.count(
         // Create a grid with 2 columns. If you change the scrollDirection to

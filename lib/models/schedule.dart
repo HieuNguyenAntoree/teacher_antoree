@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:teacher_antoree/const/constant.dart';
+
 
 ScheduleModel emptyFromJson(String str) => ScheduleModel.fromJson(json.decode(str));
 
@@ -145,8 +147,8 @@ class User {
   String displayName;
   dynamic urlAvatar;
   int gender;
-  int createdAt;
-  int modifiedAt;
+  String createdAt;
+  String modifiedAt;
   dynamic code;
   String country;
   String role;
