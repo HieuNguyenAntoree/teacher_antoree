@@ -164,30 +164,30 @@ class LoginUIState extends State<LoginUI>{
   _containerView(){
     double statusBarHeight = MediaQuery.of(context).padding.top;
     double marginLeftRight = (MediaQuery.of(context).size.width*10)/100;
-    return Container(
-      color: COLOR.BG_COLOR,
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: statusBarHeight),
-          _topImage(),
-          SizedBox(height: 20),
-          _textSection(),
-          SizedBox(height: 30),
-          _email(),
-          SizedBox(height: 20),
-          _password(),
-          SizedBox(height: 30,),
-          _statusLogin(),
-          SizedBox(height: 40,),
-          _loginButton(),
-        ],
-      ),
-    );
+     return Container(
+       color: COLOR.BG_COLOR,
+       alignment: Alignment.center,
+       padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
+       child: Column(
+         mainAxisSize: MainAxisSize.max,
+         crossAxisAlignment: CrossAxisAlignment.center,
+         mainAxisAlignment: MainAxisAlignment.center,
+         children: [
+           SizedBox(height: statusBarHeight),
+           _topImage(),
+           SizedBox(height: 20),
+           _textSection(),
+           SizedBox(height: 30),
+           _email(),
+           SizedBox(height: 20),
+           _password(),
+           SizedBox(height: 30,),
+//           _statusLogin(),
+//           SizedBox(height: 40,),
+           _loginButton(),
+         ],
+       ),
+     );
   }
 
   _topImage(){
@@ -250,7 +250,7 @@ class LoginUIState extends State<LoginUI>{
           hintText: STRINGS.LOGIN_EMAIL_HINT,
           errorText: validateEmail(),
           hintStyle: TextStyle(
-              color: COLOR.COLOR_D8D8D8,
+              color: COLOR.COLOR_9CAAA2,
               fontSize: 13,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.normal
@@ -298,7 +298,7 @@ class LoginUIState extends State<LoginUI>{
           hintText: STRINGS.LOGIN_PASS_HINT,
           errorText: validatePassword(),
           hintStyle: TextStyle(
-              color: COLOR.COLOR_D8D8D8,
+              color: COLOR.COLOR_9CAAA2,
               fontSize: 13,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.normal

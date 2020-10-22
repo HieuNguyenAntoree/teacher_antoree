@@ -37,7 +37,7 @@ class CalendarView extends StatelessWidget {
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 29, height: 25,),
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
               onPressed: () {
 
               },
@@ -111,8 +111,11 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   getSchedulesInDay(){
-    scheduleList = StorageUtil.getScheduleList();
-    getScheduleDependToDate();
+    setState(() {
+      scheduleList = StorageUtil.getScheduleList();
+      getScheduleDependToDate();
+    });
+
   }
 
   getDateFromAPI(){
@@ -120,17 +123,13 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   int checkCurrentDay(){
-    int days =  _selectDate.difference(DateTime.now()).inDays;
-    if(days == 0){
-      if(_selectDate.day - DateTime.now().day == 0) {
-        return 0;
-      }else{
-        return 1;
-      }
-    }else if(days > 0){
+    String now = VALUES.FORMAT_DATE_API.format(DateTime.now());
+    String select = VALUES.FORMAT_DATE_API.format(_selectDate);
+    int duration = DateTime.parse(select).compareTo(DateTime.parse(now));
+    if(duration > 0){
       return 1;
-    } else{
-      return -1;
+    }else{
+      return 0;
     }
   }
   cancelAction(value){
@@ -242,7 +241,8 @@ class CalendarUIState extends State<CalendarUI> {
             _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "", null);
           }
         },
-        child: _isCancel ? _cancelPopupView() : LoadingOverlay(
+        child:
+        LoadingOverlay(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -251,87 +251,18 @@ class CalendarUIState extends State<CalendarUI> {
                 height: 1.0,
                 color: COLOR.COLOR_D8D8D8,
               ),
-              Container(
-                color: const Color(0xfff8f8f8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+              Expanded(
+                child: Stack(
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 15.0,
-                        bottom: 15.0,
-                        left: 15.0,
-                      ),
-                      child: new Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Text(
-                                  '${_currentMonth[0].toUpperCase()}${_currentMonth.substring(1)}',
-                                  style: const TextStyle(
-                                      color:  const Color(0xff4B5B53),
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: "Montserrat",
-                                      fontStyle:  FontStyle.normal,
-                                      fontSize: 18.0
-                                  )
-                              )),
-                          GestureDetector(onTap: ()=>
-                          {
-                            setState(() {
-                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
-                              _currentMonth = formatMonth.format(_targetDateTime);
-                              _currentDate = _targetDateTime;
-                              nextButton = IMAGES.CALENDAR_NEXT;
-                            }),
-
-                            Timer(Duration(milliseconds: 200),(){
-                              setState(() {
-                                nextButton = IMAGES.CALENDAR_NEXT_UN;
-                              });
-                            })
-                          },
-                            child: Container(
-                              width: 52,
-                              height: 50,
-                              child: Image.asset(nextButton, width: 52.0, height: 50.0,),
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                          GestureDetector(onTap: ()=>
-                          {
-                            setState(() {
-                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
-                              _currentMonth = formatMonth.format(_targetDateTime);
-                              _currentDate = _targetDateTime;
-                              backButton = IMAGES.CALENDAR_BACK;
-                            }),
-
-                            Timer(Duration(milliseconds: 200),(){
-                              setState(() {
-                                backButton = IMAGES.CALENDAR_BACK_UN;
-                              });
-                            })
-                          },
-                            child: Container(
-                              width: 52,
-                              height: 50,
-                              child: Image.asset(backButton, width: 52.0, height: 50.0,),
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: _calendar(),//_calendarField(),
-                    ),
+                    Stack(
+                      children: [
+                        _listView(),
+                        _isCancel ? _cancelPopupView() : Container()
+                      ],
+                    )
                   ],
-                ),
+                ) ,
               ),
-              SizedBox(height: 10,),
-             Expanded(child:  _timeSheet(context),)//
             ],
           ),
           isLoading: _isLoading,
@@ -339,6 +270,94 @@ class CalendarUIState extends State<CalendarUI> {
           opacity: 0.2,
           progressIndicator: CircularProgressIndicator(),
       )
+    );
+  }
+
+  _listView(){
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xfff8f8f8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                  top: 15.0,
+                  bottom: 15.0,
+                  left: 15.0,
+                ),
+                child: new Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Text(
+                            '${_currentMonth[0].toUpperCase()}${_currentMonth.substring(1)}',
+                            style: const TextStyle(
+                                color:  const Color(0xff4B5B53),
+                                fontWeight: FontWeight.w700,
+                                fontFamily: "Montserrat",
+                                fontStyle:  FontStyle.normal,
+                                fontSize: 18.0
+                            )
+                        )),
+                    GestureDetector(onTap: ()=>
+                    {
+                      setState(() {
+                        _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
+                        _currentMonth = formatMonth.format(_targetDateTime);
+                        _currentDate = _targetDateTime;
+                        nextButton = IMAGES.CALENDAR_NEXT;
+                      }),
+
+                      Timer(Duration(milliseconds: 200),(){
+                        setState(() {
+                          nextButton = IMAGES.CALENDAR_NEXT_UN;
+                        });
+                      })
+                    },
+                      child: Container(
+                        width: 52,
+                        height: 50,
+                        child: Image.asset(nextButton, width: 52.0, height: 50.0,),
+                      ),
+                    ),
+                    SizedBox(width: 10,),
+                    GestureDetector(onTap: ()=>
+                    {
+                      setState(() {
+                        _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
+                        _currentMonth = formatMonth.format(_targetDateTime);
+                        _currentDate = _targetDateTime;
+                        backButton = IMAGES.CALENDAR_BACK;
+                      }),
+
+                      Timer(Duration(milliseconds: 200),(){
+                        setState(() {
+                          backButton = IMAGES.CALENDAR_BACK_UN;
+                        });
+                      })
+                    },
+                      child: Container(
+                        width: 52,
+                        height: 50,
+                        child: Image.asset(backButton, width: 52.0, height: 50.0,),
+                      ),
+                    ),
+                    SizedBox(width: 15,),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 15.0),
+                child: _calendar(),//_calendarField(),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 10,),
+        Expanded(child:  _timeSheet(context),)//
+      ],
     );
   }
 
@@ -370,7 +389,7 @@ class CalendarUIState extends State<CalendarUI> {
   _timeSheet(BuildContext context){
 
 //    maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 - 320 - 80 - 10 - (Platform.isAndroid ? kBottomNavigationBarHeight : 0);
-    return schedulesInDay.length == 0 ? SizedBox(height: 0,) :
+    return
     NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
       print('inside the onNotification');
@@ -393,11 +412,11 @@ class CalendarUIState extends State<CalendarUI> {
 //        height: maxHeight,
         child: ListView.builder(
           itemBuilder: (context, int index) {
-            return  TimeSheetItem(scheduleItem: schedulesInDay[index], cancelAction: cancelAction, isCurrentDay: checkCurrentDay(),);
+            return new TimeSheetItem( cancelAction: cancelAction,  scheduleList: this.schedulesInDay, index: index,) ;
           },
           scrollDirection: Axis.vertical,
           shrinkWrap: false,
-          itemCount: schedulesInDay.length,
+          itemCount: schedulesInDay.length ,
         controller: _scrollController,
         ),
       )
@@ -405,22 +424,27 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   getScheduleDependToDate(){
+
     schedulesInDay.clear();
-    for (var i = 0; i < scheduleList.objects.length; i++) {
-      DateTime dateSchedule = scheduleList.objects[i].date;
-      int days =  _selectDate.difference(dateSchedule).inDays;
-      if(days == 0 && _selectDate.day - dateSchedule.day == 0) {
-        for(Schedule sch in scheduleList.objects[i].schedules){
-          List<User> users = sch.users;
-          User student = users.firstWhere((element) => element.role == "student");
-          if(student != null){
-            schedulesInDay.add(sch);
+
+    setState(() {
+      for (var i = 0; i < scheduleList.objects.length; i++) {
+        DateTime dateSchedule = scheduleList.objects[i].date;
+        if(_selectDate.day == dateSchedule.day && _selectDate.month == dateSchedule.month && _selectDate.year == dateSchedule.year) {
+
+          for(Schedule sch in scheduleList.objects[i].schedules){
+            List<User> users = sch.users;
+            User student = users.firstWhere((element) => element.role == "student");
+            if(student != null){
+              schedulesInDay.add(sch);
+            }
           }
+          schedulesInDay.sort((a, b) => a.startTime.compareTo(b.startTime));
+          break;
         }
-        schedulesInDay.sort((a, b) => a.startTime.compareTo(b.startTime));
-        break;
       }
-    }
+    });
+
   }
 
   @override
@@ -429,6 +453,7 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   _cancelPopupView(){
+    double marginLeftRight = (MediaQuery.of(context).size.width*4.8)/100;
     return GestureDetector(
         onTap: ()=>
         {
@@ -437,79 +462,90 @@ class CalendarUIState extends State<CalendarUI> {
           }),
         },
         child: Container(
+          alignment: Alignment.center,
             color: const Color(0xffd8d8d8).withOpacity(0.9),
-//          height:  MediaQuery.of(context).size.height - kToolbarHeight - 25 - kBottomNavigationBarHeight,
+            width: MediaQuery.of(context).size.width,
             child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(5),
-                  bottomRight: Radius.circular(30),
-                  bottomLeft: Radius.circular(5),
-                ),
-                color: Colors.white,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  new GestureDetector(
-                    onTap: ()=> {
-                      launch("tel://21213123123"),
-                    },
-                    child: Container(
-                      width: 150,
-                      alignment: Alignment.center,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(5),
-                          bottomRight: Radius.circular(30),
-                          bottomLeft: Radius.circular(5),
-                        ),
-                        color: COLOR.COLOR_00C081,
-                      ),
-                      child: Text('Call center',
-                        style: TextStyle(
-                            color: const Color(0xffffffff),
-                            fontSize: 18,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.bold
-                        ),),
-                    ),
+
+              child: Container(
+                height: 212,
+                margin: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(80),
+                    topRight: Radius.circular(5),
+                    bottomRight: Radius.circular(80),
+                    bottomLeft: Radius.circular(5),
                   ),
-                  SizedBox(height: 15,),
-                  new GestureDetector(
-                    onTap: ()=> {},
-                    child: Container(
-                      width: 150,
-                      alignment: Alignment.center,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(5),
-                          bottomRight: Radius.circular(30),
-                          bottomLeft: Radius.circular(5),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    new GestureDetector(
+                      onTap: ()=> {
+                        launch("tel://21213123123"),
+                      },
+                      child: Container(
+                        width: 150,
+                        alignment: Alignment.center,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(5),
+                            bottomRight: Radius.circular(30),
+                            bottomLeft: Radius.circular(5),
+                          ),
+                          color: COLOR.COLOR_00C081,
                         ),
-                        color: Colors.white,
-                        border: Border.all(
-                            color: COLOR.COLOR_00C081,
-                            width: 4
-                        ),
+                        child: Text('Call center',
+                          style: TextStyle(
+                              color: const Color(0xffffffff),
+                              fontSize: 18,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold
+                          ),),
                       ),
-                      child: Text('back',
-                        style: TextStyle(
-                            color: COLOR.COLOR_00C081,
-                            fontSize: 18,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.bold
-                        ),),
                     ),
-                  )
-                ],
-              ),
+                    SizedBox(height: 15,),
+                    new GestureDetector(
+                      onTap: ()=> {
+                      setState(() {
+                      _isCancel = false;
+                      })
+                      },
+                      child: Container(
+                        width: 150,
+                        alignment: Alignment.center,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(5),
+                            bottomRight: Radius.circular(30),
+                            bottomLeft: Radius.circular(5),
+                          ),
+                          color: Colors.white,
+                          border: Border.all(
+                              color: COLOR.COLOR_00C081,
+                              width: 4
+                          ),
+                        ),
+                        child: Text('back',
+                          style: TextStyle(
+                              color: COLOR.COLOR_00C081,
+                              fontSize: 18,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold
+                          ),),
+                      ),
+                    )
+                  ],
+                ),
+              )
             )
         )
     );
@@ -535,84 +571,110 @@ class BottomLoader extends StatelessWidget {
 }
 
 class TimeSheetItem extends StatefulWidget {
-  final Schedule scheduleItem;
-  final Function cancelAction;
-  final int isCurrentDay;
 
-  TimeSheetItem({Key key, this.scheduleItem, this.cancelAction, this.isCurrentDay})
+  final Function cancelAction;
+  final int index;
+  final List<Schedule> scheduleList;
+
+  TimeSheetItem({Key key,  this.cancelAction,  this.scheduleList, this.index})
       : super(key: key);
 
   @override
-  TimeSheetItemState createState() => TimeSheetItemState(this.scheduleItem, this.cancelAction, this.isCurrentDay);
+  TimeSheetItemState createState() => TimeSheetItemState(this.cancelAction,  this.scheduleList, this.index);
 
 }
 
 class TimeSheetItemState extends State<TimeSheetItem> {
 
-  TimeSheetItemState(this.scheduleItem, this.cancelAction, this.isCurrentDay);
+  TimeSheetItemState(this.cancelAction, this.scheduleList, this.index);
 
   double widthCell = 0;
   Function cancelAction;
-  int isCurrentDay;
   Timer timer;
-  int isOnTime = 1;
   int delayTime = 14;
-  Schedule scheduleItem;
+  int index = 0;
+  List<Schedule> scheduleList = List<Schedule>();
 
   @override
   void initState() {
     super.initState();
-    _checkOnTime();
-    if(isCurrentDay == 0 && isOnTime >= 0) {
-      timer = Timer.periodic(Duration(minutes: delayTime), (Timer t) => _checkOnTime());
-    }
   }
 
   //Function
-  _checkOnTime(){
-    DateTime date = scheduleItem.startTime;
-    int ms = date.difference(DateTime.now()).inMinutes;
-    if(ms >= -delayTime && ms <= delayTime){
-      setState(() {
-          isOnTime = 0;
-      });
-    }else  if(ms < -delayTime){
-      setState(() {
-        isOnTime = -1;
-        if (timer != null){
-         timer.cancel();
-        }
-      });
+  int _checkOnTime(DateTime startTime){
+    String now = VALUES.FORMAT_DATE_API.format(DateTime.now());
+    Duration duration = startTime.difference(DateTime.parse(now));
+    int hrs = duration.inHours;
+    if(hrs > 0){
+      return 1;
     }else{
-      isOnTime = 1;
-    }
-  }
-
-  String _getHourAndMinutes(){
-    int start = 9;
-    String hours = scheduleItem.startTime.hour > 9 ? scheduleItem.startTime.hour.toString() : "0" + scheduleItem.startTime.hour.toString();
-    String minutes = scheduleItem.startTime.minute > 9 ? scheduleItem.startTime.minute.toString() : "0" + scheduleItem.startTime.minute.toString();
-    return hours + ':' + minutes;
-  }
-
-  String scheduleStatus(){
-    if(scheduleItem.status == SCHEDULE_STATUS.CANCEL){
-      return SCHEDULE_STATUS_TEXT.CANCEL;
-    }else if(scheduleItem.status == SCHEDULE_STATUS.DONE){
-      return SCHEDULE_STATUS_TEXT.DONE;
-    }else if(scheduleItem.status == SCHEDULE_STATUS.ACTIVE){
-      return "";
-    }else{
-      return SCHEDULE_STATUS_TEXT.UNKNOWN;
+      int ms = duration.inMinutes;
+      if(ms >= -delayTime && ms <= delayTime){
+        return 0;
+      }if(ms < -delayTime){
+        return -1;
+      }else{
+        return 1;
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<User> users = scheduleItem.users;
+    Schedule item = scheduleList[index];
+    List<User> users = item.users;
     User student = users.firstWhere((element) => element.role == "student");
-    Color textColor = (scheduleItem.status == SCHEDULE_STATUS.DONE || scheduleItem.status == SCHEDULE_STATUS.ACTIVE) ? const Color(0xff00c081) :
-    (scheduleItem.status == SCHEDULE_STATUS.CANCEL ? const Color(0xffFF5600) : const Color(0xffFF9900));
+    Color textColor = (item.status == SCHEDULE_STATUS.DONE || item.status == SCHEDULE_STATUS.ACTIVE) ? const Color(0xff00c081) :
+    (item.status == SCHEDULE_STATUS.CANCEL ? const Color(0xffFF5600) : const Color(0xffFF9900));
+
+    String now = VALUES.FORMAT_DATE_API.format(DateTime.now());
+    String select = VALUES.FORMAT_DATE_API.format(item.startTime);
+    int duration = DateTime.parse(select).compareTo(DateTime.parse(now));
+    int isCurrentDay = 0;
+    if(duration > 0){
+      isCurrentDay = 1;
+    }
+
+    int isOnTime = 0;
+    if(isCurrentDay > 0){
+      isOnTime = 1;
+    }else{
+      Duration duration = item.startTime.difference(DateTime.parse(now));
+      int hrs = duration.inHours;
+      if(hrs > 0){
+        isOnTime = 1;
+      }else{
+        int ms = duration.inMinutes;
+        if(ms >= -delayTime && ms <= delayTime){
+          isOnTime = 0;
+        }if(ms < -delayTime){
+          isOnTime = -1;
+        }else{
+          isOnTime = 1;
+        }
+      }
+    }
+    Color timeColor = (isOnTime == 0) ? const Color(0xffff5600) : ((item.status == SCHEDULE_STATUS.CANCEL) ? const  Color(0xffFF5600) : const Color(0xff4B5B53));
+
+    String hours = item.startTime.hour > 9 ? item.startTime.hour.toString() : "0" + item.startTime.hour.toString();
+    String minutes = item.startTime.minute > 9 ? item.startTime.minute.toString() : "0" + item.startTime.minute.toString();
+    String timeString =hours + ':' + minutes;
+
+    if(isCurrentDay == 0 && isOnTime >= 0) {
+      timer = Timer.periodic(Duration(minutes: delayTime), (Timer t) => _checkOnTime(item.startTime));
+    }
+
+    String status = '';
+    if(item.status == SCHEDULE_STATUS.CANCEL){
+      status = SCHEDULE_STATUS_TEXT.CANCEL;
+    }else if(item.status == SCHEDULE_STATUS.DONE){
+      status = SCHEDULE_STATUS_TEXT.DONE;
+    }else if(item.status == SCHEDULE_STATUS.ACTIVE){
+      status = '';
+    }else{
+      status =  SCHEDULE_STATUS_TEXT.UNKNOWN;
+    }
+
     widthCell = MediaQuery
         .of(context)
         .size
@@ -621,23 +683,13 @@ class TimeSheetItemState extends State<TimeSheetItem> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
+        new Container(
           padding: EdgeInsets.only(left: 15, right: 15),
             width: 90,
-            child: isOnTime == 0 ? new Text(
-                _getHourAndMinutes(),
-                style: const TextStyle(
-                    color:  Colors.red,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: "Montserrat",
-                    fontStyle:  FontStyle.normal,
-                    fontSize: 18.0
-                )
-            ) :
-            new Text(
-                _getHourAndMinutes(),
-                style: const TextStyle(
-                    color:  const Color(0xff4B5B53),
+            child: Text(
+                timeString,
+                style:  TextStyle(
+                    color:  timeColor,
                     fontWeight: FontWeight.w400,
                     fontFamily: "Montserrat",
                     fontStyle:  FontStyle.normal,
@@ -646,13 +698,13 @@ class TimeSheetItemState extends State<TimeSheetItem> {
             )
 
         ),
-        Container(
+        new Container(
           width: widthCell,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Container(
+                new Container(
                   margin: EdgeInsets.only(right: 15, top: 12),
                     height: 1,
                     decoration: BoxDecoration(
@@ -661,7 +713,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 ),
                 SizedBox(height: 10,),
                 new Text(
-                  (student.lastName != null ? student.lastName : "") + " " + scheduleStatus(),
+                  (student.lastName != null ? student.lastName : "") + " " + status,
                     style: TextStyle(
                         color:  textColor,
                         fontWeight: FontWeight.w700,
@@ -670,11 +722,11 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                         fontSize: 14.0
                     ),
                 ),
-                scheduleItem.comment != null ? SizedBox(height: 13,) : SizedBox(height: 10,),
-                Container(
+                item.comment != null ? SizedBox(height: 13,) : SizedBox(height: 10,),
+                new Container(
                   width: widthCell - 15,
                   child: new Text(
-                      scheduleItem.comment != null ? scheduleItem.comment : "",
+                      item.comment != null ? item.comment : "",
                       style: const TextStyle(
                           color:  const Color(0xff4B5B53),
                           fontWeight: FontWeight.w400,
@@ -685,7 +737,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                   )
                 ),
 //                SizedBox(height: 10,),
-                ((isCurrentDay >= 0 && isOnTime >= 0) &&  scheduleItem.status == SCHEDULE_STATUS.ACTIVE)? _bottomButton(context, widthCell) : SizedBox(height: 0,),
+                ((isCurrentDay >= 0 && isOnTime >= 0) &&  item.status == SCHEDULE_STATUS.ACTIVE)? _bottomButton(context, widthCell, isOnTime, item, isCurrentDay) : SizedBox(height: 0,),
               ],
             ),
         )
@@ -693,9 +745,9 @@ class TimeSheetItemState extends State<TimeSheetItem> {
     );
   }
 
-  _bottomButton(BuildContext context, double width){
+  _bottomButton(BuildContext context, double width, int isOnTime, Schedule item, int isCurrentDay){
     double widthButton = (width - 10 - 15)/2;
-    return Container(
+    return new Container(
         margin: EdgeInsets.only( top: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -708,7 +760,7 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                 new GestureDetector(
                   onTap: () {
                     if(isOnTime > 0) {
-                      cancelAction(scheduleItem.id);
+                      cancelAction(item.id);
                     }else {
                       showAlertDialog(context: context,
                           title: '',

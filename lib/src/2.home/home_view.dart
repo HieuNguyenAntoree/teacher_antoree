@@ -14,6 +14,7 @@ import 'package:teacher_antoree/const/constant.dart';
 import 'package:intl/intl.dart';  //for date format
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:teacher_antoree/src/8.notification/notification_view.dart';
 
 class HomeView extends StatelessWidget {
   @override
@@ -30,9 +31,9 @@ class HomeView extends StatelessWidget {
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 29, height: 25,),
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
               onPressed: () {
-
+//                _openNextScreen(NotificationView.route(), context);
               },
             ),
           ],
@@ -40,8 +41,7 @@ class HomeView extends StatelessWidget {
             icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
             onPressed: () {
               StorageUtil.removeAllCache();
-
-              Navigator.of(context).popAndPushNamed('LoginView');
+              Navigator.of(context).pop();
             },
           ),
         ),
@@ -54,6 +54,21 @@ class HomeView extends StatelessWidget {
         return false;
       },
     );
+  }
+
+  void _openNextScreen(Route route , BuildContext context) {
+    Navigator.of(context).push(route).then((result) => {
+      if(result != null) {
+        if (result == 'LoginView') {
+          if(Navigator.of(context).canPop()){
+            Navigator.of(context).pop()
+          }
+          else{
+            Navigator.of(context).popAndPushNamed('LoginView')
+          }
+        }
+      }
+    });
   }
 
   _customeHeaderBar(BuildContext context) {
@@ -106,7 +121,7 @@ class HomeUIState extends State<HomeUI> {
         print(timer.tick);
 
         seconds = seconds - 1;
-        if (hours == 0 && minutes == 0 && seconds == 0) {
+        if (hours == 0 && minutes == 5 && seconds == 0) {
           _isStartVideoCall = true;
           timer.cancel();
           Timer(Duration(minutes: 5),(){
@@ -338,14 +353,17 @@ class HomeUIState extends State<HomeUI> {
                 height: 1.0,
                 color: COLOR.COLOR_D8D8D8,
               ),
-              _containerTop(),
-              Expanded(
+              currentSchedule  == null ? Expanded(
+                  child:  Center(
+                      child: _containerTop()
+                  )) : _containerTop(),
+              currentSchedule  != null ? Expanded(
                   child:  currentSchedule != null ? Center(
                       child: _containerView()
                   ) : Container(
 
                   )
-              ),
+              ) : SizedBox(height: 0,),
               _bottomButton(),
             ],
           ),
@@ -370,7 +388,7 @@ class HomeUIState extends State<HomeUI> {
   _containerView(){
     double marginLeftRight = (MediaQuery.of(context).size.width*4.8)/100;
     return Container(
-      height: 120,
+      height: 130,
       color: COLOR.BG_COLOR,
       alignment: Alignment.center,
       padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
@@ -391,7 +409,7 @@ class HomeUIState extends State<HomeUI> {
         child: Container(
           height: 125,
           width: 137,
-          child: (teacher != null && teacher.avatar != null ) ? CachedNetworkImage(
+          child: (teacher != null && teacher.avatar != null && teacher.avatar.url != "") ? CachedNetworkImage(
             imageUrl: teacher.avatar.url,
             imageBuilder:
                 (context, imageProvider) =>
@@ -410,9 +428,10 @@ class HomeUIState extends State<HomeUI> {
             ),
 
           ) :
-          SizedBox(width: 0,),
-          decoration: (teacher == null || teacher.avatar == null || teacher.avatar.url == null) ? _borderAvatar(new AssetImage(IMAGES
-              .HOME_AVATAR), 2) : BoxDecoration(),
+          Container(
+              decoration: _borderAvatar(new AssetImage(IMAGES
+                  .HOME_AVATAR), 2)
+          ),
         )
     );
   }
@@ -504,7 +523,6 @@ class HomeUIState extends State<HomeUI> {
   _timeDownField() {
     double width = (MediaQuery.of(context).size.width - 2*((MediaQuery.of(context).size.width*4.8)/100))/3 - 2;
     return Container(
-      width: 375,
       height: 64,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(
@@ -640,6 +658,7 @@ class HomeUIState extends State<HomeUI> {
                       color: _isStartVideoCall ? COLOR.COLOR_00C081 : (
                           !_isStartVideoCall && currentSchedule == null ? COLOR.COLOR_D8D8D8 : COLOR.COLOR_B6D6CB
                       ),
+                      elevation: 0.0,
                       highlightColor: Colors.transparent,
                       splashColor: Colors.transparent,
                       child: Image.asset(IMAGES.HOME_CALL_ICON, width: 40, height: 40,),
@@ -661,15 +680,28 @@ class HomeUIState extends State<HomeUI> {
 
   void _openNextScreen(Route route ) {
     Navigator.of(context).push(route).then((result) => setState((){
-      if(result != null){
-        String formattedDate = formatDateForTimer.format(result);
-        _isStartVideoCall = false;
-        if(timer != null) {
-          timer.cancel();
-        }
-        calculatorDuration(formattedDate);
-        if (hours > 0 || minutes > 0 || seconds > 0) {
-          startTimeout();
+      if(result != null) {
+        String screen = result;
+        if (screen == 'LoginView') {
+          if (timer != null) {
+            timer.cancel();
+          }
+          if(Navigator.of(context).canPop()){
+            Navigator.of(context).pop();
+          }
+          else{
+            Navigator.of(context).popAndPushNamed('LoginView');
+          }
+        } else {
+          String formattedDate = formatDateForTimer.format(result);
+          _isStartVideoCall = false;
+          if (timer != null) {
+            timer.cancel();
+          }
+          calculatorDuration(formattedDate);
+          if (hours > 0 || minutes > 0 || seconds > 0) {
+            startTimeout();
+          }
         }
       }
     }));

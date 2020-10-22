@@ -10,7 +10,9 @@ class VALUES {
   static const COURSE_STATUSES_CLOSED_STR = "Closed";
   static const COURSE_STATUSES_ALL_STR = "All";
 
-  static const DELAY_TIME = 20;
+  static const DELAY_TIME = 15;
+  static const START_TIME = 9;
+  static const END_TIME = 23;
   static const SCHEDULE_DAYS = 3;
   static DateFormat FORMAT_DATE_API = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   static DateFormat FORMAT_DATE_yyyy_mm_dd = DateFormat("yyyy-MM-dd");
@@ -27,7 +29,7 @@ class STRINGS{
   static const LOGIN_EMAIL_VALID = "Email is invalid";
   static const EMPTY_LIST = "List is empty";
   static const TEACHER_STRING = "Teacher";
-  static const NO_SCHEDULE = "You don't' have schedule in next 30 days, so you can't' connect the feature.";
+  static const NO_SCHEDULE = "You don't' have schedule in next 3 days.";
 }
 
 class IMAGES{
@@ -54,6 +56,7 @@ class IMAGES{
   static const String RATING_TOPIMAGE = "assets/images/6.rating/rating_topimage.png";
 
   static const String NOTIFCATION_CANCEL = "assets/images/8.notification/notification_cancel.png";
+  static const String NOTIFCATION_ICON = "assets/images/8.notification/notification_icon.png";
 
   static const String CALENDAR_NEXT = "assets/images/4.calendar/calendar_back_active.png";
   static const String CALENDAR_NEXT_UN = "assets/images/4.calendar/calendar_back_unactive.png";

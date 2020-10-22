@@ -36,7 +36,7 @@ class TimeSlotView extends StatelessWidget {
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 29, height: 25,),
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
               onPressed: () {
 
               },
@@ -238,96 +238,74 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   {
     List<String> slots = List<String>();
     int difference = date.day - DateTime.now().day;
+    int minute = 0;
+    int hour = VALUES.START_TIME;
+    int maxHour = VALUES.END_TIME;
+    int i = hour;
     if(difference > 0 || difference < 0){
-      int minute = 0;
-      int hour = 5;
-      int maxHour = 22;
-
-      var i = hour;
-      do{
-        if (minute == 0){
-          if(i + 1 > 9) {
-            String str = i.toString() + ":00";
-            slots.add(str);
-          }else{
-            String str = "0" + i.toString() + ":00";
-            slots.add(str);
-          }
-          minute = VALUES.DELAY_TIME;
-        }else if (minute != VALUES.DELAY_TIME && i < maxHour){
-          if(i > 9) {
-            String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 0;
-          i++;
-        }
-        else if(i < maxHour){
-          if(i > 9) {
-            String str = (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 2*VALUES.DELAY_TIME;
-        }else{
-          i++;
-        }
-      }while(i <= maxHour);
-      return slots;
+      minute = 59;
+      hour = VALUES.START_TIME;
+      i = hour;
     }else if (difference == 0){
       DateTime date = DateTime.now();
-      int i = date.hour;
-      int minute = 0;
-      int maxHour = 22;
-      if(date.minute < VALUES.DELAY_TIME){
+      i = date.hour;
+      minute = 0;
+      if(date.minute < 3*VALUES.DELAY_TIME){
         i = date.hour;
-        minute = 2 * VALUES.DELAY_TIME;
-      }else {
+        minute = date.minute;
+      }
+      else {
         i = date.hour + 1;
         minute = 0;
       }
-
-      do{
-        if (minute == 0){
-          if(i + 1 > 9) {
-            String str = i.toString() + ":00";
-            slots.add(str);
-          }else{
-            String str = "0" + i.toString() + ":00";
-            slots.add(str);
-          }
-          minute = VALUES.DELAY_TIME;
-        }else if (minute != VALUES.DELAY_TIME && i < maxHour){
-          if(i > 9) {
-            String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 0;
-          i++;
-        }
-        else if(i < maxHour){
-          if(i > 9) {
-            String str = (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }else{
-            String str = "0" + (i).toString() + ":${VALUES.DELAY_TIME}";
-            slots.add(str);
-          }
-          minute = 2*VALUES.DELAY_TIME;
-        }else{
-          i++;
-        }
-      }while(i <= maxHour);
-      return slots;
     }
+
+    do{
+      if (minute < VALUES.DELAY_TIME && i < maxHour){
+        if(i + 1 > 9) {
+          String str = i.toString() + ":${VALUES.DELAY_TIME}";
+          slots.add(str);
+        }else{
+          String str = "0" + i.toString() + ":${VALUES.DELAY_TIME}";
+          slots.add(str);
+        }
+        minute = VALUES.DELAY_TIME;
+      }else if (minute < 2*VALUES.DELAY_TIME && i < maxHour){
+        if(i > 9) {
+          String str = (i).toString() + ":${2*VALUES.DELAY_TIME}";
+          slots.add(str);
+        }else{
+          String str = "0" + (i).toString() + ":${2*VALUES.DELAY_TIME}";
+          slots.add(str);
+        }
+        minute = 2*VALUES.DELAY_TIME;
+      }
+      else if (minute < 3*VALUES.DELAY_TIME && i < maxHour){
+        if(i > 9) {
+          String str = (i).toString() + ":${3*VALUES.DELAY_TIME}";
+          slots.add(str);
+        }else{
+          String str = "0" + (i).toString() + ":${3*VALUES.DELAY_TIME}";
+          slots.add(str);
+        }
+        minute = 3*VALUES.DELAY_TIME;
+        i++;
+      }
+      else if (i <= maxHour){
+        if(i + 1 > 9) {
+          String str = i.toString() + ":00";
+          slots.add(str);
+        }else{
+          String str = "0" + i.toString() + ":00";
+          slots.add(str);
+        }
+        minute = 0;
+        if(i == maxHour){
+          i++;
+        }
+      }
+    }while(i <= maxHour);
+    return slots;
   }
 
   @override
@@ -539,7 +517,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               _statusLabel(Colors.white, 'Unavailable', 15, true),
-              _statusLabel(const Color(0xffff5600), 'Cancel by customer', 0, false)
+//              _statusLabel(const Color(0xffff5600), 'Cancel by customer', 0, false)
             ],
           )
         ],
@@ -604,9 +582,6 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   _timelineField(){
     final double itemHeight = 40;
     final int total = timelotsCount;
-    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 -  80 - 130 - 60 - 10 - (Platform.isAndroid ? kBottomNavigationBarHeight : 0);
-    double girdHeight = (itemHeight * ((total/4).floor() + (total%4 > 0 ? 1 : 0)));
-//    double height = (girdHeight > maxHeight ? maxHeight : girdHeight) + 2;
     double width = MediaQuery.of(context).size.width;
     final double itemWidth = (width - 32)/4;
     final int gridViewCrossAxisCount = 4;

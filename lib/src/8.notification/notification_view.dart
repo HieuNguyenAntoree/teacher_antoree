@@ -2,33 +2,39 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/color.dart';
 import 'package:teacher_antoree/const/defaultValue.dart';
+import 'package:teacher_antoree/const/sharedPreferences.dart';
+import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/src/2.home/home_view.dart';
 import 'package:teacher_antoree/src/5.cancel/cancel_view.dart';
 import 'package:teacher_antoree/src/customViews/route_names.dart';
 
 class NotificationView extends StatelessWidget {
 
-  final String idSchedule;
-  const NotificationView(this.idSchedule);
-  static Route route(String idSchedule) {
-    return MaterialPageRoute<void>(builder: (_) => NotificationView(idSchedule));
+  const NotificationView();
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => NotificationView());
   }
 
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
       child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: COLOR.BG_COLOR,
         appBar: AppBar(
-            title:_customeHeaderBar(),
-            leading: addLeadingIcon(context),
-            centerTitle: true,
-            backgroundColor: const Color(0xffffffff)
+          title:_customeHeaderBar(context),
+          centerTitle: true,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          backgroundColor: COLOR.BG_COLOR,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
+            onPressed: () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 0),
-          child: NotificationUI(this.idSchedule),
-        ),
+        body: NotificationUI(),
       ),
       onWillPop: () async {
         return false;
@@ -36,66 +42,68 @@ class NotificationView extends StatelessWidget {
     );
   }
 
-  addLeadingIcon(BuildContext context){
-    return new Container(
-      height: 30.0,
-      width: 26.0,
-      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-      child: new Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          new Image.asset(
-            IMAGES.HOME_LOGOUT,
-            width: 30.0,
-            height: 26.0,
-          ),
-          new FlatButton(
-              onPressed: (){
-                Navigator.of(context).pop();
-              }
-          )
-        ],
-      ),
-    );
-  }
-  _customeHeaderBar() {
-    return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          new Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: 10),
-              child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-            ),
-          ),
-          GestureDetector(
-              child: Image.asset(IMAGES.HOME_NOTI_OFF, width: 41, height: 35,)
-          ),
-        ],
-      ),
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+        ),
+      ],
     );
   }
 }
 
 class NotificationUI extends StatefulWidget {
-  final String idSchedule;
-  const NotificationUI(this.idSchedule);
+  const NotificationUI();
   @override
-  NotificationUIState createState() =>NotificationUIState(this.idSchedule);
+  NotificationUIState createState() =>NotificationUIState();
 }
 
 class NotificationUIState extends State<NotificationUI>{
 
-  bool _isStartVideoCall = false;
   String idSchedule;
-  NotificationUIState(this.idSchedule);
+  String avatarURL;
+  String teacherName;
   void initState() {
     super.initState();
+    loadDataFromLocal();
   }
 
+
+  loadDataFromLocal(){
+    ScheduleModel scheduleList = StorageUtil.getScheduleList();
+    if(scheduleList != null){
+      if(scheduleList.objects.length > 0) {
+        for(var i = 0; i < scheduleList.objects.length; i ++){
+          List<Schedule> list = scheduleList.objects[i].schedules;
+          if(list.length > 0){
+            Schedule schMin = list[0];
+            DateTime nowTime = DateTime.now();
+            for(Schedule sch in list){
+              DateTime schTime = sch.startTime;
+              int minsNow =  schTime.difference(nowTime).inMinutes;
+              int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
+              if(minsNow > 0 && minsNow < minsWithMinSch) {
+                schMin = sch;
+              }
+            }
+            if(schMin.startTime.difference(nowTime).inMinutes > 0){
+              Schedule currentSchedule = schMin;
+              for(var j = 0; j < currentSchedule.users.length; j ++){
+                User _user = currentSchedule.users[j];
+                if(_user.role == "teacher"){
+                  User teacher = _user;
+                  teacherName = teacher.lastName;
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +113,10 @@ class NotificationUIState extends State<NotificationUI>{
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
+          Container(
+            height: 1.0,
+            color: COLOR.COLOR_D8D8D8,
+          ),
           const Padding(padding: EdgeInsets.all(40)),
           _topImage(),
           SizedBox(height: 20),
@@ -122,7 +134,7 @@ class NotificationUIState extends State<NotificationUI>{
     return Center(
       child: Container(
           alignment: Alignment.center,
-          child: Image.asset(IMAGES.NOTIFCATION_CANCEL)
+          child: Image.asset(IMAGES.NOTIFCATION_CANCEL, width: 93, height: 80,)
       ),
     );
   }
@@ -170,9 +182,13 @@ class NotificationUIState extends State<NotificationUI>{
     );
   }
 
-  _cancelButton(){
-    return new GestureDetector(
-      onTap: ()=> Navigator.of(context).push(CancelView.route(this.idSchedule)),
+  bool isPressedCancelButton = false;
+  _cancelButton() {
+    return _cancButtonPressed();
+  }
+
+  _cancButtonPressed(){
+    return Listener(
       child: Container(
         margin: EdgeInsets.only(left: 40, right: 40),
         alignment: Alignment.center,
@@ -184,7 +200,7 @@ class NotificationUIState extends State<NotificationUI>{
             bottomRight: Radius.circular(30),
             bottomLeft: Radius.circular(5),
           ),
-          color: Colors.white,
+          color: isPressedCancelButton ? COLOR.COLOR_00C081 : Colors.white ,
           border: Border.all(
               color: COLOR.COLOR_00C081,
               width: 4
@@ -192,12 +208,31 @@ class NotificationUIState extends State<NotificationUI>{
         ),
         child: Text("Hủy hẹn",
           style: TextStyle(
-              color: COLOR.COLOR_00C081,
+              color: isPressedCancelButton ? Colors.white : COLOR.COLOR_00C081,
               fontSize: 18,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.bold
           ),),
       ),
+      onPointerDown: (_) {
+        setState(() {
+          isPressedCancelButton = true;
+        });
+
+      },
+      onPointerUp: (_) {
+        setState(() {
+          isPressedCancelButton = false;
+        });
+      },
     );
+  }
+
+  void _openNextScreen(Route route ) {
+    Navigator.of(context).push(route).then((result) => setState((){
+      if(result != null){
+        Navigator.of(context).pop(result);
+      }
+    }));
   }
 }

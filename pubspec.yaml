@@ -63,6 +63,7 @@ flutter:
     - assets/images/2.home/home_pencil.png
     - assets/images/2.home/home_avatar.png
     - assets/images/8.notification/notification_cancel.png
+    - assets/images/8.notification/notification_icon.png
     - assets/images/6.rating/rating_topimage.png
     - assets/images/6.rating/rating_star_gray.png
     - assets/images/6.rating/rating_star_green.png
