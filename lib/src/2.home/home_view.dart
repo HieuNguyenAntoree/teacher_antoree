@@ -41,7 +41,7 @@ class HomeView extends StatelessWidget {
             icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
             onPressed: () {
               StorageUtil.removeAllCache();
-              Navigator.of(context).pop();
+              Navigator.of(context).pop('LoginView');
             },
           ),
         ),
@@ -121,10 +121,10 @@ class HomeUIState extends State<HomeUI> {
         print(timer.tick);
 
         seconds = seconds - 1;
-        if (hours == 0 && minutes == 5 && seconds == 0) {
+        if (hours == 0 && minutes == VALUES.DELAY_CALL_TIME && seconds == 0) {
           _isStartVideoCall = true;
-          timer.cancel();
-          Timer(Duration(minutes: 5),(){
+          Timer(Duration(minutes: 2*VALUES.DELAY_CALL_TIME),(){
+            timer.cancel();
             setState(() {
               _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
             });
@@ -192,7 +192,7 @@ class HomeUIState extends State<HomeUI> {
           List<Schedule> list = scheduleList.objects[i].schedules;
           if(list.length > 0){
             Schedule schMin = list[0];
-            DateTime nowTime = DateTime.now();
+            DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
             for(Schedule sch in list){
               DateTime schTime = sch.startTime;
               int minsNow =  schTime.difference(nowTime).inMinutes;
@@ -201,7 +201,8 @@ class HomeUIState extends State<HomeUI> {
                 schMin = sch;
               }
             }
-            if(schMin.startTime.difference(nowTime).inMinutes > 0){
+            int ms = schMin.startTime.difference(nowTime).inMinutes;
+            if(ms < VALUES.DELAY_CALL_TIME && ms > -VALUES.DELAY_CALL_TIME){
               currentSchedule = schMin;
               timerDate = currentSchedule.startTime;
               if(timer != null){
@@ -210,6 +211,14 @@ class HomeUIState extends State<HomeUI> {
               calculatorDuration(formatDateForTimer.format(timerDate));
               if (hours > 0 || minutes > 0 || seconds > 0) {
                 startTimeout();
+              }else if (hours == 0 || minutes <= 0) {
+                _isStartVideoCall = true;
+                Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
+                  setState(() {
+                    currentSchedule = null;
+                    _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+                  });
+                });
               }
               for(var j = 0; j < currentSchedule.users.length; j ++){
                 User _user = currentSchedule.users[j];
@@ -220,7 +229,6 @@ class HomeUIState extends State<HomeUI> {
                 }
               }
             }
-
             break;
           }
         }

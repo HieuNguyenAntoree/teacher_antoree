@@ -61,10 +61,6 @@ class NotificationUI extends StatefulWidget {
 }
 
 class NotificationUIState extends State<NotificationUI>{
-
-  String idSchedule;
-  String avatarURL;
-  String teacherName;
   void initState() {
     super.initState();
     loadDataFromLocal();
@@ -72,37 +68,7 @@ class NotificationUIState extends State<NotificationUI>{
 
 
   loadDataFromLocal(){
-    ScheduleModel scheduleList = StorageUtil.getScheduleList();
-    if(scheduleList != null){
-      if(scheduleList.objects.length > 0) {
-        for(var i = 0; i < scheduleList.objects.length; i ++){
-          List<Schedule> list = scheduleList.objects[i].schedules;
-          if(list.length > 0){
-            Schedule schMin = list[0];
-            DateTime nowTime = DateTime.now();
-            for(Schedule sch in list){
-              DateTime schTime = sch.startTime;
-              int minsNow =  schTime.difference(nowTime).inMinutes;
-              int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
-              if(minsNow > 0 && minsNow < minsWithMinSch) {
-                schMin = sch;
-              }
-            }
-            if(schMin.startTime.difference(nowTime).inMinutes > 0){
-              Schedule currentSchedule = schMin;
-              for(var j = 0; j < currentSchedule.users.length; j ++){
-                User _user = currentSchedule.users[j];
-                if(_user.role == "teacher"){
-                  User teacher = _user;
-                  teacherName = teacher.lastName;
-                }
-              }
-            }
-            break;
-          }
-        }
-      }
-    }
+
   }
 
   @override

@@ -194,7 +194,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
       if (timeSheetList.length == 0) {
         return -1;
       }
-      return timeSheetList.indexWhere((element) => element.timeStart.hour - currentTime.hour == 0 && element.timeStart.minute - currentTime.minute <= 0 && element.timeStart.minute - currentTime.minute > -20);
+      return timeSheetList.indexWhere((element) => element.timeStart.hour - currentTime.hour == 0 && element.timeStart.minute - currentTime.minute <= 0 && element.timeStart.minute - currentTime.minute > -VALUES.DELAY_TIME);
     }
     return -1;
   }

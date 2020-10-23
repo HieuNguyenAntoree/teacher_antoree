@@ -13,6 +13,7 @@ class VALUES {
   static const DELAY_TIME = 15;
   static const START_TIME = 9;
   static const END_TIME = 23;
+  static const DELAY_CALL_TIME = 5;
   static const SCHEDULE_DAYS = 3;
   static DateFormat FORMAT_DATE_API = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   static DateFormat FORMAT_DATE_yyyy_mm_dd = DateFormat("yyyy-MM-dd");
