@@ -1,22 +1,51 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/color.dart';
 import 'package:teacher_antoree/const/defaultValue.dart';
 import 'package:teacher_antoree/const/sharedPreferences.dart';
+import 'dart:io' show Platform;
+
 import 'package:teacher_antoree/models/schedule.dart';
-import 'package:teacher_antoree/src/2.home/home_view.dart';
-import 'package:teacher_antoree/src/5.cancel/cancel_view.dart';
-import 'package:teacher_antoree/src/customViews/route_names.dart';
 
-class NotificationView extends StatelessWidget {
+class NotificationView extends StatefulWidget {
 
-  const NotificationView();
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => NotificationView());
   }
 
   @override
+  NotificationUIState createState() =>NotificationUIState();
+}
+
+
+class NotificationUIState extends State<NotificationView>{
+
+  Notification notifications;
+
+  void initState() {
+    super.initState();
+    loadDataFromLocal();
+  }
+
+
+  loadDataFromLocal(){
+
+  }
+
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+        ),
+      ],
+    );
+  }
+  @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return new WillPopScope(
       child: Scaffold(
         backgroundColor: COLOR.BG_COLOR,
@@ -30,11 +59,25 @@ class NotificationView extends StatelessWidget {
           leading: IconButton(
             icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
             onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              StorageUtil.removeAllCache();
+              Navigator.of(context).pop('LoginView');
             },
           ),
         ),
-        body: NotificationUI(),
+        body: Container(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                height: 1.0,
+                color: COLOR.COLOR_D8D8D8,
+              ),
+              Expanded(child: _notiList(context),
+              )
+            ],
+          ),
+        )
       ),
       onWillPop: () async {
         return false;
@@ -42,163 +85,158 @@ class NotificationView extends StatelessWidget {
     );
   }
 
-  _customeHeaderBar(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-        ),
-      ],
+  _notiList(BuildContext context){
+    double maxHeight = MediaQuery.of(context).size.height - kToolbarHeight - 1 - (Platform.isAndroid ? kBottomNavigationBarHeight : 0) - MediaQuery.of(context).padding.bottom;
+
+    return Container(
+//      height: maxHeight,
+      child: ListView.builder(
+        itemBuilder: (context, int index) {
+          //page = page + 1;
+          return new NotificationItem(index: 0, notifications: notifications,);
+        },
+        itemCount: 20,
+//        controller: _scrollController,
+      ),
     );
   }
 }
 
-class NotificationUI extends StatefulWidget {
-  const NotificationUI();
-  @override
-  NotificationUIState createState() =>NotificationUIState();
-}
 
-class NotificationUIState extends State<NotificationUI>{
-  void initState() {
-    super.initState();
-    loadDataFromLocal();
-  }
+class NotificationItem extends StatelessWidget {
 
-
-  loadDataFromLocal(){
-
-  }
+  NotificationItem({Key key, this.index, this.notifications}) : super(key: key);
+  double heightCell = 90;
+  Notification notifications;
+  int index;
+//  User student;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    double marginLeftRight = (MediaQuery.of(context).size.width*4.8)/100;
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
+            height: heightCell,
+            color: COLOR.COLOR_FDFDFD,
+            child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _avatarImage(),
+                  Expanded(child: _notificationInfor(context),
+                  )
+                ]
+            )
+        ),
+        Container(
+            height: 1,
+            decoration: BoxDecoration(
+                color: const Color(0xffd8d8d8)
+            )
+        )
+      ],
+    );
+  }
+
+  _avatarImage() {
     return Container(
-      padding: const EdgeInsets.all(0),
+      height: 50,
+      width: 54,
+      margin: EdgeInsets.only(top: 15),
+      child:
+//          student.avatar.url != null ? CachedNetworkImage(
+//            imageUrl: student.avatar.url,
+//            imageBuilder:
+//                (context, imageProvider) =>
+//                Container(
+//                  decoration: _borderAvatar(imageProvider, 1),
+//                ),
+//            placeholder: (context, url) =>
+//                Container(
+//                  decoration: _borderAvatar(new AssetImage(IMAGES
+//                      .HOME_AVATAR), 4),
+//                ),
+//            errorWidget: (context, url, error)
+//            => Container(
+//                decoration: _borderAvatar(new AssetImage(IMAGES
+//                    .HOME_AVATAR), 4)
+//            ),
+//
+//          ) :
+      Container(
+          decoration: _borderAvatar(new AssetImage(IMAGES
+              .HOME_AVATAR), 4)
+      ),
+
+    );
+  }
+
+  _borderAvatar(ImageProvider image, double scale){
+    return BoxDecoration(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(30),
+        bottomRight: Radius.circular(30),
+      ),
+      border: Border.all(width: 3.0, color: COLOR.COLOR_00C081),
+      color: Colors.white,
+      image: new DecorationImage(
+        fit: BoxFit.none,
+        image: image,
+        scale: scale,
+      ),
+    );
+  }
+  _notificationInfor(BuildContext context){
+    return Container(
+      padding: EdgeInsets.only(left: 10),
       child: Column(
         mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
-          Container(
-            height: 1.0,
-            color: COLOR.COLOR_D8D8D8,
+          SizedBox(height: 15,),
+          RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(
+                  children: [
+                    TextSpan(
+                        style: const TextStyle(
+                          color: COLOR.COLOR_NOTI_TEXT,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: "Montserrat",
+                          fontStyle: FontStyle.normal,
+                          fontSize: 14.0,
+                        ),
+                        text: 'Bảo '),
+                    TextSpan(
+                        style: const TextStyle(
+                            color: COLOR.COLOR_NOTI_TEXT,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Montserrat",
+                            fontStyle: FontStyle.normal,
+                            fontSize: 14.0
+                        ),
+                        text: 'đã hủy cuộc hẹn lúc 08:00 ngày 13/10/2020'),
+                  ]
+              )
           ),
-          const Padding(padding: EdgeInsets.all(40)),
-          _topImage(),
-          SizedBox(height: 20),
-          _textSection(),
-          SizedBox(height: 30),
-          _okButton(),
-          SizedBox(height: 20),
-          _cancelButton(),
+          SizedBox(height: 15,),
+          Text(
+              '2 giây',
+              style: const TextStyle(
+                  color: const Color(0xff9caaa2),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: "Montserrat",
+                  fontStyle: FontStyle.normal,
+                  fontSize: 12.0
+              )
+          )
         ],
       ),
     );
   }
 
-  _topImage() {
-    return Center(
-      child: Container(
-          alignment: Alignment.center,
-          child: Image.asset(IMAGES.NOTIFCATION_CANCEL, width: 93, height: 80,)
-      ),
-    );
-  }
-
-  _textSection() {
-    return Center(
-      child: Text(
-        "Cuộc hẹn của bạn đã bị hủy\nvì giáo viên có việc đột xuất\n\nAntoree rất tiếc và trải nghiệm này",
-        style: const TextStyle(
-            color:  const Color(0xff4B5B53),
-            fontWeight: FontWeight.w400,
-            fontFamily: "Montserrat",
-            fontStyle:  FontStyle.normal,
-            fontSize: 14.0
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  _okButton(){
-    return new GestureDetector(
-      onTap: ()=> Navigator.popUntil(context, ModalRoute.withName(HomeViewRoute)),
-      child: Container(
-        margin: EdgeInsets.only(left: 40, right: 40),
-        alignment: Alignment.center,
-        height: 48,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(5),
-            bottomRight: Radius.circular(30),
-            bottomLeft: Radius.circular(5),
-          ),
-          color: COLOR.COLOR_00C081,
-        ),
-        child: Text("Đổi lịch hẹn / giáo viên",
-          style: TextStyle(
-              color: const Color(0xffffffff),
-              fontSize: 18,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.bold
-          ),),
-      ),
-    );
-  }
-
-  bool isPressedCancelButton = false;
-  _cancelButton() {
-    return _cancButtonPressed();
-  }
-
-  _cancButtonPressed(){
-    return Listener(
-      child: Container(
-        margin: EdgeInsets.only(left: 40, right: 40),
-        alignment: Alignment.center,
-        height: 48,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(5),
-            bottomRight: Radius.circular(30),
-            bottomLeft: Radius.circular(5),
-          ),
-          color: isPressedCancelButton ? COLOR.COLOR_00C081 : Colors.white ,
-          border: Border.all(
-              color: COLOR.COLOR_00C081,
-              width: 4
-          ),
-        ),
-        child: Text("Hủy hẹn",
-          style: TextStyle(
-              color: isPressedCancelButton ? Colors.white : COLOR.COLOR_00C081,
-              fontSize: 18,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.bold
-          ),),
-      ),
-      onPointerDown: (_) {
-        setState(() {
-          isPressedCancelButton = true;
-        });
-
-      },
-      onPointerUp: (_) {
-        setState(() {
-          isPressedCancelButton = false;
-        });
-      },
-    );
-  }
-
-  void _openNextScreen(Route route ) {
-    Navigator.of(context).push(route).then((result) => setState((){
-      if(result != null){
-        Navigator.of(context).pop(result);
-      }
-    }));
-  }
 }
+

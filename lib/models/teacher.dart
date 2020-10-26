@@ -1,14 +1,30 @@
-// To parse this JSON data, do
-//
-//     final empty = emptyFromJson(jsonString);
-
 import 'dart:convert';
-List<TeacherModel> emptyFromJson(String str) => List<TeacherModel>.from(json.decode(str).map((x) => TeacherModel.fromJson(x)));
+TeacherModel emptyFromJson(String str) => TeacherModel.fromJson(json.decode(str));
 
-String emptyToJson(List<TeacherModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String emptyToJson(TeacherModel data) => json.encode(data.toJson());
 
 class TeacherModel {
   TeacherModel({
+    this.paging,
+    this.objects,
+  });
+
+  Paging paging;
+  List<Teacher> objects;
+
+  factory TeacherModel.fromJson(Map<String, dynamic> json) => TeacherModel(
+    paging: json["paging"] == null ? null : Paging.fromJson(json["paging"]),
+    objects: json["objects"] == null ? null : List<Teacher>.from(json["objects"].map((x) => Teacher.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "paging": paging == null ? null : paging.toJson(),
+    "objects": objects == null ? null : List<dynamic>.from(objects.map((x) => x.toJson())),
+  };
+}
+
+class Teacher {
+  Teacher({
     this.id,
     this.userId,
     this.voiceDemo,
@@ -18,33 +34,35 @@ class TeacherModel {
     this.modifiedAt,
     this.isActive,
     this.teacherType,
+    this.introduction,
     this.tsNote,
     this.rating,
     this.pricePerHour,
     this.profileLink,
-    this.user,
-    this.introduction,
     this.isTester,
+    this.userInfo,
+    this.user,
   });
 
-  String id;
-  String userId;
+  String id = "";
+  String userId = "";
   Contract voiceDemo;
   InterviewedBy interviewedBy;
   Contract contract;
   DateTime createdAt;
   DateTime modifiedAt;
   bool isActive;
-  String teacherType;
-  String tsNote;
-  int rating;
-  double pricePerHour;
-  String profileLink;
-  InterviewedBy user;
-  Introduction introduction;
+  String teacherType = "";
+  String introduction = "";
+  String tsNote = "";
+  int rating = 0;
+  double pricePerHour = 0;
+  String profileLink = "";
   bool isTester;
+  User userInfo;
+  User user;
 
-  factory TeacherModel.fromJson(Map<String, dynamic> json) => TeacherModel(
+  factory Teacher.fromJson(Map<String, dynamic> json) => Teacher(
     id: json["id"] == null ? null : json["id"],
     userId: json["userId"] == null ? null : json["userId"],
     voiceDemo: json["voiceDemo"] == null ? null : Contract.fromJson(json["voiceDemo"]),
@@ -54,13 +72,14 @@ class TeacherModel {
     modifiedAt: json["modifiedAt"] == null ? null : DateTime.parse(json["modifiedAt"]),
     isActive: json["isActive"] == null ? null : json["isActive"],
     teacherType: json["teacherType"] == null ? null : json["teacherType"],
+    introduction: json["introduction"] == null ? null : json["introduction"],
     tsNote: json["tsNote"] == null ? null : json["tsNote"],
     rating: json["rating"] == null ? null : json["rating"],
     pricePerHour: json["pricePerHour"] == null ? null : json["pricePerHour"],
     profileLink: json["profileLink"] == null ? null : json["profileLink"],
-    user: json["user"] == null ? null : InterviewedBy.fromJson(json["user"]),
-    introduction: json["introduction"] == null ? null : introductionValues.map[json["introduction"]],
     isTester: json["isTester"] == null ? null : json["isTester"],
+    userInfo: json["userInfo"] == null ? null : User.fromJson(json["userInfo"]),
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -73,13 +92,14 @@ class TeacherModel {
     "modifiedAt": modifiedAt == null ? null : modifiedAt.toIso8601String(),
     "isActive": isActive == null ? null : isActive,
     "teacherType": teacherType == null ? null : teacherType,
+    "introduction": introduction == null ? null : introduction,
     "tsNote": tsNote == null ? null : tsNote,
     "rating": rating == null ? null : rating,
     "pricePerHour": pricePerHour == null ? null : pricePerHour,
     "profileLink": profileLink == null ? null : profileLink,
-    "user": user == null ? null : user.toJson(),
-    "introduction": introduction == null ? null : introductionValues.reverse[introduction],
     "isTester": isTester == null ? null : isTester,
+    "userInfo": userInfo == null ? null : userInfo.toJson(),
+    "user": user == null ? null : user.toJson(),
   };
 }
 
@@ -97,8 +117,8 @@ class Contract {
   FileName fileName;
   BucketName bucketName;
   Region region;
-  String url;
-  String createdAt;
+  String url = "";
+  String createdAt = "";
 
   factory Contract.fromJson(Map<String, dynamic> json) => Contract(
     id: json["id"] == null ? null : contractIdValues.map[json["id"]],
@@ -147,7 +167,17 @@ final regionValues = EnumValues({
 });
 
 class InterviewedBy {
-  InterviewedBy({
+  InterviewedBy();
+
+  factory InterviewedBy.fromJson(Map<String, dynamic> json) => InterviewedBy(
+  );
+
+  Map<String, dynamic> toJson() => {
+  };
+}
+
+class User {
+  User({
     this.id,
     this.firstName,
     this.lastName,
@@ -155,51 +185,42 @@ class InterviewedBy {
     this.birthday,
     this.address,
     this.email,
-    this.urlSkype,
+    this.status,
+    this.displayName,
     this.gender,
     this.createdAt,
     this.modifiedAt,
-    this.status,
-    this.displayName,
     this.country,
-    this.urlFacebook,
-    this.urlAvatar,
   });
 
-  String id;
-  String firstName;
-  String lastName;
+  String id = "";
+  String firstName = "";
+  String lastName = "";
   Contract avatar;
-  String birthday;
+  String birthday = "";
   Address address;
-  String email;
-  UrlSkype urlSkype;
+  String email = "";
+  int status;
+  String displayName;
   int gender;
   String createdAt;
   String modifiedAt;
-  int status;
-  String displayName;
   String country;
-  String urlFacebook;
-  String urlAvatar;
 
-  factory InterviewedBy.fromJson(Map<String, dynamic> json) => InterviewedBy(
-    id: json["id"] == null ? null : json["id"],
-    firstName: json["firstName"] == null ? null : json["firstName"],
-    lastName: json["lastName"] == null ? null : json["lastName"],
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"] == null ? "" : json["id"],
+    firstName: json["firstName"] == null ? "" : json["firstName"],
+    lastName: json["lastName"] == null ? "" : json["lastName"],
     avatar: json["avatar"] == null ? null : Contract.fromJson(json["avatar"]),
     birthday: json["birthday"] == null ? null : json["birthday"],
     address: json["address"] == null ? null : Address.fromJson(json["address"]),
     email: json["email"] == null ? null : json["email"],
-    urlSkype: json["urlSkype"] == null ? null : urlSkypeValues.map[json["urlSkype"]],
+    status: json["status"] == null ? null : json["status"],
+    displayName: json["displayName"] == null ? null : json["displayName"],
     gender: json["gender"] == null ? null : json["gender"],
     createdAt: json["createdAt"] == null ? null : json["createdAt"],
     modifiedAt: json["modifiedAt"] == null ? null : json["modifiedAt"],
-    status: json["status"] == null ? null : json["status"],
-    displayName: json["displayName"] == null ? null : json["displayName"],
     country: json["country"] == null ? null : json["country"],
-    urlFacebook: json["urlFacebook"] == null ? null : json["urlFacebook"],
-    urlAvatar: json["urlAvatar"] == null ? null : json["urlAvatar"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -210,15 +231,12 @@ class InterviewedBy {
     "birthday": birthday == null ? null : birthday,
     "address": address == null ? null : address.toJson(),
     "email": email == null ? null : email,
-    "urlSkype": urlSkype == null ? null : urlSkypeValues.reverse[urlSkype],
+    "status": status == null ? null : status,
+    "displayName": displayName == null ? null : displayName,
     "gender": gender == null ? null : gender,
     "createdAt": createdAt == null ? null : createdAt,
     "modifiedAt": modifiedAt == null ? null : modifiedAt,
-    "status": status == null ? null : status,
-    "displayName": displayName == null ? null : displayName,
     "country": country == null ? null : country,
-    "urlFacebook": urlFacebook == null ? null : urlFacebook,
-    "urlAvatar": urlAvatar == null ? null : urlAvatar,
   };
 }
 
@@ -266,20 +284,33 @@ final locationLevelValues = EnumValues({
   "wtf?": LocationLevel.WTF
 });
 
-enum UrlSkype { SKY5, SKY6, SKY3 }
+class Paging {
+  Paging({
+    this.page,
+    this.limit,
+    this.offset,
+    this.total,
+  });
 
-final urlSkypeValues = EnumValues({
-  "sky3": UrlSkype.SKY3,
-  "sky5": UrlSkype.SKY5,
-  "sky6": UrlSkype.SKY6
-});
+  int page;
+  int limit;
+  int offset;
+  int total;
 
-enum Introduction { PROFESSSONAL_TEACHER }
+  factory Paging.fromJson(Map<String, dynamic> json) => Paging(
+    page: json["page"] == null ? null : json["page"],
+    limit: json["limit"] == null ? null : json["limit"],
+    offset: json["offset"] == null ? null : json["offset"],
+    total: json["total"] == null ? null : json["total"],
+  );
 
-final introductionValues = EnumValues({
-  "professsonal teacher": Introduction.PROFESSSONAL_TEACHER
-});
-
+  Map<String, dynamic> toJson() => {
+    "page": page == null ? null : page,
+    "limit": limit == null ? null : limit,
+    "offset": offset == null ? null : offset,
+    "total": total == null ? null : total,
+  };
+}
 
 class EnumValues<T> {
   Map<String, T> map;

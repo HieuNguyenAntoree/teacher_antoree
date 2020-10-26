@@ -16,79 +16,90 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:teacher_antoree/src/8.notification/notification_view.dart';
 
-class HomeView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new WillPopScope(
-      child: Scaffold(
-        backgroundColor: COLOR.BG_COLOR,
-        appBar: AppBar(
-          title:_customeHeaderBar(context),
-          centerTitle: true,
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-          backgroundColor: COLOR.BG_COLOR,
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
-              onPressed: () {
-//                _openNextScreen(NotificationView.route(), context);
-              },
-            ),
-          ],
-          leading: IconButton(
-            icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
-            onPressed: () {
-              StorageUtil.removeAllCache();
-              Navigator.of(context).pop('LoginView');
-            },
-          ),
-        ),
-        body: BlocProvider(
-          create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
-          child: HomeUI(),
-        ),
-      ),
-      onWillPop: () async {
-        return false;
-      },
-    );
+class HomeView extends StatefulWidget {
+
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => HomeView());
   }
 
-  void _openNextScreen(Route route , BuildContext context) {
-    Navigator.of(context).push(route).then((result) => {
-      if(result != null) {
-        if (result == 'LoginView') {
-          if(Navigator.of(context).canPop()){
-            Navigator.of(context).pop()
-          }
-          else{
-            Navigator.of(context).popAndPushNamed('LoginView')
-          }
-        }
-      }
-    });
-  }
-
-  _customeHeaderBar(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-        ),
-      ],
-    );
-  }
-}
-
-class HomeUI extends StatefulWidget {
-  @override
   HomeUIState createState() => HomeUIState();
+//  @override
+//  Widget build(BuildContext context) {
+//    return new WillPopScope(
+//      child: Scaffold(
+//        backgroundColor: COLOR.BG_COLOR,
+//        appBar: AppBar(
+//          title:_customeHeaderBar(context),
+//          centerTitle: true,
+//          bottomOpacity: 0.0,
+//          elevation: 0.0,
+//          backgroundColor: COLOR.BG_COLOR,
+//          automaticallyImplyLeading: false,
+//          actions: [
+//            IconButton(
+//              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
+//              onPressed: () {
+//                _openNextScreen(NotificationView.route(), context);
+//              },
+//            ),
+//          ],
+//          leading: IconButton(
+//            icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
+//            onPressed: () {
+//              StorageUtil.removeAllCache();
+//              if(Navigator.of(context).canPop()){
+//                Navigator.of(context).pop();
+//              }
+//              else{
+//                Navigator.of(context).popAndPushNamed('LoginView')
+//              }
+//            },
+//          ),
+//        ),
+//        body: BlocProvider(
+//          create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+//          child: HomeUI(),
+//        ),
+//      ),
+//      onWillPop: () async {
+//        return false;
+//      },
+//    );
+//  }
+//
+//  void _openNextScreen(Route route , BuildContext context) {
+//    Navigator.of(context).push(route).then((result) => {
+//      if(result != null) {
+//        if (result == 'LoginView') {
+//          if(Navigator.of(context).canPop()){
+//            Navigator.of(context).pop()
+//          }
+//          else{
+//            Navigator.of(context).popAndPushNamed('LoginView')
+//          }
+//        }
+//      }
+//    });
+//  }
+//
+//  _customeHeaderBar(BuildContext context) {
+//    return Stack(
+//      alignment: Alignment.center,
+//      children: [
+//        Positioned(
+//          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+//        ),
+//      ],
+//    );
+//  }
 }
 
-class HomeUIState extends State<HomeUI> {
+//class HomeUI extends StatefulWidget {
+//  @override
+//  HomeUIState createState() => HomeUIState();
+//}
+
+class HomeUIState extends State<HomeView> {
 
   bool _isLoading = false;
   bool _isStartVideoCall = false;
@@ -195,14 +206,19 @@ class HomeUIState extends State<HomeUI> {
             DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
             for(Schedule sch in list){
               DateTime schTime = sch.startTime;
-              int minsNow =  schTime.difference(nowTime).inMinutes;
-              int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
-              if(minsNow > 0 && minsNow < minsWithMinSch) {
+              if(schTime.difference(nowTime).inDays > 0){
                 schMin = sch;
+                break;
+              }else{
+                int minsNow =  schTime.difference(nowTime).inMinutes;
+                int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
+                if(minsNow > 0 && minsNow < minsWithMinSch) {
+                  schMin = sch;
+                }
               }
             }
             int ms = schMin.startTime.difference(nowTime).inMinutes;
-            if(ms < VALUES.DELAY_CALL_TIME && ms > -VALUES.DELAY_CALL_TIME){
+            if( ms > -VALUES.DELAY_CALL_TIME){
               currentSchedule = schMin;
               timerDate = currentSchedule.startTime;
               if(timer != null){
@@ -312,70 +328,123 @@ class HomeUIState extends State<HomeUI> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return BlocListener<APIConnect, ApiState>(
-        listener: (context, state){
-          if (state.result is StateInit) {
-            setState(() {
-              _isLoading = true;
-            });
-          }else if (state.result is LoadingState) {
-            setState(() {
-              _isLoading = true;
-            });
-          }else if (state.result is SuccessState) {
-            setState(() {
-              _isLoading = true;
-            });
-          }
-          else if (state.result is ParseJsonToObject) {
-            setState(() {
-              _isLoading = false;
-            });
-            scheduleList = StorageUtil.getScheduleList();
-            if(scheduleList != null) {
-              if (scheduleList.objects.length == 0) {
-                _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.EMPTY_LIST, "Close", "", null);
+    return new WillPopScope(
+      child: Scaffold(
+        backgroundColor: COLOR.BG_COLOR,
+        appBar: AppBar(
+          title:_customeHeaderBar(context),
+          centerTitle: true,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          backgroundColor: COLOR.BG_COLOR,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
+              onPressed: () {
+                _openNextScreen(NotificationView.route());
+              },
+            ),
+          ],
+          leading: IconButton(
+            icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
+            onPressed: () {
+              if(timer != null){
+                timer.cancel();
               }
-            }
-            setState(() {
-              loadDataFromLocal();
-            });
-
-            if(currentSchedule == null){
-              _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.NO_SCHEDULE, 'OK', '', null);
-            }
-          }else {
-            setState(() {
-              _isLoading = false;
-            });
-            ErrorState error = state.result;
-            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getScheduleListFromAPI);
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.all(0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                height: 1.0,
-                color: COLOR.COLOR_D8D8D8,
-              ),
-              currentSchedule  == null ? Expanded(
-                  child:  Center(
-                      child: _containerTop()
-                  )) : _containerTop(),
-              currentSchedule  != null ? Expanded(
-                  child:  currentSchedule != null ? Center(
-                      child: _containerView()
-                  ) : Container(
-
-                  )
-              ) : SizedBox(height: 0,),
-              _bottomButton(),
-            ],
+              StorageUtil.removeAllCache();
+              if(Navigator.of(context).canPop()){
+                Navigator.of(context).pop();
+              }
+              else{
+                Navigator.of(context).popAndPushNamed('LoginView');
+              }
+            },
           ),
-        )
+        ),
+        body: BlocProvider(
+            create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+            child: BlocListener<APIConnect, ApiState>(
+                listener: (context, state){
+                  if (state.result is StateInit) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                  }else if (state.result is LoadingState) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                  }else if (state.result is SuccessState) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                  }
+                  else if (state.result is ParseJsonToObject) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    scheduleList = StorageUtil.getScheduleList();
+                    if(scheduleList != null) {
+                      if (scheduleList.objects.length == 0) {
+                        _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.EMPTY_LIST, "Close", "", null);
+                      }
+                    }
+                    setState(() {
+                      loadDataFromLocal();
+                    });
+
+                    if(currentSchedule == null){
+                      _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.NO_SCHEDULE, 'OK', '', null);
+                    }
+                  }else {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    ErrorState error = state.result;
+                    _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "Try again!", getScheduleListFromAPI);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        height: 1.0,
+                        color: COLOR.COLOR_D8D8D8,
+                      ),
+                      currentSchedule  == null ? Expanded(
+                          child:  Center(
+                              child: _containerTop()
+                          )) : _containerTop(),
+                      currentSchedule  != null ? Expanded(
+                          child:  currentSchedule != null ? Center(
+                              child: _containerView()
+                          ) : Container(
+
+                          )
+                      ) : SizedBox(height: 0,),
+                      _bottomButton(),
+                    ],
+                  ),
+                )
+            )
+        ),
+      ),
+      onWillPop: () async {
+        return false;
+      },
+    );
+  }
+
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+        ),
+      ],
     );
   }
 
