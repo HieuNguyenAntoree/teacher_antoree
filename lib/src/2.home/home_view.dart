@@ -633,7 +633,9 @@ class HomeUIState extends State<HomeView> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Expanded(
-                    child: Center(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      margin: EdgeInsets.only(right: 5),
                       child: Text(
                         time > 9 ? '$time' : '  $time',
                         style: const TextStyle(
@@ -641,22 +643,24 @@ class HomeUIState extends State<HomeView> {
                             fontWeight: FontWeight.w400,
                             fontFamily: "Montserrat",
                             fontStyle: FontStyle.normal,
-                            fontSize: 48.0
+                            fontSize: 46.0
                         ),
                       ),
                     )
                 ),
-                Text(
-                  '$timeText',
-                  style: const TextStyle(
-                      color: const Color(0xff4B5B53),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: "Montserrat",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 18.0
+                Container(
+                  margin: EdgeInsets.only(right: 5) ,
+                  child: Text(
+                    '$timeText',
+                    style: const TextStyle(
+                        color: const Color(0xff4B5B53),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: "Montserrat",
+                        fontStyle: FontStyle.normal,
+                        fontSize: 18.0
+                    ),
                   ),
                 ),
-                SizedBox(width: 8,)
               ]
           ),
         )

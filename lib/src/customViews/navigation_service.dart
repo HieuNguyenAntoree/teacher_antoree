@@ -10,7 +10,18 @@ class NavigationService {
   }
 
   Future<dynamic> navigateTo(String routeName) {
-    return _navigationKey.currentState
-        .pushNamed(routeName);
+    if(_navigationKey.currentState.canPop()){
+      if(routeName != "NotificationView" ) {
+        return _navigationKey.currentState
+            .popAndPushNamed(routeName);
+      }else{
+        return _navigationKey.currentState
+            .pushNamed(routeName);
+      }
+    }
+    else{
+      return _navigationKey.currentState
+          .pushNamed(routeName);
+    }
   }
 }

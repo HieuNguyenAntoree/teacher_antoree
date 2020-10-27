@@ -35,3 +35,39 @@ class Item {
     _controller.add(this);
   }
 }
+
+final Map<String, NotificationiOS> _notification_iOS = <String, NotificationiOS>{};
+NotificationiOS notificationiOSForMessage(Map<String, dynamic> message) {
+  final dynamic aps = message['aps'] ?? message;
+  final dynamic alert = aps['alert'] ?? message;
+  final String title = alert['title'];
+  final String body = alert['body'];
+  final int badge = aps['badge'];
+  final String idSchedule = message['idSchedule'];
+  final NotificationiOS item = _notification_iOS.putIfAbsent(idSchedule, () => NotificationiOS(itemId: idSchedule, title: title, body: body))
+    .._pageName = message['screen'];
+  return item;
+}
+
+class NotificationiOS {
+  NotificationiOS({this.itemId, this.title, this.body,});
+
+  final String itemId;
+  final String title;
+  final String body;
+
+  StreamController<NotificationiOS> _controller = StreamController<NotificationiOS>.broadcast();
+
+  Stream<NotificationiOS> get onChanged => _controller.stream;
+  final NavigationService _navigationService = locator<NavigationService>();
+
+  String _pageName;
+
+  String get pageName => _pageName;
+
+  set pageName(String value) {
+    _pageName = value;
+    _controller.add(this);
+  }
+}
+
