@@ -16,10 +16,10 @@ Future<void> main() async {
   setupLocator();
 
   var configuredApp = new AppConfig(
-    appName: 'Antorree Teacher ',
-    flavorName: 'staging',
-    apiBaseUrl: 'https://api-gateway.stg.antoree.tech',
-    gateBaseUrl: 'https://gate.stg.antoree.tech',
+    appName: 'Antoree Teacher ',
+    flavorName: 'prod',
+    apiBaseUrl: 'https://api-gateway.prod.antoree.tech',
+    gateBaseUrl: 'https://gate.prod.antoree.tech',
     child: App(),
   );
   runApp(configuredApp);

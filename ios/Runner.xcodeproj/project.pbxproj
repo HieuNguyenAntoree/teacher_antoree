@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		34130724B367D16A29851C95 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		34130724B367D16A29851C95 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		35C7E0C8252AD3A900058177 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		35C7E0C9252AD3A900058177 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		35C7E0CD252AD3A900058177 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -70,6 +70,8 @@
 		28CCF3E380EE826DCA0D9B64 /* Pods_Antoree_Teacher_Beta.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Antoree_Teacher_Beta.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B71FB78073F4820AEDE7E5 /* Pods-Antoree-Teacher-Staging.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Staging.debug-staging.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Staging/Pods-Antoree-Teacher-Staging.debug-staging.xcconfig"; sourceTree = "<group>"; };
 		33017E0C22A16BD47398901B /* Pods-Antoree-Teacher-Dev.release-beta.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Antoree-Teacher-Dev.release-beta.xcconfig"; path = "Target Support Files/Pods-Antoree-Teacher-Dev/Pods-Antoree-Teacher-Dev.release-beta.xcconfig"; sourceTree = "<group>"; };
+		3552F4DC254ABF6300EDDFDF /* Antoree-Teacher-Prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Antoree-Teacher-Prod.entitlements"; sourceTree = "<group>"; };
+		3552F4DD254ABF6B00EDDFDF /* Antoree-Teacher-Beta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Antoree-Teacher-Beta.entitlements"; sourceTree = "<group>"; };
 		35C7E0C0252AD2F300058177 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		35C7E0D9252AD3A900058177 /* Antoree-Teacher-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Antoree-Teacher-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		35C7E11C252AD41400058177 /* Antoree-Teacher-Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Antoree-Teacher-Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,7 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35C7E1B3252AD61500058177 /* Pods_Runner.framework in Frameworks */,
-				34130724B367D16A29851C95 /* BuildFile in Frameworks */,
+				34130724B367D16A29851C95 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +237,8 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				3552F4DD254ABF6B00EDDFDF /* Antoree-Teacher-Beta.entitlements */,
+				3552F4DC254ABF6300EDDFDF /* Antoree-Teacher-Prod.entitlements */,
 				F2A42B8E252DD2B2004A5F70 /* Antoree-Teacher-Staging.entitlements */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
@@ -1164,6 +1168,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1232,6 +1237,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1378,6 +1384,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1444,6 +1451,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1589,6 +1597,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1655,6 +1664,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1805,6 +1815,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -1873,6 +1884,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2019,6 +2031,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2085,6 +2098,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2235,6 +2249,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2303,6 +2318,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2429,6 +2445,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2461,6 +2478,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2492,6 +2510,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Beta.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2629,6 +2648,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2661,6 +2681,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
@@ -2692,6 +2713,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Antoree-Teacher-Prod.entitlements";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = XDWYRY9TB5;
 				ENABLE_BITCODE = NO;
