@@ -51,6 +51,37 @@ platform :android do
     )
   end
 
+  lane :release_beta do
+    Dir.chdir "../.." do
+      sh("flutter", "build", "apk", "--release", "-t", "lib/main_beta.dart", "--flavor", "beta")
+    end
+    # gradle(task: "clean assembleBetaRelease")
+
+    change_logs = changelog_from_git_commits(
+      pretty: "- (%ae) %s",# Optional, lets you provide a custom format to apply to each commit when generating the changelog text
+      date_format: "short",# Optional, lets you provide an additional date format to dates within the pretty-formatted string
+      match_lightweight_tag: false,  # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
+      merge_commit_filtering: "exclude_merges", # Optional, lets you filter out merge commits
+      tag_match_pattern: "/androidrelease_beta/gs"
+    )
+    firebase_app_distribution(
+      apk_path: "../build/app/outputs/flutter-apk/app-beta-release.apk",
+      app: "1:207114269782:android:0ce35f971acb71e4b137f7",
+      release_notes: change_logs,
+      groups: "internal-testers"
+    )
+    versionProperties = JavaProperties.load("../version.properties")
+    build_number = versionProperties[:VERSION_CODE] # => "bar"
+    git_add(path: "./")
+    git_commit(path: "./", message: "Version bump " + build_number)
+    add_git_tag(
+      grouping: "Antoree-Teacher",
+      prefix: "v",
+      build_number: build_number,
+      postfix: "-Beta"
+    )
+  end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean assembleRelease")

@@ -26,6 +26,11 @@ Runs all the tests
 fastlane android release_staging
 ```
 Submit a new staing build to Fastlane Beta
+### android release_beta
+```
+fastlane android release_beta
+```
+
 ### android deploy
 ```
 fastlane android deploy
