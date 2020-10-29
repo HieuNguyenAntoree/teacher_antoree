@@ -97,7 +97,7 @@ platform :android do
     )
     firebase_app_distribution(
       apk_path: "../build/app/outputs/flutter-apk/app-prod-release.apk",
-      app: "1:207114269782:android:0ce35f971acb71e4b137f7",
+      app: "1:204701476475:android:c36cd73f719fe252bb24de",
       release_notes: change_logs,
       groups: "internal-testers"
     )
