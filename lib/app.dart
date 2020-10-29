@@ -109,35 +109,38 @@ class _AppState extends State<App> {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
-        if(Platform.isAndroid){
-          Item item = itemForMessage(message);
-          if(StorageUtil.getAccessToken() != ""){
-            if(item.pageName != null){
-              if(item.pageName == "NotificationView"){
+        if(StorageUtil.getAccessToken() != ""){
+          if(Platform.isAndroid){
+            Item item = itemForMessage(message);
+            if(StorageUtil.getAccessToken() != ""){
+              if(item.pageName != null){
+                if(item.pageName == "NotificationView"){
+                  _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
+                }else{
+                  _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+                }
+              }
+              else{
                 _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
-              }else{
-                _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
               }
             }
-            else{
-              _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
-            }
-          }
-        }else{
-          NotificationiOS item = notificationiOSForMessage(message);
-          if(StorageUtil.getAccessToken() != ""){
-            if(item.pageName != null){
-              if(item.pageName == "NotificationView"){
-                _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
-              }else{
-                _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+          }else{
+            NotificationiOS item = notificationiOSForMessage(message);
+            if(StorageUtil.getAccessToken() != ""){
+              if(item.pageName != null){
+                if(item.pageName == "NotificationView"){
+                  _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
+                }else{
+                  _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+                }
               }
-            }
-            else{
-              _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
+              else{
+                _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
+              }
             }
           }
         }
+
       },
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
