@@ -7,6 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'dart:io' show Platform;
+import 'package:device_info/device_info.dart';
+import 'package:package_info/package_info.dart';
 
 class LoginView extends StatelessWidget{
   static Route route(){
@@ -46,6 +49,7 @@ class LoginUIState extends State<LoginUI>{
     super.initState();
     emailController..text = 'admin@antoree.com';
     passController..text = 'Antor33rotnA';
+    checkAndUpdateDeviceId();
   }
 
   // ignore: missing_return
@@ -53,6 +57,36 @@ class LoginUIState extends State<LoginUI>{
     context.bloc<APIConnect>().add(
         LoginSubmitted(emailController.text, passController.text));
   }
+
+  Future checkAndUpdateDeviceId() async {
+    var os_version = "";
+    if (Platform.isAndroid) {
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      os_version = androidInfo.version.release;
+    }
+    else if (Platform.isIOS) {
+      var iosInfo = await DeviceInfoPlugin().iosInfo;
+      os_version = iosInfo.systemName;
+    }
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      String appName = "antoree_teacher";//packageInfo.appName;
+      String version = packageInfo.version;
+      String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
+      String deviceId = StorageUtil.getStringValuesSF(KEY.DEVICE_ID);
+      if(deviceId == ""){
+        PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+          String appName = packageInfo.appName;
+          String version = packageInfo.version;
+          String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
+          APIConnect(context)..add(AddDevice(os_version, "Android", "vn", version, appName, "", fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        });
+      }else{
+        final accessToken = StorageUtil.getAccessToken();
+        APIConnect(context)..add(UpdateDevice(deviceId, os_version, "Android", "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+      }
+    });
+}
 
   Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
     return showDialog<void>(
@@ -136,7 +170,12 @@ class LoginUIState extends State<LoginUI>{
           setState(() {
             _isLoading = true;
           });
-        }else if (state.result is ParseJsonToObject) {
+        }else if (state.result is SuccessState) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        else if (state.result is ParseJsonToObject) {
           setState(() {
             _isLoading = false;
           });

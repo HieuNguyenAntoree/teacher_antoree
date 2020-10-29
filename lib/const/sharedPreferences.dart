@@ -28,7 +28,9 @@ class StorageUtil {
   }
 
   static storeStringToSF(String key, String value) async{
-    if (_preferences != null) _preferences.setString(key, value);
+    if (_preferences != null){
+      _preferences.setString(key, value);
+    }
     else {
       await StorageUtil.getInstance();
       _preferences.setString(key, value);
@@ -60,8 +62,14 @@ class StorageUtil {
   }
 
  static String getStringValuesSF(String key){
-   if (_preferences != null) return _preferences.getString(key);
-   return "";
+   if (_preferences != null) {
+     String deviceId = _preferences.getString(key);
+     if( deviceId != null){
+       return deviceId;
+     }
+     return "";
+   }
+     return "";
   }
 
   static bool getBoolValuesSF(String key) {
@@ -89,6 +97,7 @@ class StorageUtil {
       _preferences.remove(KEY.SCHEDULE);
       _preferences.remove(KEY.TEACHER);
       _preferences.remove(KEY.TIMESHEET);
+      _preferences.remove(KEY.DEVICE_ID);
       _preferences.clear();
     }
   }
@@ -209,9 +218,8 @@ class StorageUtil {
   }
 
   /*----------------------------TEACHER------------------------------*/
-  static storeTeacherListToSF( List<dynamic> value) async{
-//    Map decodeOptions = jsonDecode(value);
-    String jsonObject = jsonEncode(value);
+  static storeTeacherListToSF(  Map value) async{
+    String jsonObject = jsonEncode(TeacherModel.fromJson(value));
     if (_preferences != null) {
       _preferences.setString(KEY.TEACHER, jsonObject);
     }
@@ -221,20 +229,42 @@ class StorageUtil {
     }
   }
 
-  static List<TeacherModel> getTeacherList()  {
+  static List<Teacher> getTeacherList()  {
     if (_preferences != null) {
       String courseStr = _preferences.getString(KEY.TEACHER);
       if(courseStr != null){
         var value = jsonDecode(courseStr);
-        List<TeacherModel> user = List<TeacherModel>();
-        for(Map i in value){
-          user.add(TeacherModel.fromJson(i));
+        var model = TeacherModel.fromJson(value);
+
+        List<Teacher> user = List<Teacher>();
+        for(Teacher i in model.objects){
+          user.add(i);
         }
         return user;
       }
       return null;
     }else{
       return null;
+    }
+  }
+
+  static addTeacherToList( Map newValue)  {
+
+    if (_preferences != null) {
+      String courseStr = _preferences.getString(KEY.TEACHER);
+      if(courseStr != null){
+        var value = jsonDecode(courseStr);
+        var model = TeacherModel.fromJson(value);
+        var newList = TeacherModel.fromJson(newValue);
+        newList.objects.insertAll(0, model.objects);
+        String jsonObject = jsonEncode(newList);
+        _preferences.setString(KEY.TEACHER, jsonObject);
+      }
+      else{
+        storeTeacherListToSF(newValue);
+      }
+    }else{
+      storeTeacherListToSF(newValue);
     }
   }
 

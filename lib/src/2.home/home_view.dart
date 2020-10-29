@@ -12,7 +12,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teacher_antoree/const/constant.dart';
 import 'package:intl/intl.dart';  //for date format
-import 'package:intl/date_symbol_data_local.dart';
+import 'dart:io' show Platform;
+import 'package:device_info/device_info.dart';
+import 'package:package_info/package_info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:teacher_antoree/src/8.notification/notification_view.dart';
 
@@ -23,81 +25,7 @@ class HomeView extends StatefulWidget {
   }
 
   HomeUIState createState() => HomeUIState();
-//  @override
-//  Widget build(BuildContext context) {
-//    return new WillPopScope(
-//      child: Scaffold(
-//        backgroundColor: COLOR.BG_COLOR,
-//        appBar: AppBar(
-//          title:_customeHeaderBar(context),
-//          centerTitle: true,
-//          bottomOpacity: 0.0,
-//          elevation: 0.0,
-//          backgroundColor: COLOR.BG_COLOR,
-//          automaticallyImplyLeading: false,
-//          actions: [
-//            IconButton(
-//              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
-//              onPressed: () {
-//                _openNextScreen(NotificationView.route(), context);
-//              },
-//            ),
-//          ],
-//          leading: IconButton(
-//            icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
-//            onPressed: () {
-//              StorageUtil.removeAllCache();
-//              if(Navigator.of(context).canPop()){
-//                Navigator.of(context).pop();
-//              }
-//              else{
-//                Navigator.of(context).popAndPushNamed('LoginView')
-//              }
-//            },
-//          ),
-//        ),
-//        body: BlocProvider(
-//          create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
-//          child: HomeUI(),
-//        ),
-//      ),
-//      onWillPop: () async {
-//        return false;
-//      },
-//    );
-//  }
-//
-//  void _openNextScreen(Route route , BuildContext context) {
-//    Navigator.of(context).push(route).then((result) => {
-//      if(result != null) {
-//        if (result == 'LoginView') {
-//          if(Navigator.of(context).canPop()){
-//            Navigator.of(context).pop()
-//          }
-//          else{
-//            Navigator.of(context).popAndPushNamed('LoginView')
-//          }
-//        }
-//      }
-//    });
-//  }
-//
-//  _customeHeaderBar(BuildContext context) {
-//    return Stack(
-//      alignment: Alignment.center,
-//      children: [
-//        Positioned(
-//          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-//        ),
-//      ],
-//    );
-//  }
 }
-
-//class HomeUI extends StatefulWidget {
-//  @override
-//  HomeUIState createState() => HomeUIState();
-//}
 
 class HomeUIState extends State<HomeView> {
 
@@ -192,7 +120,103 @@ class HomeUIState extends State<HomeView> {
 //    Intl.defaultLocale = 'vi_VN';
 //    initializeDateFormatting();
     loadDataFromLocal();
+    checkAndUpdateDeviceId();
   }
+
+  Future checkAndUpdateDeviceId() async {
+    var os_version = "";
+    if (Platform.isAndroid) {
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      os_version = androidInfo.version.release;
+    }
+    else if (Platform.isIOS) {
+      var iosInfo = await DeviceInfoPlugin().iosInfo;
+      os_version = iosInfo.systemName;
+    }
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      String appName = "antoree_teacher";//packageInfo.appName;
+      String version = packageInfo.version;
+      String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
+      if(StorageUtil.getStringValuesSF(KEY.DEVICE_ID) == ""){
+        PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+          String appName = packageInfo.appName;
+          String version = packageInfo.version;
+          String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
+          APIConnect(context)..add(AddDevice(os_version, "Android", "vn", version, appName, "", fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        });
+      }else{
+        final accessToken = StorageUtil.getAccessToken();
+        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, "Android", "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    if(timer != null){
+      timer.cancel();
+    }
+    super.dispose();
+  }
+
+//  loadDataFromLocal(){
+//    _isStartVideoCall = false;
+//    scheduleList = StorageUtil.getScheduleList();
+//    if(scheduleList != null){
+//      if(scheduleList.objects.length > 0) {
+//        for(var i = 0; i < scheduleList.objects.length; i ++){
+//          List<Schedule> list = scheduleList.objects[i].schedules;
+//          if(list.length > 0){
+//            Schedule schMin = list[0];
+//            DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
+//            for(Schedule sch in list){
+//              DateTime schTime = sch.startTime;
+//              if(schTime.difference(nowTime).inDays > 0){
+//                schMin = sch;
+//                break;
+//              }else{
+//                int minsNow =  schTime.difference(nowTime).inMinutes;
+//                int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
+//                if(minsNow > 0 && minsNow < minsWithMinSch) {
+//                  schMin = sch;
+//                }
+//              }
+//            }
+//            int ms = schMin.startTime.difference(nowTime).inMinutes;
+//            if( ms > -VALUES.DELAY_CALL_TIME){
+//              currentSchedule = schMin;
+//              timerDate = currentSchedule.startTime;
+//              if(timer != null){
+//                timer.cancel();
+//              }
+//              calculatorDuration(formatDateForTimer.format(timerDate));
+//              if (hours > 0 || minutes > 0 || seconds > 0) {
+//                startTimeout();
+//              }else if (hours == 0 || minutes <= 0) {
+//                _isStartVideoCall = true;
+//                Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
+//                  setState(() {
+//                    currentSchedule = null;
+//                    _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+//                  });
+//                });
+//              }
+//              for(var j = 0; j < currentSchedule.users.length; j ++){
+//                User _user = currentSchedule.users[j];
+//                if(_user.role == "teacher"){
+//                  teacher = _user;
+//                }else if(_user.role == "student"){
+//                  student = _user;
+//                }
+//              }
+//            }
+//            break;
+//          }
+//        }
+//      }
+//    }
+//  }
 
   loadDataFromLocal(){
     _isStartVideoCall = false;
@@ -202,50 +226,57 @@ class HomeUIState extends State<HomeView> {
         for(var i = 0; i < scheduleList.objects.length; i ++){
           List<Schedule> list = scheduleList.objects[i].schedules;
           if(list.length > 0){
-            Schedule schMin = list[0];
-            DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
-            for(Schedule sch in list){
-              DateTime schTime = sch.startTime;
-              if(schTime.difference(nowTime).inDays > 0){
-                schMin = sch;
+            for(var i = 0; i < list.length; i++){
+              Schedule schMin = list[i];
+              if(currentSchedule != null){
+                i = list.length - 1;
                 break;
-              }else{
-                int minsNow =  schTime.difference(nowTime).inMinutes;
-                int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
-                if(minsNow > 0 && minsNow < minsWithMinSch) {
+              }
+              DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
+              for(Schedule sch in list){
+                DateTime schTime = sch.startTime;
+                if(schTime.difference(nowTime).inDays > 0){
                   schMin = sch;
+                  break;
+                }else{
+                  int minsNow =  schTime.difference(nowTime).inMinutes;
+                  int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
+                  if(minsNow > 0 && minsNow < minsWithMinSch) {
+                    schMin = sch;
+                  }
                 }
               }
-            }
-            int ms = schMin.startTime.difference(nowTime).inMinutes;
-            if( ms > -VALUES.DELAY_CALL_TIME){
-              currentSchedule = schMin;
-              timerDate = currentSchedule.startTime;
-              if(timer != null){
-                timer.cancel();
-              }
-              calculatorDuration(formatDateForTimer.format(timerDate));
-              if (hours > 0 || minutes > 0 || seconds > 0) {
-                startTimeout();
-              }else if (hours == 0 || minutes <= 0) {
-                _isStartVideoCall = true;
-                Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
-                  setState(() {
-                    currentSchedule = null;
-                    _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+              int ms = schMin.startTime.difference(nowTime).inMinutes;
+              if( ms > -VALUES.DELAY_CALL_TIME){
+                currentSchedule = schMin;
+                timerDate = currentSchedule.startTime;
+                if(timer != null){
+                  timer.cancel();
+                }
+                calculatorDuration(formatDateForTimer.format(timerDate));
+                if (hours > 0 || minutes > 0 || seconds > 0) {
+                  startTimeout();
+                }else if (hours == 0 || minutes <= 0) {
+                  _isStartVideoCall = true;
+                  Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
+                    setState(() {
+                      currentSchedule = null;
+                      _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+                    });
                   });
-                });
-              }
-              for(var j = 0; j < currentSchedule.users.length; j ++){
-                User _user = currentSchedule.users[j];
-                if(_user.role == "teacher"){
-                  teacher = _user;
-                }else if(_user.role == "student"){
-                  student = _user;
+                }
+                for(var j = 0; j < currentSchedule.users.length; j ++){
+                  User _user = currentSchedule.users[j];
+                  if(_user.role == "teacher"){
+                    teacher = _user;
+                  }else if(_user.role == "student"){
+                    student = _user;
+                  }
                 }
               }
+              break;
             }
-            break;
+
           }
         }
       }
@@ -338,14 +369,14 @@ class HomeUIState extends State<HomeView> {
           elevation: 0.0,
           backgroundColor: COLOR.BG_COLOR,
           automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
-              onPressed: () {
-                _openNextScreen(NotificationView.route());
-              },
-            ),
-          ],
+//          actions: [
+//            IconButton(
+//              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
+//              onPressed: () {
+//                _openNextScreen(NotificationView.route());
+//              },
+//            ),
+//          ],
           leading: IconButton(
             icon: Image.asset(IMAGES.HOME_LOGOUT, width: 29, height: 25,),
             onPressed: () {

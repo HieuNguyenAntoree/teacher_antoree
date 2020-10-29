@@ -35,14 +35,14 @@ class CalendarView extends StatelessWidget {
           elevation: 0.0,
           backgroundColor: COLOR.BG_COLOR,
           automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
-              onPressed: () {
-
-              },
-            ),
-          ],
+//          actions: [
+//            IconButton(
+//              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
+//              onPressed: () {
+//
+//              },
+//            ),
+//          ],
           leading: IconButton(
             icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
             onPressed: () {

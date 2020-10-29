@@ -17,6 +17,7 @@ import 'package:teacher_antoree/src/customViews/router.dart';
 import 'package:teacher_antoree/src/fcm/fcm_object.dart';
 import 'package:teacher_antoree/src/fcm/receive_fcm.dart';
 import 'dart:io' show Platform;
+import 'const/key.dart';
 import 'const/sharedPreferences.dart';
 
 class App extends StatefulWidget {
@@ -108,12 +109,15 @@ class _AppState extends State<App> {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
-        Item item = itemForMessage(message);
         if(Platform.isAndroid){
           Item item = itemForMessage(message);
           if(StorageUtil.getAccessToken() != ""){
             if(item.pageName != null){
-              _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+              if(item.pageName == "NotificationView"){
+                _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
+              }else{
+                _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+              }
             }
             else{
               _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
@@ -123,24 +127,17 @@ class _AppState extends State<App> {
           NotificationiOS item = notificationiOSForMessage(message);
           if(StorageUtil.getAccessToken() != ""){
             if(item.pageName != null){
-              _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+              if(item.pageName == "NotificationView"){
+                _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
+              }else{
+                _handleClickMe(item.title, item.body, "Close", "Open", item.pageName, item.itemId);
+              }
             }
             else{
               _handleClickMe(item.title, item.body, "Close", '', '', item.itemId);
             }
           }
         }
-
-//        var dialogResponse = await _dialogService.showConfirmationDialog(
-//            title: item.title,
-//            description: item.body,
-//            confirmationTitle: "Open",
-//            cancelTitle: "Close");
-//
-//        if (dialogResponse.confirmed) {
-//          _navigationService.navigateTo(item.pageName);
-//        }
-
       },
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
@@ -162,6 +159,7 @@ class _AppState extends State<App> {
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       print("Push Messaging token: $token");
+      StorageUtil.storeStringToSF(KEY.FCM_TOKEN, token);
     });
     _firebaseMessaging.subscribeToTopic("matchscore");
   }

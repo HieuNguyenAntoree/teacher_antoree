@@ -7,6 +7,8 @@ class KEY {
   static const NETWORK = "NETWORK";
   static const LOGIN_STATUS = "LOGIN_STATUS";
   static const TIMESHEET = "TIMESHEET";
+  static const DEVICE_ID = "DEVICE_ID";
+  static const FCM_TOKEN = "FCM_TOKEN";
 }
 
 class GOOGLECLIENT{

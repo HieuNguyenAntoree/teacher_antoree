@@ -125,3 +125,37 @@ class CancelTimeSheet extends ApiEvent {
   List<Object> get props => [idTimeSheet];
 }
 
+class AddDevice extends ApiEvent {
+  const AddDevice(this.os_version, this.platform, this.language_code, this.app_version, this.app_name, this.user_id, this.fcm_token, this.last_opened_at);
+
+  final dynamic  os_version;
+  final dynamic platform;
+  final dynamic language_code;
+  final dynamic app_version;
+  final dynamic app_name;
+  final dynamic user_id;
+  final dynamic fcm_token;
+  final dynamic last_opened_at;
+
+
+  @override
+  List<Object> get props => [os_version, platform, language_code, app_version, app_name, user_id, fcm_token, last_opened_at];
+}
+
+class UpdateDevice extends ApiEvent {
+  const UpdateDevice(this.device_id, this.os_version, this.platform, this.language_code, this.app_version, this.app_name, this.user_id, this.fcm_token, this.last_opened_at);
+
+  final dynamic  device_id;
+  final dynamic  os_version;
+  final dynamic platform;
+  final dynamic language_code;
+  final dynamic app_version;
+  final dynamic app_name;
+  final dynamic user_id;
+  final dynamic fcm_token;
+  final dynamic last_opened_at;
+
+
+  @override
+  List<Object> get props => [device_id, os_version, platform, language_code, app_version, app_name, user_id, fcm_token, last_opened_at];
+}

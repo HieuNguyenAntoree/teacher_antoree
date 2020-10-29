@@ -5,7 +5,9 @@ import 'package:connect_api/connection/model/result.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:teacher_antoree/const/key.dart';
 import 'package:teacher_antoree/const/sharedPreferences.dart';
+import 'package:teacher_antoree/models/device.dart';
 import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/models/teacher.dart';
 import 'package:teacher_antoree/models/timesheet.dart';
@@ -37,7 +39,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       }
     }else if(event is ScheduleFetched){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.getScheduleList(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, event.from_date, event.to_date);
+      Result result = await _connectionAPI.getScheduleOfTeacher(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, event.from_date, event.to_date);
       if (result is ParseJsonToObject){
         ScheduleModel user = ScheduleModel.fromJson(result.value);
         StorageUtil.storeScheduleListToSF(user.toJson());
@@ -76,11 +78,11 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.getTeacherList(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, event.available_time);
       if (result is ParseJsonToObject){
-        List<TeacherModel> user = List<TeacherModel>();
-        for(Map i in result.value){
-          user.add(TeacherModel.fromJson(i));
+        if(event.offset == 0) {
+          StorageUtil.storeTeacherListToSF(result.value);
+        }else{
+          StorageUtil.addTeacherToList(result.value);
         }
-        StorageUtil.storeTeacherListToSF(result.value);
         yield ApiState(result: result );
       }else{
         yield ApiState(result: result );
@@ -140,6 +142,27 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       }else{
         ErrorState error = ErrorState("Set");
         yield ApiState(result: error );
+      }
+    }
+    else if(event is AddDevice){
+      Result result = await _connectionAPI.postAddDevice(AppConfig.of(context).apiBaseUrl, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.user_id, event.fcm_token, event.last_opened_at);
+      if (result is ParseJsonToObject){
+        DeviceModel model = DeviceModel.fromJson(result.value);
+        StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
+        yield ApiState(result: Result.success(MESSAGE.Sucess) );
+      }else{
+        yield ApiState(result: result );
+      }
+    }
+    else if(event is UpdateDevice){
+      final accessToken = StorageUtil.getAccessToken();
+      Result result = await _connectionAPI.putUpdateDevice(AppConfig.of(context).apiBaseUrl, accessToken, event.device_id, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.user_id, event.fcm_token, event.last_opened_at);
+      if (result is ParseJsonToObject){
+        DeviceModel model = DeviceModel.fromJson(result.value);
+        StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
+        yield ApiState(result: Result.success(MESSAGE.Sucess) );
+      }else{
+        yield ApiState(result: result );
       }
     }
     else{
