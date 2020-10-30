@@ -49,6 +49,10 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		F24E23F2254C0B00001E3BF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F24E23F1254C0B00001E3BF0 /* Assets.xcassets */; };
+		F2B69458254C0FED0096F8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F24E23F1254C0B00001E3BF0 /* Assets.xcassets */; };
+		F2B6945E254C0FEE0096F8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F24E23F1254C0B00001E3BF0 /* Assets.xcassets */; };
+		F2B6945F254C0FEF0096F8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F24E23F1254C0B00001E3BF0 /* Assets.xcassets */; };
+		F2B69460254C0FEF0096F8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F24E23F1254C0B00001E3BF0 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -449,6 +453,7 @@
 				35C7E0CE252AD3A900058177 /* AppFrameworkInfo.plist in Resources */,
 				35C7E152252AD50C00058177 /* Antore-Teacher-Dev-Info.plist in Resources */,
 				35C7E0D1252AD3A900058177 /* Main.storyboard in Resources */,
+				F2B69458254C0FED0096F8FE /* Assets.xcassets in Resources */,
 				35C7E1B7252AD95A00058177 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,6 +466,7 @@
 				35C7E110252AD41400058177 /* LaunchScreen.storyboard in Resources */,
 				35C7E111252AD41400058177 /* AppFrameworkInfo.plist in Resources */,
 				35C7E114252AD41400058177 /* Main.storyboard in Resources */,
+				F2B6945E254C0FEE0096F8FE /* Assets.xcassets in Resources */,
 				35C7E1B9252ADB0E00058177 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,6 +479,7 @@
 				35C7E155252AD51300058177 /* Antore-Teacher-Stg-Info.plist in Resources */,
 				35C7E127252AD41B00058177 /* AppFrameworkInfo.plist in Resources */,
 				35C7E12A252AD41B00058177 /* Main.storyboard in Resources */,
+				F2B6945F254C0FEF0096F8FE /* Assets.xcassets in Resources */,
 				35C7E1BB252ADB7900058177 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -485,6 +492,7 @@
 				35C7E145252AD4C400058177 /* AppFrameworkInfo.plist in Resources */,
 				35C7E146252AD4C400058177 /* GoogleService-Info.plist in Resources */,
 				35C7E154252AD50F00058177 /* Antore-Teacher-Prod-Info.plist in Resources */,
+				F2B69460254C0FEF0096F8FE /* Assets.xcassets in Resources */,
 				35C7E148252AD4C400058177 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
