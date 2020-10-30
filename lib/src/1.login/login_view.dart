@@ -60,6 +60,7 @@ class LoginUIState extends State<LoginUI>{
 
   Future checkAndUpdateDeviceId() async {
     var os_version = "";
+    var deviceType = "ANDROID";
     if (Platform.isAndroid) {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       os_version = androidInfo.version.release;
@@ -67,6 +68,7 @@ class LoginUIState extends State<LoginUI>{
     else if (Platform.isIOS) {
       var iosInfo = await DeviceInfoPlugin().iosInfo;
       os_version = iosInfo.systemName;
+      deviceType = "IOS";
     }
 
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
@@ -79,11 +81,11 @@ class LoginUIState extends State<LoginUI>{
           String appName = packageInfo.appName;
           String version = packageInfo.version;
           String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
-          APIConnect(context)..add(AddDevice(os_version, "Android", "vn", version, appName, "", fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName, "", fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
         });
       }else{
         final accessToken = StorageUtil.getAccessToken();
-        APIConnect(context)..add(UpdateDevice(deviceId, os_version, "Android", "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        APIConnect(context)..add(UpdateDevice(deviceId, os_version, deviceType, "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
       }
     });
 }

@@ -5,6 +5,7 @@ import 'package:connect_api/connection/model/result.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:teacher_antoree/const/defaultValue.dart';
 import 'package:teacher_antoree/const/key.dart';
 import 'package:teacher_antoree/const/sharedPreferences.dart';
 import 'package:teacher_antoree/models/device.dart';
@@ -26,7 +27,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
 
   @override
   Stream<ApiState> mapEventToState(ApiEvent event) async* {
-    yield ApiState(result: LoadingState(MESSAGE.Loading) );
+//    yield ApiState(result: LoadingState(MESSAGE.Loading) );
     // TODO: implement mapEventToState
     if(event is LoginSubmitted){
       Result result = await _connectionAPI.login(AppConfig.of(context).gateBaseUrl, event.username, event.password);
@@ -35,7 +36,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         StorageUtil.storeTokenObjectToSF(user.toJson());
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result);
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }else if(event is ScheduleFetched){
       final accessToken = StorageUtil.getAccessToken();
@@ -45,7 +53,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         StorageUtil.storeScheduleListToSF(user.toJson());
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is CancelSchedule){
@@ -54,7 +69,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }else if(event is Rating){
       final accessToken = StorageUtil.getAccessToken();
@@ -62,7 +84,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is ChangeSchedule){
@@ -71,7 +100,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is TeacherList){
@@ -85,7 +121,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         }
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is ChangeTeacher){
@@ -94,7 +137,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is CallVideo){
@@ -103,7 +153,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       if (result is SuccessState){
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is TimeSheetList){
@@ -118,7 +175,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         StorageUtil.storeTimeSheetListToSF(result.value, event.date);
         yield ApiState(result: result );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is CancelTimeSheet){
@@ -151,7 +215,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
         yield ApiState(result: Result.success(MESSAGE.Sucess) );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else if(event is UpdateDevice){
@@ -162,7 +233,14 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
         StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
         yield ApiState(result: Result.success(MESSAGE.Sucess) );
       }else{
-        yield ApiState(result: result );
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
       }
     }
     else{

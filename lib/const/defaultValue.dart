@@ -17,20 +17,29 @@ class VALUES {
   static const SCHEDULE_DAYS = 3;
   static DateFormat FORMAT_DATE_API = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   static DateFormat FORMAT_DATE_yyyy_mm_dd = DateFormat("yyyy-MM-dd");
+  static const PAGE_SIZE = 20;
 }
 
 class STRINGS{
-  static const ERROR_TITLE = "ERORR";
+  static const ERROR_TITLE = "Information";
   static const LOGIN_TEXT = "Learning English online 1 on 1";
-  static const LOGIN_EMAIL_HINT = "Your Email / cell-phone number";
-  static const LOGIN_PASS_HINT = "Your Password";
+  static const LOGIN_EMAIL_HINT = "Your email / cell-phone number";
+  static const LOGIN_PASS_HINT = "Your password";
   static const LOGIN_LOGIN_STATUS = "Remember me";
   static const LOGIN_BUTTON = "Login";
-  static const LOGIN_PASS_VALID = "Password should contain more 5 characters";
+  static const LOGIN_PASS_VALID = "Password should contain more 8 characters";
   static const LOGIN_EMAIL_VALID = "Email is invalid";
-  static const EMPTY_LIST = "List is empty";
+  static const EMPTY_LIST = "Data is empty";
   static const TEACHER_STRING = "Teacher";
   static const NO_SCHEDULE = "You don't' have schedule in next 3 days.";
+  static const NETWORK = 'Please check your network.';
+  static const SERVER = 'Data download unsuccessful';
+  static const OTHERS = 'Data download unsuccessful';
+}
+
+class MESSAGE {
+  static const Loading = 'Connecting, please wait for connect';
+  static const Sucess = 'Connect successfully';
 }
 
 class IMAGES{
