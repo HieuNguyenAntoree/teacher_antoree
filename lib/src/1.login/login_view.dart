@@ -187,7 +187,7 @@ class LoginUIState extends State<LoginUI>{
             _isLoading = false;
           });
           ErrorState error = state.result;
-          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, 'Ok', 'Try again!', _loginAction);
+          _handleClickMe(STRINGS.ERROR_TITLE, error.msg, 'Close', 'Try again!', _loginAction);
         }
       },
       child: LoadingOverlay(

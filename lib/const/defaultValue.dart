@@ -33,7 +33,7 @@ class STRINGS{
   static const TEACHER_STRING = "Teacher";
   static const NO_SCHEDULE = "You don't' have schedule in next 3 days.";
   static const NETWORK = 'Please check your network.';
-  static const SERVER = 'Data download unsuccessful';
+  static const SERVER = 'Connect to server unsuccessful';
   static const OTHERS = 'Data download unsuccessful';
 }
 
