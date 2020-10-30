@@ -720,11 +720,10 @@ class HomeUIState extends State<HomeView> {
                       splashColor: Colors.transparent,
                       child: Image.asset(IMAGES.HOME_CALL_ICON, width: 40, height: 40,),
                       onPressed: () {
-//                        if(currentSchedule != null && teacher != null){
-//                          context.bloc<APIConnect>().add(CallVideo(currentSchedule.id,  "teacher"));
-//                        _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "";
-//                        }
-                        VideoState(context, currentSchedule.id).initState();
+                        if(currentSchedule != null && teacher != null){
+                          context.bloc<APIConnect>().add(CallVideo(currentSchedule.id,  "teacher"));
+                        _isStartVideoCall ? VideoState(context, currentSchedule.id).initState() : "";
+                        }
                       },
                     ),
                   ),

@@ -47,8 +47,8 @@ class LoginUIState extends State<LoginUI>{
   @override
   void initState() {
     super.initState();
-    emailController..text = 'admin@antoree.com';
-    passController..text = 'Antor33rotnA';
+//    emailController..text = 'admin@antoree.com';
+//    passController..text = 'Antor33rotnA';
     checkAndUpdateDeviceId();
   }
 
