@@ -723,6 +723,76 @@ class TimeSheetItemState extends State<TimeSheetItem> {
     );
   }
 
+  Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title, style: const TextStyle(
+              color:  const Color(0xff4B5B53),
+              fontWeight: FontWeight.w700,
+              fontFamily: "Montserrat",
+              fontStyle:  FontStyle.normal,
+              fontSize: 14.0
+          ),),
+          content: Text(mess,
+            style: const TextStyle(
+                color:  const Color(0xff4B5B53),
+                fontWeight: FontWeight.w400,
+                fontFamily: "Montserrat",
+                fontStyle:  FontStyle.normal,
+                fontSize: 12.0
+            ),),
+          actions: rightButton == "" ? <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )]
+              : <Widget>[
+            CupertinoDialogAction(
+              child: Text(leftButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text(rightButton, style:
+              const TextStyle(
+                  color:  const Color(0xff4B5B53),
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Montserrat",
+                  fontStyle:  FontStyle.normal,
+                  fontSize: 14.0
+              ),),
+              onPressed: () {
+                _onTap();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   _bottomButton(BuildContext context, double width, int isOnTime, Schedule item, int isCurrentDay){
     double widthButton = (width - 10 - 15)/2;
     return new Container(
@@ -740,11 +810,12 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                     if(isOnTime > 0) {
                       cancelAction(item.id);
                     }else {
-                      showAlertDialog(context: context,
-                          title: '',
-                          message: "Can't cancel this time",
-                          actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-                          actionsOverflowDirection: VerticalDirection.up);
+                      _handleClickMe(STRINGS.ERROR_TITLE, "Can't cancel this time", "Close", "", null);
+//                      showAlertDialog(context: context,
+//                          title: '',
+//                          message: "Can't cancel this time",
+//                          actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
+//                          actionsOverflowDirection: VerticalDirection.up);
                     }
                   },
                   child: isCurrentDay > 0 ? _cancelGreenButton(widthButton) : (isOnTime == 0  ? _cancelGreyButton(widthButton) : _cancelGreenButton(widthButton)),
@@ -755,11 +826,12 @@ class TimeSheetItemState extends State<TimeSheetItem> {
                     if (isOnTime == 0) {
 
                     }else if (isOnTime > 0) {
-                      showAlertDialog(context: context,
-                          title: '',
-                          message: "Can't call this time",
-                          actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
-                          actionsOverflowDirection: VerticalDirection.up);
+                      _handleClickMe(STRINGS.ERROR_TITLE,"Can't call this time", "Close", "", null);
+//                      showAlertDialog(context: context,
+//                          title: '',
+//                          message: "Can't call this time",
+//                          actions: [AlertDialogAction(isDefaultAction: true, label: 'OK')],
+//                          actionsOverflowDirection: VerticalDirection.up);
                     }
                   },
                   child: isOnTime > 0 ? _callGreyButton(widthButton) : _callGreenButton(widthButton),

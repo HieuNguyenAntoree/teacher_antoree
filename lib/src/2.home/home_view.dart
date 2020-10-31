@@ -125,29 +125,32 @@ class HomeUIState extends State<HomeView> {
 
   Future checkAndUpdateDeviceId() async {
     var os_version = "";
+    var deviceType = "ANDROID";
     if (Platform.isAndroid) {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       os_version = androidInfo.version.release;
+
     }
     else if (Platform.isIOS) {
       var iosInfo = await DeviceInfoPlugin().iosInfo;
       os_version = iosInfo.systemName;
+      deviceType = "IOS";
     }
 
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       String appName = "antoree_teacher";//packageInfo.appName;
       String version = packageInfo.version;
       String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
+      final accessToken = StorageUtil.getAccessToken();
       if(StorageUtil.getStringValuesSF(KEY.DEVICE_ID) == ""){
         PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
           String appName = packageInfo.appName;
           String version = packageInfo.version;
           String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
-          APIConnect(context)..add(AddDevice(os_version, "Android", "vn", version, appName, "", fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
         });
       }else{
-        final accessToken = StorageUtil.getAccessToken();
-        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, "Android", "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, deviceType, "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
       }
     });
   }
@@ -159,64 +162,6 @@ class HomeUIState extends State<HomeView> {
     }
     super.dispose();
   }
-
-//  loadDataFromLocal(){
-//    _isStartVideoCall = false;
-//    scheduleList = StorageUtil.getScheduleList();
-//    if(scheduleList != null){
-//      if(scheduleList.objects.length > 0) {
-//        for(var i = 0; i < scheduleList.objects.length; i ++){
-//          List<Schedule> list = scheduleList.objects[i].schedules;
-//          if(list.length > 0){
-//            Schedule schMin = list[0];
-//            DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
-//            for(Schedule sch in list){
-//              DateTime schTime = sch.startTime;
-//              if(schTime.difference(nowTime).inDays > 0){
-//                schMin = sch;
-//                break;
-//              }else{
-//                int minsNow =  schTime.difference(nowTime).inMinutes;
-//                int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
-//                if(minsNow > 0 && minsNow < minsWithMinSch) {
-//                  schMin = sch;
-//                }
-//              }
-//            }
-//            int ms = schMin.startTime.difference(nowTime).inMinutes;
-//            if( ms > -VALUES.DELAY_CALL_TIME){
-//              currentSchedule = schMin;
-//              timerDate = currentSchedule.startTime;
-//              if(timer != null){
-//                timer.cancel();
-//              }
-//              calculatorDuration(formatDateForTimer.format(timerDate));
-//              if (hours > 0 || minutes > 0 || seconds > 0) {
-//                startTimeout();
-//              }else if (hours == 0 || minutes <= 0) {
-//                _isStartVideoCall = true;
-//                Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
-//                  setState(() {
-//                    currentSchedule = null;
-//                    _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
-//                  });
-//                });
-//              }
-//              for(var j = 0; j < currentSchedule.users.length; j ++){
-//                User _user = currentSchedule.users[j];
-//                if(_user.role == "teacher"){
-//                  teacher = _user;
-//                }else if(_user.role == "student"){
-//                  student = _user;
-//                }
-//              }
-//            }
-//            break;
-//          }
-//        }
-//      }
-//    }
-//  }
 
   loadDataFromLocal(){
     _isStartVideoCall = false;
@@ -417,7 +362,7 @@ class HomeUIState extends State<HomeView> {
                     scheduleList = StorageUtil.getScheduleList();
                     if(scheduleList != null) {
                       if (scheduleList.objects.length == 0) {
-                        _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.EMPTY_LIST, "Close", "", null);
+                        _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.NO_SCHEDULE, "Close", "", null);
                       }
                     }
                     setState(() {

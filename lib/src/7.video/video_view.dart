@@ -11,8 +11,8 @@ import 'package:jitsi_meet/feature_flag/feature_flag_enum.dart';
 class VideoState{
   final serverText = TextEditingController(text: 'https://vcall.stg.antoree.tech/');
   final roomText = TextEditingController(text: "Antoree_Test");
-  final subjectText = TextEditingController(text: "My Plugin Test Meeting");
-  final nameText = TextEditingController(text: "Plugin Test User");
+  final subjectText = TextEditingController(text: "Antoree Testing");
+  final nameText = TextEditingController(text: "Please waiting for student");
   final emailText = TextEditingController(text: "fake@email.com");
   final iosAppBarRGBAColor = TextEditingController(text: "#0080FF80");//transparent blue
   var isAudioOnly = true;
