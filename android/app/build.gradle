@@ -162,7 +162,7 @@ android {
             signingConfig signingConfigs.betaStaging
         }
 
-        production {
+        prod {
             dimension "version"
             applicationId rootProject.ext.applicationId
             resValue "string", "app_name", "Antoree Student"
