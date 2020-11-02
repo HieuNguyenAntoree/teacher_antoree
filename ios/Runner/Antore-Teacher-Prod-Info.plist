@@ -8,10 +8,6 @@
 	<string>Antoree Teacher</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIcons</key>
-	<dict/>
-	<key>CFBundleIcons~ipad</key>
-	<dict/>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -25,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>20201031.1130</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>FirebaseScreenReportingEnabled</key>
@@ -39,15 +35,15 @@
 	<key>MinimumOSVersion</key>
 	<string>11.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>$(PRODUCT_NAME) camera use.</string>
+	<string>$(PRODUCT_NAME) use calendar for video call schedule. Please allow us access your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) MyApp needs access to your camera for meetings.</string>
+	<string>$(PRODUCT_NAME) needs access to your camera for video call.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>$(PRODUCT_NAME) location use.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) MyApp needs access to your microphone for meetings.</string>
+	<string>$(PRODUCT_NAME) needs access to your microphone for video call.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) camera use.</string>
+	<string>$(PRODUCT_NAME) needs access to your photo to update profile picture.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Black</string>
