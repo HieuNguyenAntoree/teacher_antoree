@@ -30,10 +30,10 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
 //    yield ApiState(result: LoadingState(MESSAGE.Loading) );
     // TODO: implement mapEventToState
     if(event is LoginSubmitted){
-      Result result = await _connectionAPI.login(AppConfig.of(context).gateBaseUrl, event.username, event.password);
+      Result result = await _connectionAPI.login(AppConfig.of(context).apiBaseUrl, event.username, event.password);
       if (result is ParseJsonToObject){
         TokenItem user = TokenItem.fromJson(result.value);
-        StorageUtil.storeTokenObjectToSF(user.toJson());
+        StorageUtil.storeAuthorizationToSF(user.toJson());
         yield ApiState(result: result );
       }else{
         ErrorState error = result;

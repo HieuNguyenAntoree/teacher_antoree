@@ -54,8 +54,12 @@ class LoginUIState extends State<LoginUI>{
 
   // ignore: missing_return
   VoidCallback _loginAction(){
-    context.bloc<APIConnect>().add(
-        LoginSubmitted(emailController.text, passController.text));
+    if (passController.text.isEmpty || emailController.text.isEmpty) {
+      _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.ERROR_EMPTY, STRINGS.OK, "", null);
+    }else{
+      context.bloc<APIConnect>().add(
+          LoginSubmitted(emailController.text, passController.text));
+    }
   }
 
   Future checkAndUpdateDeviceId() async {

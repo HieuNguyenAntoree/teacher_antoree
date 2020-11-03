@@ -35,6 +35,8 @@ class STRINGS{
   static const NETWORK = 'Please check your network.';
   static const SERVER = 'Connect to server unsuccessful';
   static const OTHERS = 'Data download unsuccessful';
+  static const OK = "Ok";
+  static const ERROR_EMPTY = "Please input email or password.";
 }
 
 class MESSAGE {

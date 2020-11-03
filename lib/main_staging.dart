@@ -17,7 +17,7 @@ Future<void> main() async {
 
   var configuredApp = new AppConfig(
     appName: 'Antorree Teacher ',
-    flavorName: 'production',
+    flavorName: 'staging',
     apiBaseUrl: 'https://api-gateway.stg.antoree.tech',
     gateBaseUrl: 'https://gate.stg.antoree.tech',
     child: App(),

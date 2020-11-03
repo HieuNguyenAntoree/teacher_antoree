@@ -102,24 +102,24 @@ class StorageUtil {
     }
   }
  /*----------------------------TOKEN ITEM------------------------------*/
-  static storeTokenObjectToSF(Map<String, dynamic> value) async{
+  static storeAuthorizationToSF(Map<String, dynamic> value) async{
 //    Map<String, dynamic> decodeOptions = jsonDecode(jsonString);
-    String jsonObject = jsonEncode(TokenItem.fromJson(value));
+    String jsonObject = jsonEncode(Authorization.fromJson(value));
     if (_preferences != null) {
       _preferences.setString(KEY.TOKEN, jsonObject);
     }
     else {
       await StorageUtil.getInstance();
-     _preferences.setString(KEY.TOKEN, jsonObject);
+      _preferences.setString(KEY.TOKEN, jsonObject);
     }
   }
 
-  static TokenItem getTokenObject() {
+  static Authorization getTokenObject() {
     if (_preferences != null) {
       String tokenStr = _preferences.getString(KEY.TOKEN);
       if(tokenStr != null){
         Map tokenItemMap = jsonDecode(tokenStr);
-        var tokenItem = TokenItem.fromJson(tokenItemMap);
+        var tokenItem = Authorization.fromJson(tokenItemMap);
         return tokenItem;
       }
       return null;
@@ -131,7 +131,7 @@ class StorageUtil {
   static String getAccessToken(){
     var tokenItem = StorageUtil.getTokenObject();
     if(tokenItem != null){
-      return tokenItem.tokenType + ' ' + tokenItem.accessToken;
+      return tokenItem.authorization;
     }
     return "";
   }

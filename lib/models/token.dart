@@ -24,3 +24,17 @@ class TokenItem {
         "refresh_token": refreshToken,
   };
 }
+
+class Authorization {
+  Authorization({this.authorization});
+
+  String authorization;
+
+  factory Authorization.fromJson(Map<String, dynamic> json) => Authorization(
+    authorization: json["authorization"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "authorization": authorization,
+  };
+}
