@@ -32,7 +32,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     if(event is LoginSubmitted){
       Result result = await _connectionAPI.login(AppConfig.of(context).apiBaseUrl, event.username, event.password);
       if (result is ParseJsonToObject){
-        TokenItem user = TokenItem.fromJson(result.value);
+        Authorization user = Authorization.fromJson(result.value);
         StorageUtil.storeAuthorizationToSF(user.toJson());
         yield ApiState(result: result );
       }else{
