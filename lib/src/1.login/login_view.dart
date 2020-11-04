@@ -54,6 +54,7 @@ class LoginUIState extends State<LoginUI>{
 
   // ignore: missing_return
   VoidCallback _loginAction(){
+    FocusScope.of(context).unfocus();
     if (passController.text.isEmpty || emailController.text.isEmpty) {
       _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.ERROR_EMPTY, STRINGS.OK, "", null);
     }else{

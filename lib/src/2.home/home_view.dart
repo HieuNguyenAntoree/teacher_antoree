@@ -191,37 +191,38 @@ class HomeUIState extends State<HomeView> {
                   }
                 }
               }
-              int ms = schMin.startTime.difference(nowTime).inMinutes;
-              if( ms > -VALUES.DELAY_CALL_TIME){
-                currentSchedule = schMin;
-                timerDate = currentSchedule.startTime;
-                if(timer != null){
-                  timer.cancel();
-                }
-                calculatorDuration(formatDateForTimer.format(timerDate));
-                if (hours > 0 || minutes > 0 || seconds > 0) {
-                  startTimeout();
-                }else if (hours == 0 || minutes <= 0) {
-                  _isStartVideoCall = true;
-                  Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
-                    setState(() {
-                      currentSchedule = null;
-                      _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+              if(schMin.status == 1) {
+                int ms = schMin.startTime.difference(nowTime).inMinutes;
+                if( ms > -VALUES.DELAY_CALL_TIME){
+                  currentSchedule = schMin;
+                  timerDate = currentSchedule.startTime;
+                  if(timer != null){
+                    timer.cancel();
+                  }
+                  calculatorDuration(formatDateForTimer.format(timerDate));
+                  if (hours > 0 || minutes > 0 || seconds > 0) {
+                    startTimeout();
+                  }else if (hours == 0 || minutes <= 0) {
+                    _isStartVideoCall = true;
+                    Timer(Duration(minutes: VALUES.DELAY_CALL_TIME),(){
+                      setState(() {
+                        currentSchedule = null;
+                        _isStartVideoCall = false;//Nút gọi này được hiện ra và enable bắt đầu trước và sau 5 phút so với giờ của giờ hẹn
+                      });
                     });
-                  });
-                }
-                for(var j = 0; j < currentSchedule.users.length; j ++){
-                  User _user = currentSchedule.users[j];
-                  if(_user.role == "teacher"){
-                    teacher = _user;
-                  }else if(_user.role == "student"){
-                    student = _user;
+                  }
+                  for(var j = 0; j < currentSchedule.users.length; j ++){
+                    User _user = currentSchedule.users[j];
+                    if(_user.role == "teacher"){
+                      teacher = _user;
+                    }else if(_user.role == "student"){
+                      student = _user;
+                    }
                   }
                 }
               }
               break;
             }
-
           }
         }
       }
