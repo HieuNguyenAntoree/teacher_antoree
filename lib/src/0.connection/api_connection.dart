@@ -49,6 +49,8 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.getScheduleOfTeacher(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, event.from_date, event.to_date);
       if (result is ParseJsonToObject){
+
+
         ScheduleModel user = ScheduleModel.fromJson(result.value);
         StorageUtil.storeScheduleListToSF(user.toJson());
         yield ApiState(result: result );

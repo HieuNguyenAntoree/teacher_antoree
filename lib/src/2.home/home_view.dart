@@ -369,9 +369,15 @@ class HomeUIState extends State<HomeView> {
                       loadDataFromLocal();
                     });
 
-                    if(currentSchedule == null){
-                      _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.NO_SCHEDULE, 'OK', '', null);
+                    if(scheduleList != null) {
+                      if (scheduleList.objects.length > 0) {
+                        if(currentSchedule == null){
+                          _handleClickMe(STRINGS.ERROR_TITLE, STRINGS.NO_SCHEDULE, 'OK', '', null);
+                        }
+                      }
+
                     }
+
                   }else {
                     setState(() {
                       _isLoading = false;
