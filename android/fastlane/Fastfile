@@ -24,7 +24,11 @@ platform :android do
 
   desc "Submit a new staing build to Fastlane Beta"
   lane :release_staging do
-    gradle(task: "clean assembleStagingRelease")
+
+    Dir.chdir "../.." do
+      sh("flutter", "build", "apk", "--release", "-t", "lib/main_staging.dart", "--flavor", "staging")
+    end
+    # gradle(task: "clean assembleStagingRelease")
 
     change_logs = changelog_from_git_commits(
       pretty: "- (%ae) %s",# Optional, lets you provide a custom format to apply to each commit when generating the changelog text
