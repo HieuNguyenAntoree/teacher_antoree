@@ -113,12 +113,13 @@ class HomeUIState extends State<HomeView> {
       seconds = 0;
     }
   }
-
+  APIConnect apiconnect;
   @override
   void initState() {
     super.initState();
 //    Intl.defaultLocale = 'vi_VN';
 //    initializeDateFormatting();
+    apiconnect = APIConnect(context);
     loadDataFromLocal();
     checkAndUpdateDeviceId();
   }
@@ -147,10 +148,10 @@ class HomeUIState extends State<HomeView> {
           String appName = packageInfo.appName;
           String version = packageInfo.version;
           String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
-          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName,  fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
         });
       }else{
-        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, deviceType, "vn", version, appName, accessToken, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
       }
     });
   }
@@ -231,6 +232,10 @@ class HomeUIState extends State<HomeView> {
 
   VoidCallback getScheduleListFromAPI(){
     context.bloc<APIConnect>().add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+  }
+
+  VoidCallback logout(){
+    APIConnect(context)..add(DeleteDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID)));
   }
 
   Future<void> _handleClickMe(String title, String mess, String leftButton, String rightButton, VoidCallback _onTap) async {
@@ -329,6 +334,7 @@ class HomeUIState extends State<HomeView> {
               if(timer != null){
                 timer.cancel();
               }
+              logout();
               StorageUtil.removeAllCache();
               if(Navigator.of(context).canPop()){
                 Navigator.of(context).pop();

@@ -136,60 +136,6 @@ class StorageUtil {
     return "";
   }
 
-//  /*----------------------------USER------------------------------*/
-//  static storeUserObjectToSF(String key, Map value) async{
-////    Map decodeOptions = jsonDecode(value);
-//    String jsonObject = jsonEncode(LoginUser.fromJson(value));
-//    if (_preferences != null) {
-//      _preferences.setString(key, jsonObject);
-//    }
-//    else {
-//      await StorageUtil.getInstance();
-//      _preferences.setString(key, jsonObject);
-//    }
-//  }
-//
-//  static LoginUser getUserObject()  {
-//    if (_preferences != null) {
-//      String loginUserStr = _preferences.getString(KEY.USER);
-//      if(loginUserStr != null) {
-//        Map userItemMap = jsonDecode(loginUserStr);
-//        var user = LoginUser.fromJson(userItemMap);
-//        return user;
-//      }
-//      return null;
-//    }else{
-//      return null;
-//    }
-//  }
-//
-//  /*----------------------------PROFILE------------------------------*/
-//  static storeProfileObjectToSF(String key, Map value) async{
-////    Map decodeOptions = jsonDecode(value);
-//    String jsonObject = jsonEncode(Welcome.fromJson(value));
-//    if (_preferences != null) {
-//      _preferences.setString(key, jsonObject);
-//    }
-//    else {
-//      await StorageUtil.getInstance();
-//      _preferences.setString(key, jsonObject);
-//    }
-//  }
-//
-//  static Welcome getProfileObject()  {
-//    if (_preferences != null) {
-//      String welcomeStr = _preferences.getString(KEY.PROFILE);
-//      if(welcomeStr != null) {
-//        Map userItemMap = jsonDecode(welcomeStr);
-//        var user = Welcome.fromJson(userItemMap);
-//        return user;
-//      }
-//      return null;
-//    }else{
-//      return null;
-//    }
-//  }
-//
 //  /*----------------------------SCHEDULE------------------------------*/
   static storeScheduleListToSF( Map value) async{
 //    Map decodeOptions = jsonDecode(value);

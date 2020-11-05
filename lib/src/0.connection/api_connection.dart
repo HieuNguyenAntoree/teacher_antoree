@@ -212,7 +212,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       }
     }
     else if(event is AddDevice){
-      Result result = await _connectionAPI.postAddDevice(AppConfig.of(context).apiBaseUrl, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.user_id, event.fcm_token, event.last_opened_at);
+      Result result = await _connectionAPI.postAddDevice(AppConfig.of(context).apiBaseUrl, event.os_version, event.platform, event.language_code, event.app_version, event.app_name,  event.fcm_token, event.last_opened_at);
       if (result is ParseJsonToObject){
         DeviceModel model = DeviceModel.fromJson(result.value);
         StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
@@ -230,11 +230,27 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is UpdateDevice){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.putUpdateDevice(AppConfig.of(context).apiBaseUrl, accessToken, event.device_id, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.user_id, event.fcm_token, event.last_opened_at);
+      Result result = await _connectionAPI.putUpdateDevice(AppConfig.of(context).apiBaseUrl, accessToken, event.device_id, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.fcm_token, event.last_opened_at);
       if (result is ParseJsonToObject){
         DeviceModel model = DeviceModel.fromJson(result.value);
         StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
         yield ApiState(result: Result.success(MESSAGE.Sucess) );
+      }else{
+        ErrorState error = result;
+        if(error.msg == 1){
+          yield ApiState(result: Result.error(STRINGS.NETWORK));
+        }else if(error.msg == 2){
+          yield ApiState(result: Result.error(STRINGS.SERVER));
+        }else{
+          yield ApiState(result: Result.error(STRINGS.OTHERS));
+        }
+      }
+    }
+    else if(event is DeleteDevice){
+      final accessToken = StorageUtil.getAccessToken();
+      Result result = await _connectionAPI.deleteDevice(AppConfig.of(context).apiBaseUrl, accessToken, event.device_id);
+      if (result is SuccessState){
+        yield ApiState(result: result );
       }else{
         ErrorState error = result;
         if(error.msg == 1){
