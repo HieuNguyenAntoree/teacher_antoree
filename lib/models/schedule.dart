@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:teacher_antoree/const/constant.dart';
+import 'package:Antoree/const/constant.dart';
 
 
 ScheduleModel emptyFromJson(String str) => ScheduleModel.fromJson(json.decode(str));
@@ -160,7 +160,7 @@ class User {
     id: json["id"] == null ? null : json["id"],
     firstName: json["firstName"] == null ? null : json["firstName"],
     lastName: json["lastName"] == null ? null : json["lastName"],
-    avatar: json["avatar"] == null ? null : Avatar.fromJson(json["avatar"]),
+    avatar: json["avatar"] == null ? Avatar() : Avatar.fromJson(json["avatar"]),
     birthday: json["birthday"],
     phoneNumber: json["phoneNumber"],
     address: json["address"] == null ? null : Address.fromJson(json["address"]),
@@ -253,29 +253,29 @@ class Avatar {
     this.createdAt,
   });
 
-  String id;
-  dynamic fileName;
-  String bucketName;
-  String region;
-  String url;
-  String createdAt;
+  String id = "";
+  dynamic fileName = "";
+  String bucketName = "";
+  String region = "";
+  String url = "";
+  String createdAt = "";
 
   factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
-    id: json["id"] == null ? null : json["id"],
+    id: json["id"] == null ? "" : json["id"],
     fileName: json["fileName"],
-    bucketName: json["bucketName"] == null ? null : json["bucketName"],
-    region: json["region"] == null ? null : json["region"],
-    url: json["url"] == null ? null : json["url"],
-    createdAt: json["createdAt"] == null ? null : json["createdAt"],
+    bucketName: json["bucketName"] == "" ? null : json["bucketName"],
+    region: json["region"] == null ? "" : json["region"],
+    url: json["url"] == null ? "" : json["url"],
+    createdAt: json["createdAt"] == null ? "" : json["createdAt"],
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
+    "id": id == null ? "" : id,
     "fileName": fileName,
-    "bucketName": bucketName == null ? null : bucketName,
-    "region": region == null ? null : region,
-    "url": url == null ? null : url,
-    "createdAt": createdAt == null ? null : createdAt,
+    "bucketName": bucketName == null ? "" : bucketName,
+    "region": region == null ? "" : region,
+    "url": url == null ? "" : url,
+    "createdAt": createdAt == null ? "" : createdAt,
   };
 }
 

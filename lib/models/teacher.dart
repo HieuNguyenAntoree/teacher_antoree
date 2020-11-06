@@ -47,7 +47,7 @@ class Teacher {
   String id = "";
   String userId = "";
   Contract voiceDemo;
-  InterviewedBy interviewedBy;
+  String interviewedBy;
   Contract contract;
   DateTime createdAt;
   DateTime modifiedAt;
@@ -66,7 +66,7 @@ class Teacher {
     id: json["id"] == null ? null : json["id"],
     userId: json["userId"] == null ? null : json["userId"],
     voiceDemo: json["voiceDemo"] == null ? null : Contract.fromJson(json["voiceDemo"]),
-    interviewedBy: json["interviewedBy"] == null ? null : InterviewedBy.fromJson(json["interviewedBy"]),
+    interviewedBy: json["interviewedBy"] == null ? "" : json["interviewedBy"],
     contract: json["contract"] == null ? null : Contract.fromJson(json["contract"]),
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     modifiedAt: json["modifiedAt"] == null ? null : DateTime.parse(json["modifiedAt"]),
@@ -86,7 +86,7 @@ class Teacher {
     "id": id == null ? null : id,
     "userId": userId == null ? null : userId,
     "voiceDemo": voiceDemo == null ? null : voiceDemo.toJson(),
-    "interviewedBy": interviewedBy == null ? null : interviewedBy.toJson(),
+    "interviewedBy": interviewedBy == null ? "" : interviewedBy,
     "contract": contract == null ? null : contract.toJson(),
     "createdAt": createdAt == null ? null : createdAt.toIso8601String(),
     "modifiedAt": modifiedAt == null ? null : modifiedAt.toIso8601String(),

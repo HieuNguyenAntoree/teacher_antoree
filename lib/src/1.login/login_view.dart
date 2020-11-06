@@ -43,6 +43,10 @@ class LoginUIState extends State<LoginUI>{
   bool _isStatusLogin = true;
   TextEditingController emailController = new TextEditingController();
   TextEditingController passController = new TextEditingController();
+  FocusNode passwordFocus = new FocusNode();
+  FocusNode emailFocus = new FocusNode();
+  String emailError = null;
+  String passwordError = null;
 
   @override
   void initState() {
@@ -50,6 +54,17 @@ class LoginUIState extends State<LoginUI>{
 //    emailController..text = 'admin@antoree.com';
 //    passController..text = 'Antor33rotnA';
     checkAndUpdateDeviceId();
+    passwordFocus.addListener(onChange);
+    emailFocus.addListener(onChange);
+  }
+
+  void onChange(){
+    if(passwordFocus.hasFocus || emailFocus.hasFocus){
+      setState(() {
+        passwordError = null;
+        emailError = null;
+      });
+    }
   }
 
   // ignore: missing_return
@@ -210,7 +225,12 @@ class LoginUIState extends State<LoginUI>{
   _containerView(){
     double statusBarHeight = MediaQuery.of(context).padding.top;
     double marginLeftRight = (MediaQuery.of(context).size.width*10)/100;
-     return Container(
+    return new GestureDetector(
+      onTap: ()=> setState(() {
+        _isStatusLogin = !_isStatusLogin;
+        StorageUtil.storeBoolToSF(KEY.LOGIN_STATUS, _isStatusLogin);
+      }),
+      child: Container(
        color: COLOR.BG_COLOR,
        alignment: Alignment.center,
        padding: EdgeInsets.only(left: marginLeftRight, right: marginLeftRight),
@@ -230,8 +250,10 @@ class LoginUIState extends State<LoginUI>{
            SizedBox(height: 30,),
 //           _statusLogin(),
 //           SizedBox(height: 40,),
-           _loginButton(),
-         ],
+             _loginButton(),
+             SizedBox(height: 10,)
+           ],
+         ),
        ),
      );
   }
@@ -274,6 +296,7 @@ class LoginUIState extends State<LoginUI>{
           color: const Color(0xffffffff)
       ),
       child: TextFormField(
+        focusNode: emailFocus,
         cursorColor: COLOR.COLOR_00C081,
         keyboardType: TextInputType.emailAddress,
         controller: emailController,
@@ -294,7 +317,7 @@ class LoginUIState extends State<LoginUI>{
             icon: new Image.asset(IMAGES.LOGIN_ACCOUNT, width: 24, height: 27,),
           ),
           hintText: STRINGS.LOGIN_EMAIL_HINT,
-          errorText: validateEmail(),
+          errorText: emailError ,
           hintStyle: TextStyle(
               color: COLOR.COLOR_9CAAA2,
               fontSize: 13,
@@ -322,6 +345,7 @@ class LoginUIState extends State<LoginUI>{
           color: const Color(0xffffffff)
       ),
       child: TextFormField(
+        focusNode: passwordFocus,
         cursorColor: COLOR.COLOR_00C081,
         obscureText: true,
         controller: passController,
@@ -342,7 +366,7 @@ class LoginUIState extends State<LoginUI>{
             icon: new Image.asset(IMAGES.LOGIN_PASS, width: 20, height: 20,),
           ),
           hintText: STRINGS.LOGIN_PASS_HINT,
-          errorText: validatePassword(),
+          errorText: passwordError,
           hintStyle: TextStyle(
               color: COLOR.COLOR_9CAAA2,
               fontSize: 13,
@@ -384,6 +408,13 @@ class LoginUIState extends State<LoginUI>{
   _loginButton(){
     return new GestureDetector(
       onTap: ()=> {
+        setState(() {
+          passwordFocus.unfocus();
+          emailFocus.unfocus();
+          emailError = validateEmail();
+          passwordError = validatePassword();
+        }),
+
         _loginAction(),
       },
       child: Container(

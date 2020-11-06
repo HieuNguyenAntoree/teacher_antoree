@@ -170,29 +170,35 @@ class HomeUIState extends State<HomeView> {
     if(scheduleList != null){
       if(scheduleList.objects.length > 0) {
         for(var i = 0; i < scheduleList.objects.length; i ++){
+          DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
+          int days = scheduleList.objects[i].date.difference(nowTime).inDays;
+          if(days < 0){
+            continue;
+          }
           List<Schedule> list = scheduleList.objects[i].schedules;
           if(list.length > 0){
+            Schedule schMin;
             for(var i = 0; i < list.length; i++){
-              Schedule schMin = list[i];
               if(currentSchedule != null){
                 i = list.length - 1;
                 break;
               }
-              DateTime nowTime = DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.now()));
-              for(Schedule sch in list){
-                DateTime schTime = sch.startTime;
-                if(schTime.difference(nowTime).inDays > 0){
+              Schedule sch = list[i];
+              if(sch.startTime.difference(nowTime).inDays > 0){
+                schMin = schMin;
+                break;
+              }else{
+                if(sch.startTime.hour == nowTime.hour && sch.startTime.minute >  nowTime.minute){
                   schMin = sch;
                   break;
-                }else{
-                  int minsNow =  schTime.difference(nowTime).inMinutes;
-                  int minsWithMinSch =  schMin.startTime.difference(nowTime).inMinutes;
-                  if(minsNow > 0 && minsNow < minsWithMinSch) {
-                    schMin = sch;
-                  }
+                }else if(sch.startTime.hour > nowTime.hour){
+                  schMin = sch;
+                  break;
                 }
               }
-              if(schMin.status == 1) {
+            }
+            if(schMin != null) {
+              if(schMin.status == 1){
                 int ms = schMin.startTime.difference(nowTime).inMinutes;
                 if( ms > -VALUES.DELAY_CALL_TIME){
                   currentSchedule = schMin;
@@ -222,7 +228,6 @@ class HomeUIState extends State<HomeView> {
                   }
                 }
               }
-              break;
             }
           }
         }
