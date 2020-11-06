@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:Antoree/const/constant.dart';
+import 'package:teacher_antoree/const/constant.dart';
 
 
 ScheduleModel emptyFromJson(String str) => ScheduleModel.fromJson(json.decode(str));
