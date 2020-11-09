@@ -101,11 +101,11 @@ class LoginUIState extends State<LoginUI>{
           String appName = packageInfo.appName;
           String version = packageInfo.version;
           String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
-          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, DateTime.now()));
         });
       }else{
         final accessToken = StorageUtil.getAccessToken();
-        APIConnect(context)..add(UpdateDevice(deviceId, os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        APIConnect(context)..add(UpdateDevice(deviceId, os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, DateTime.now()));
       }
     });
 }

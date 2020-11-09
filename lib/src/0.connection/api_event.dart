@@ -11,8 +11,8 @@ abstract class ApiEvent extends Equatable {
 class LoginSubmitted extends ApiEvent {
   const LoginSubmitted(this.username, this.password);
 
-  final dynamic password;
-  final dynamic username;
+  final String password;
+  final String username;
 
   @override
   List<Object> get props => [username, password];
@@ -24,9 +24,9 @@ class ScheduleFetched extends ApiEvent {
       this.from_date,
       this.to_date,
       );
-  final dynamic offset;
-  final dynamic from_date;
-  final dynamic to_date;
+  final int offset;
+  final DateTime from_date;
+  final DateTime to_date;
 
   @override
   List<Object> get props => [offset, from_date, to_date];
@@ -35,9 +35,9 @@ class ScheduleFetched extends ApiEvent {
 class CancelSchedule extends ApiEvent {
   const CancelSchedule(this.idSchedule, this.reason, this.other_reason);
 
-  final dynamic idSchedule;
-  final dynamic reason;
-  final dynamic other_reason;
+  final String idSchedule;
+  final String reason;
+  final String other_reason;
 
   @override
   List<Object> get props => [idSchedule, reason, other_reason];
@@ -46,9 +46,9 @@ class CancelSchedule extends ApiEvent {
 class Rating extends ApiEvent {
   const Rating(this.idSchedule, this.rating, this.role);
 
-  final dynamic idSchedule;
-  final dynamic rating;
-  final dynamic role;
+  final String idSchedule;
+  final int rating;
+  final String role;
 
   @override
   List<Object> get props => [idSchedule, rating, role];
@@ -57,8 +57,8 @@ class Rating extends ApiEvent {
 class ChangeSchedule extends ApiEvent {
   const ChangeSchedule(this.idSchedule, this.datetime);
 
-  final dynamic idSchedule;
-  final dynamic datetime;
+  final String idSchedule;
+  final DateTime datetime;
 
   @override
   List<Object> get props => [idSchedule, datetime];
@@ -67,8 +67,8 @@ class ChangeSchedule extends ApiEvent {
 class TeacherList extends ApiEvent {
   const TeacherList( this.offset, this.available_time);
 
-  final dynamic available_time;
-  final dynamic offset;
+  final DateTime available_time;
+  final int offset;
 
   @override
   List<Object> get props => [offset, available_time];
@@ -77,10 +77,10 @@ class TeacherList extends ApiEvent {
 class ChangeTeacher extends ApiEvent {
   const ChangeTeacher(this.idSchedule, this.datetime, this.idTeacher, this.role);
 
-  final dynamic idSchedule;
-  final dynamic idTeacher;
-  final dynamic datetime;
-  final dynamic role;
+  final String idSchedule;
+  final String idTeacher;
+  final DateTime datetime;
+  final String role;
 
   @override
   List<Object> get props => [idSchedule, datetime, idTeacher, role];
@@ -89,8 +89,8 @@ class ChangeTeacher extends ApiEvent {
 class CallVideo extends ApiEvent {
   const CallVideo(this.idSchedule, this.role);
 
-  final dynamic idSchedule;
-  final dynamic role;
+  final String idSchedule;
+  final String role;
 
   @override
   List<Object> get props => [idSchedule, role];
@@ -99,7 +99,7 @@ class CallVideo extends ApiEvent {
 class TimeSheetList extends ApiEvent {
   const TimeSheetList( this.date);
 
-  final dynamic date;
+  final DateTime date;
 
   @override
   List<Object> get props => [date];
@@ -108,9 +108,9 @@ class TimeSheetList extends ApiEvent {
 class SetTimeSheet extends ApiEvent {
   const SetTimeSheet(this.status, this.startTime, this.endTime);
 
-  final dynamic startTime;
-  final dynamic endTime;
-  final dynamic status;
+  final DateTime startTime;
+  final DateTime endTime;
+  final int status;
 
   @override
   List<Object> get props => [status, startTime, endTime];
@@ -119,7 +119,7 @@ class SetTimeSheet extends ApiEvent {
 class CancelTimeSheet extends ApiEvent {
   const CancelTimeSheet(this.idTimeSheet);
 
-  final dynamic idTimeSheet;
+  final String idTimeSheet;
 
   @override
   List<Object> get props => [idTimeSheet];
@@ -128,13 +128,13 @@ class CancelTimeSheet extends ApiEvent {
 class AddDevice extends ApiEvent {
   const AddDevice(this.os_version, this.platform, this.language_code, this.app_version, this.app_name,  this.fcm_token, this.last_opened_at);
 
-  final dynamic  os_version;
-  final dynamic platform;
-  final dynamic language_code;
-  final dynamic app_version;
-  final dynamic app_name;
-  final dynamic fcm_token;
-  final dynamic last_opened_at;
+  final String  os_version;
+  final String platform;
+  final String language_code;
+  final String app_version;
+  final String app_name;
+  final String fcm_token;
+  final DateTime last_opened_at;
 
 
   @override
@@ -144,14 +144,14 @@ class AddDevice extends ApiEvent {
 class UpdateDevice extends ApiEvent {
   const UpdateDevice(this.device_id, this.os_version, this.platform, this.language_code, this.app_version, this.app_name,  this.fcm_token, this.last_opened_at);
 
-  final dynamic  device_id;
-  final dynamic  os_version;
-  final dynamic platform;
-  final dynamic language_code;
-  final dynamic app_version;
-  final dynamic app_name;
-  final dynamic fcm_token;
-  final dynamic last_opened_at;
+  final String  device_id;
+  final String  os_version;
+  final String platform;
+  final String language_code;
+  final String app_version;
+  final String app_name;
+  final String fcm_token;
+  final DateTime last_opened_at;
 
 
   @override
@@ -161,7 +161,7 @@ class UpdateDevice extends ApiEvent {
 class DeleteDevice extends ApiEvent {
   const DeleteDevice(this.device_id);
 
-  final dynamic  device_id;
+  final String  device_id;
 
 
   @override

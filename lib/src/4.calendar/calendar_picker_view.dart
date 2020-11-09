@@ -23,7 +23,7 @@ class TimeSlotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String selectDateTime = VALUES.FORMAT_DATE_API.format(DateTime.now());
+    DateTime selectDateTime = DateTime.now();
     return new WillPopScope(
       child: Scaffold(
         backgroundColor: COLOR.BG_COLOR,
@@ -50,7 +50,7 @@ class TimeSlotView extends StatelessWidget {
           ),
         ),
         body: BlocProvider(
-          create: (context) => APIConnect(context)..add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime)))),
+          create: (context) => APIConnect(context)..add(TimeSheetList(selectDateTime)),
           child: TimeSlotUI(),
         )
       ),
@@ -209,9 +209,8 @@ class TimeSlotUIState extends State<TimeSlotUI>{
     String exdateTimeString = _selectDate.year.toString() + '-' + (_selectDate.month > 9 ? _selectDate.month.toString() : '0' + _selectDate.month.toString()) + '-'  + (_selectDate.day > 9 ? _selectDate.day.toString() : '0' + _selectDate.day.toString()) + ' '  + time;
     DateTime selectDateTime = DateTime.parse(exdateTimeString);
 
-    DateFormat formatterAPI = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    String startime = formatterAPI.format(selectDateTime);
-    String endTime = formatterAPI.format(selectDateTime.add(new Duration(minutes: 20)));
+    DateTime startime = selectDateTime;
+    DateTime endTime = selectDateTime.add(new Duration(minutes: VALUES.DELAY_TIME));
     context.bloc<APIConnect>().add(SetTimeSheet(1, startime, endTime));
   }
 
@@ -225,7 +224,7 @@ class TimeSlotUIState extends State<TimeSlotUI>{
 
   getTimeLots(DateTime date){
     String selectDateTime = VALUES.FORMAT_DATE_API.format(_selectDate);
-    context.bloc<APIConnect>().add(TimeSheetList(VALUES.FORMAT_DATE_API.format(DateTime.parse(selectDateTime))));
+    context.bloc<APIConnect>().add(TimeSheetList(DateTime.parse(selectDateTime)));
     setState(() {
       indexSelected = -1;
       timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));

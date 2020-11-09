@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:teacher_antoree/const/constant.dart';
+
 DeviceModel emptyFromJson(String str) => DeviceModel.fromJson(json.decode(str));
 
 String emptyToJson(DeviceModel data) => json.encode(data.toJson());
@@ -37,12 +39,12 @@ class DeviceModel {
     languageCode: json["language_code"] == null ? null : json["language_code"],
     appName: json["app_name"] == null ? null : json["app_name"],
     appVersion: json["app_version"] == null ? null : json["app_version"],
-    lastOpenedAt: json["last_opened_at"] == null ? null : DateTime.parse(json["last_opened_at"]),
+    lastOpenedAt: json["last_opened_at"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["last_opened_at"]).toLocal())),
     id: json["id"] == null ? null : json["id"],
     userId: json["user_id"] == null ? null : json["user_id"],
     fcmToken: json["fcm_token"] == null ? null : json["fcm_token"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    createdAt: json["created_at"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["created_at"]).toLocal())),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["updated_at"]).toLocal())),
   );
 
   Map<String, dynamic> toJson() => {

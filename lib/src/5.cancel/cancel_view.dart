@@ -51,7 +51,7 @@ class CalendarView extends StatelessWidget {
           ),
         ),
         body: BlocProvider(
-          create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+          create: (context) => APIConnect(context)..add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))),
           child: CalendarUI(this.idSchedule),
         ),
       ),
@@ -119,7 +119,7 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   getDateFromAPI(){
-    context.bloc<APIConnect>().add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(_selectDate), VALUES.FORMAT_DATE_API.format(_selectDate.add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+    context.bloc<APIConnect>().add(ScheduleFetched(0,_selectDate, _selectDate.add(new Duration(days: VALUES.SCHEDULE_DAYS))));
   }
 
   int checkCurrentDay(){

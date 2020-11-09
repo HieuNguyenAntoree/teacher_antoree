@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:teacher_antoree/const/defaultValue.dart';
 TeacherModel emptyFromJson(String str) => TeacherModel.fromJson(json.decode(str));
 
 String emptyToJson(TeacherModel data) => json.encode(data.toJson());
@@ -68,8 +70,8 @@ class Teacher {
     voiceDemo: json["voiceDemo"] == null ? null : Contract.fromJson(json["voiceDemo"]),
     interviewedBy: json["interviewedBy"] == null ? "" : json["interviewedBy"],
     contract: json["contract"] == null ? null : Contract.fromJson(json["contract"]),
-    createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-    modifiedAt: json["modifiedAt"] == null ? null : DateTime.parse(json["modifiedAt"]),
+    createdAt: json["createdAt"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["createdAt"]).toLocal())),
+    modifiedAt: json["modifiedAt"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["modifiedAt"]).toLocal())),
     isActive: json["isActive"] == null ? null : json["isActive"],
     teacherType: json["teacherType"] == null ? null : json["teacherType"],
     introduction: json["introduction"] == null ? null : json["introduction"],

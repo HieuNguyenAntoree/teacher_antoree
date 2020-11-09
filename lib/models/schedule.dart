@@ -14,11 +14,11 @@ class ScheduleModel {
   });
 
   Paging paging;
-  List<Object> objects;
+  List<ScheduleObject> objects;
 
   factory ScheduleModel.fromJson(Map<String, dynamic> json) => ScheduleModel(
     paging: json["paging"] == null ? null : Paging.fromJson(json["paging"]),
-    objects: json["objects"] == null ? null : List<Object>.from(json["objects"].map((x) => Object.fromJson(x))),
+    objects: json["objects"] == null ? null : List<ScheduleObject>.from(json["objects"].map((x) => ScheduleObject.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -27,8 +27,8 @@ class ScheduleModel {
   };
 }
 
-class Object {
-  Object({
+class ScheduleObject {
+  ScheduleObject({
     this.date,
     this.schedules,
   });
@@ -36,8 +36,8 @@ class Object {
   DateTime date;
   List<Schedule> schedules;
 
-  factory Object.fromJson(Map<String, dynamic> json) => Object(
-    date: json["date"] == null ? null : DateTime.parse(json["date"]),
+  factory ScheduleObject.fromJson(Map<String, dynamic> json) => ScheduleObject(
+    date: json["date"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["date"]).toLocal())),
     schedules: json["schedules"] == null ? null : List<Schedule>.from(json["schedules"].map((x) => Schedule.fromJson(x))),
   );
 
@@ -78,11 +78,11 @@ class Schedule {
     id: json["id"] == null ? null : json["id"],
     description: json["description"] == null ? null : json["description"],
     content: json["content"] == null ? null : json["content"],
-    startTime: json["startTime"] == null ? null : DateTime.parse(json["startTime"]),
-    endTime: json["endTime"] == null ? null : DateTime.parse(json["endTime"]),
+    startTime: json["startTime"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["startTime"]).toLocal())),
+    endTime: json["endTime"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["endTime"]).toLocal())),
     status: json["status"] == null ? null : json["status"],
-    createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-    modifiedAt: json["modifiedAt"] == null ? null : DateTime.parse(json["modifiedAt"]),
+    createdAt: json["createdAt"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["createdAt"]).toLocal())),
+    modifiedAt: json["modifiedAt"] == null ? null : DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["modifiedAt"]).toLocal())),
     users: json["users"] == null ? null : List<User>.from(json["users"].map((x) => User.fromJson(x))),
     scheduleType: json["scheduleType"],
     comment: json["comment"] == null ? null : json["comment"],

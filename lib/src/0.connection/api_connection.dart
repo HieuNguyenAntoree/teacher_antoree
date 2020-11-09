@@ -48,7 +48,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       }
     }else if(event is ScheduleFetched){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.getScheduleOfTeacher(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, event.from_date, event.to_date);
+      Result result = await _connectionAPI.getScheduleOfTeacher(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, VALUES.FORMAT_DATE_API.format(event.from_date.toUtc()), VALUES.FORMAT_DATE_API.format(event.to_date.toUtc()));
       if (result is ParseJsonToObject){
 
 
@@ -99,7 +99,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is ChangeSchedule){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.changeSchedule(AppConfig.of(context).apiBaseUrl, accessToken, event.idSchedule, event.datetime);
+      Result result = await _connectionAPI.changeSchedule(AppConfig.of(context).apiBaseUrl, accessToken, event.idSchedule, VALUES.FORMAT_DATE_API.format(event.datetime.toUtc()));
       if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
@@ -115,7 +115,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is TeacherList){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.getTeacherList(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, event.available_time);
+      Result result = await _connectionAPI.getTeacherList(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.PAGE_SIZE, event.offset, VALUES.FORMAT_DATE_API.format(event.available_time.toUtc()));
       if (result is ParseJsonToObject){
         if(event.offset == 0) {
           StorageUtil.storeTeacherListToSF(result.value);
@@ -136,7 +136,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is ChangeTeacher){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.changeTeacher(AppConfig.of(context).apiBaseUrl, accessToken, event.idSchedule, event.datetime, event.idTeacher, event.role);
+      Result result = await _connectionAPI.changeTeacher(AppConfig.of(context).apiBaseUrl, accessToken, event.idSchedule, VALUES.FORMAT_DATE_API.format(event.datetime.toUtc()), event.idTeacher, event.role);
       if (result is ParseJsonToObject){
         yield ApiState(result: result );
       }else{
@@ -168,14 +168,16 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is TimeSheetList){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.getTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, event.date);
+      DateTime eventTime = event.date;
+      DateTime utcTime = event.date.toUtc();
+      Result result = await _connectionAPI.getTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.FORMAT_DATE_API.format(utcTime));
       if (result is ParseJsonToObject){
         List<TimeSheet> ts = List<TimeSheet>();
         for(Map i in result.value){
           ts.add(TimeSheet.fromJson(i));
         }
 
-        StorageUtil.storeTimeSheetListToSF(result.value, event.date);
+        StorageUtil.storeTimeSheetListToSF(result.value, VALUES.FORMAT_DATE_API.format(event.date.toLocal()));
         yield ApiState(result: result );
       }else{
         ErrorState error = result;
@@ -201,10 +203,10 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is SetTimeSheet){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.postTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, event.status, event.startTime, event.endTime);
+      Result result = await _connectionAPI.postTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, event.status, VALUES.FORMAT_DATE_API.format(event.startTime.toUtc()), VALUES.FORMAT_DATE_API.format(event.endTime.toUtc()));
       if (result is ParseJsonToObject){
         TimeSheet timeSheet = TimeSheet.fromJson(result.value);
-        StorageUtil.addTimeSheetToList(event.startTime, timeSheet);
+        StorageUtil.addTimeSheetToList(VALUES.FORMAT_DATE_API.format(event.startTime.toLocal()), timeSheet);
         yield ApiState(result: result );
       }else{
         ErrorState error = ErrorState("Set");
@@ -212,7 +214,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       }
     }
     else if(event is AddDevice){
-      Result result = await _connectionAPI.postAddDevice(AppConfig.of(context).apiBaseUrl, event.os_version, event.platform, event.language_code, event.app_version, event.app_name,  event.fcm_token, event.last_opened_at);
+      Result result = await _connectionAPI.postAddDevice(AppConfig.of(context).apiBaseUrl, event.os_version, event.platform, event.language_code, event.app_version, event.app_name,  event.fcm_token, VALUES.FORMAT_DATE_API.format(event.last_opened_at.toUtc()));
       if (result is ParseJsonToObject){
         DeviceModel model = DeviceModel.fromJson(result.value);
         StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);
@@ -230,7 +232,7 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
     }
     else if(event is UpdateDevice){
       final accessToken = StorageUtil.getAccessToken();
-      Result result = await _connectionAPI.putUpdateDevice(AppConfig.of(context).apiBaseUrl, accessToken, event.device_id, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.fcm_token, event.last_opened_at);
+      Result result = await _connectionAPI.putUpdateDevice(AppConfig.of(context).apiBaseUrl, accessToken, event.device_id, event.os_version, event.platform, event.language_code, event.app_version, event.app_name, event.fcm_token, VALUES.FORMAT_DATE_API.format(event.last_opened_at.toUtc()));
       if (result is ParseJsonToObject){
         DeviceModel model = DeviceModel.fromJson(result.value);
         StorageUtil.storeStringToSF(KEY.DEVICE_ID,model.id);

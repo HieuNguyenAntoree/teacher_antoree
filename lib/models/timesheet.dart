@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:teacher_antoree/const/defaultValue.dart';
+
 List<TimeSheet> emptyFromJson(String str) => List<TimeSheet>.from(json.decode(str).map((x) => TimeSheet.fromJson(x)));
 
 String emptyToJson(List<TimeSheet> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -30,11 +32,11 @@ class TimeSheet {
   factory TimeSheet.fromJson(Map<String, dynamic> json) => TimeSheet(
     id: json["id"],
     teacherId: json["teacherId"],
-    timeStart: DateTime.parse(json["timeStart"]),
-    timeEnd: DateTime.parse(json["timeEnd"]),
+    timeStart: DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["timeStart"]).toLocal())),
+    timeEnd: DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["timeEnd"]).toLocal())),
     status: json["status"],
-    createdAt: DateTime.parse(json["createdAt"]),
-    modifiedAt: DateTime.parse(json["modifiedAt"]),
+    createdAt: DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["createdAt"]).toLocal())),
+    modifiedAt: DateTime.parse(VALUES.FORMAT_DATE_API.format(DateTime.parse(json["modifiedAt"]).toLocal())),
   );
 
   Map<String, dynamic> toJson() => {

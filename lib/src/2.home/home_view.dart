@@ -148,10 +148,10 @@ class HomeUIState extends State<HomeView> {
           String appName = packageInfo.appName;
           String version = packageInfo.version;
           String fcm_token = StorageUtil.getStringValuesSF(KEY.FCM_TOKEN) ;
-          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName,  fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+          APIConnect(context)..add(AddDevice(os_version, deviceType, "vn", version, appName,  fcm_token == null ? "" : fcm_token, DateTime.now()));
         });
       }else{
-        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, VALUES.FORMAT_DATE_API.format(DateTime.now())));
+        APIConnect(context)..add(UpdateDevice(StorageUtil.getStringValuesSF(KEY.DEVICE_ID), os_version, deviceType, "vn", version, appName, fcm_token == null ? "" : fcm_token, DateTime.now()));
       }
     });
   }
@@ -236,7 +236,7 @@ class HomeUIState extends State<HomeView> {
   }
 
   VoidCallback getScheduleListFromAPI(){
-    context.bloc<APIConnect>().add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))));
+    context.bloc<APIConnect>().add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))));
   }
 
   VoidCallback logout(){
@@ -351,7 +351,7 @@ class HomeUIState extends State<HomeView> {
           ),
         ),
         body: BlocProvider(
-            create: (context) => APIConnect(context)..add(ScheduleFetched(0,VALUES.FORMAT_DATE_API.format(DateTime.now()), VALUES.FORMAT_DATE_API.format(DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))))),
+            create: (context) => APIConnect(context)..add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))),
             child: BlocListener<APIConnect, ApiState>(
                 listener: (context, state){
                   if (state.result is StateInit) {
@@ -696,13 +696,11 @@ class HomeUIState extends State<HomeView> {
                   Container(
                     width: width / 2 - 10,
                     child: RaisedButton(
-                        color: currentSchedule == null  ? COLOR.COLOR_D8D8D8 : leftbuttonColor,
-                        highlightColor: currentSchedule != null  ? COLOR.COLOR_00C081 : COLOR.COLOR_D8D8D8,
-                        splashColor: currentSchedule != null  ? COLOR.COLOR_00C081 : Colors.transparent,
+                        color: leftbuttonColor,
+                        highlightColor: COLOR.COLOR_00C081,
+                        splashColor: COLOR.COLOR_00C081,
                         onPressed: () {
-                          if(currentSchedule != null){
-                            Navigator.of(context).push(TimeSlotView.route());
-                          }
+                          Navigator.of(context).push(TimeSlotView.route());
                         },
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(80),)),
                         child: Image.asset(IMAGES.HOME_PENCIL, width: 40, height: 70,)
