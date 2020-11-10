@@ -281,13 +281,13 @@ class StorageUtil {
     if (_preferences != null) {
       String courseStr = _preferences.getString(KEY.TIMESHEET + "_" + selectDate);
       if(courseStr != null){
-        var value = jsonDecode(courseStr);
-        List<TimeSheet> ts = List<TimeSheet>();
-        for(Map i in value){
-          ts.add(TimeSheet.fromJson(i));
-        }
-        ts.removeWhere((element) => element.id == idTimeSheet);
-        storeTimeSheetListToSF(ts, date);
+        List<dynamic> value = jsonDecode(courseStr);
+//        List<TimeSheet> ts = List<TimeSheet>();
+//        for(Map i in value){
+//          ts.add(TimeSheet.fromJson(i));
+//        }
+        value.removeWhere((element) => element.id == idTimeSheet);
+        storeTimeSheetListToSF(value, date);
       }
       return;
     }else{
