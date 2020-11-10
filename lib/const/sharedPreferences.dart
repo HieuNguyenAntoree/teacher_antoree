@@ -1,5 +1,6 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teacher_antoree/const/constant.dart';
 import 'package:teacher_antoree/models/schedule.dart';
 import 'package:teacher_antoree/models/teacher.dart';
 import 'package:teacher_antoree/models/timesheet.dart';
@@ -138,8 +139,8 @@ class StorageUtil {
 
 //  /*----------------------------SCHEDULE------------------------------*/
   static storeScheduleListToSF( Map value) async{
-//    Map decodeOptions = jsonDecode(value);
-    String jsonObject = jsonEncode(ScheduleModel.fromJson(value));
+    String jsonObject = jsonEncode(value);
+//    String jsonObject = jsonEncode(ScheduleModel.fromJson(value));
     if (_preferences != null) {
       _preferences.setString(KEY.SCHEDULE, jsonObject);
     }
@@ -248,24 +249,26 @@ class StorageUtil {
     }
   }
 
-  static addTimeSheetToList(String date, TimeSheet timeSheet)  {
+  static addTimeSheetToList(String date, Map timeSheet)  {
     DateTime dateTime = DateFormat("yyyy-MM-dd").parse(date);
     String selectDate = DateFormat("yyyy-MM-dd").format(dateTime);
     if (_preferences != null) {
       String courseStr = _preferences.getString(KEY.TIMESHEET + "_" + selectDate);
       if(courseStr != null){
-        var value = jsonDecode(courseStr);
-        List<TimeSheet> ts = List<TimeSheet>();
-        for(Map i in value){
-          ts.add(TimeSheet.fromJson(i));
-        }
-        ts.add(timeSheet);
-        storeTimeSheetListToSF(ts, date);
+        List<dynamic> value = jsonDecode(courseStr);
+//        List<TimeSheet> ts = List<TimeSheet>();
+//        for(Map i in value){
+//          ts.add(TimeSheet.fromJson(i));
+//        }
+        value.add(timeSheet);
+        storeTimeSheetListToSF(value, date);
       }
       else{
-        List<TimeSheet> ts = List<TimeSheet>();
-        ts.add(timeSheet);
-        storeTimeSheetListToSF(ts, date);
+        List<dynamic> value = List<dynamic>();
+//        List<TimeSheet> ts = List<TimeSheet>();
+//        ts.add(TimeSheet.fromJson(timeSheet));
+        value.add(timeSheet);
+        storeTimeSheetListToSF(value, date);
       }
     }else{
       return;

@@ -42,10 +42,10 @@ class TimeSheet {
   Map<String, dynamic> toJson() => {
     "id": id,
     "teacherId": teacherId,
-    "timeStart": timeStart.toIso8601String(),
-    "timeEnd": timeEnd.toIso8601String(),
+    "timeStart": timeStart.toUtc(),
+    "timeEnd": timeEnd.toUtc(),
     "status": status,
-    "createdAt": createdAt.toIso8601String(),
-    "modifiedAt": modifiedAt.toIso8601String(),
+    "createdAt": createdAt.toUtc(),
+    "modifiedAt": modifiedAt.toUtc(),
   };
 }

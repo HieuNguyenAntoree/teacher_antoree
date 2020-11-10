@@ -52,8 +52,8 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       if (result is ParseJsonToObject){
 
 
-        ScheduleModel user = ScheduleModel.fromJson(result.value);
-        StorageUtil.storeScheduleListToSF(user.toJson());
+//        ScheduleModel user = ScheduleModel.fromJson(result.value);
+        StorageUtil.storeScheduleListToSF(result.value);
         yield ApiState(result: result );
       }else{
         ErrorState error = result;
@@ -172,10 +172,10 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       DateTime utcTime = event.date.toUtc();
       Result result = await _connectionAPI.getTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, VALUES.FORMAT_DATE_API.format(utcTime));
       if (result is ParseJsonToObject){
-        List<TimeSheet> ts = List<TimeSheet>();
-        for(Map i in result.value){
-          ts.add(TimeSheet.fromJson(i));
-        }
+//        List<TimeSheet> ts = List<TimeSheet>();
+//        for(Map i in result.value){
+//          ts.add(TimeSheet.fromJson(i));
+//        }
 
         StorageUtil.storeTimeSheetListToSF(result.value, VALUES.FORMAT_DATE_API.format(event.date.toLocal()));
         yield ApiState(result: result );
@@ -205,8 +205,8 @@ class APIConnect extends Bloc<ApiEvent, ApiState>{
       final accessToken = StorageUtil.getAccessToken();
       Result result = await _connectionAPI.postTeacherTimeSheet(AppConfig.of(context).apiBaseUrl, accessToken, event.status, VALUES.FORMAT_DATE_API.format(event.startTime.toUtc()), VALUES.FORMAT_DATE_API.format(event.endTime.toUtc()));
       if (result is ParseJsonToObject){
-        TimeSheet timeSheet = TimeSheet.fromJson(result.value);
-        StorageUtil.addTimeSheetToList(VALUES.FORMAT_DATE_API.format(event.startTime.toLocal()), timeSheet);
+//        TimeSheet timeSheet = TimeSheet.fromJson(result.value);
+        StorageUtil.addTimeSheetToList(VALUES.FORMAT_DATE_API.format(event.startTime.toLocal()), result.value);
         yield ApiState(result: result );
       }else{
         ErrorState error = ErrorState("Set");

@@ -236,7 +236,7 @@ class HomeUIState extends State<HomeView> {
   }
 
   VoidCallback getScheduleListFromAPI(){
-    context.bloc<APIConnect>().add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))));
+    apiconnect.add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS))));
   }
 
   VoidCallback logout(){
@@ -351,7 +351,7 @@ class HomeUIState extends State<HomeView> {
           ),
         ),
         body: BlocProvider(
-            create: (context) => APIConnect(context)..add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))),
+            create: (context) => apiconnect..add(ScheduleFetched(0,DateTime.now(), DateTime.now().add(new Duration(days: VALUES.SCHEDULE_DAYS)))),
             child: BlocListener<APIConnect, ApiState>(
                 listener: (context, state){
                   if (state.result is StateInit) {
@@ -685,7 +685,7 @@ class HomeUIState extends State<HomeView> {
                         splashColor: currentSchedule != null  ? COLOR.COLOR_00C081 : Colors.transparent,
                         onPressed: () {
                           if(currentSchedule != null){
-                            Navigator.of(context).push(CalendarView.route(currentSchedule.id));
+                            _openNextScreen(CalendarView.route(currentSchedule.id));
                           }
                         },
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(80),)),
@@ -700,7 +700,7 @@ class HomeUIState extends State<HomeView> {
                         highlightColor: COLOR.COLOR_00C081,
                         splashColor: COLOR.COLOR_00C081,
                         onPressed: () {
-                          Navigator.of(context).push(TimeSlotView.route());
+                          _openNextScreen(TimeSlotView.route());
                         },
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(80),)),
                         child: Image.asset(IMAGES.HOME_PENCIL, width: 40, height: 70,)
@@ -753,30 +753,7 @@ class HomeUIState extends State<HomeView> {
 
   void _openNextScreen(Route route ) {
     Navigator.of(context).push(route).then((result) => setState((){
-      if(result != null) {
-        String screen = result;
-        if (screen == 'LoginView') {
-          if (timer != null) {
-            timer.cancel();
-          }
-          if(Navigator.of(context).canPop()){
-            Navigator.of(context).pop();
-          }
-          else{
-            Navigator.of(context).popAndPushNamed('LoginView');
-          }
-        } else {
-          String formattedDate = formatDateForTimer.format(result);
-          _isStartVideoCall = false;
-          if (timer != null) {
-            timer.cancel();
-          }
-          calculatorDuration(formattedDate);
-          if (hours > 0 || minutes > 0 || seconds > 0) {
-            startTimeout();
-          }
-        }
-      }
+      getScheduleListFromAPI();
     }));
   }
 }

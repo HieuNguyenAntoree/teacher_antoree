@@ -15,70 +15,17 @@ import 'dart:io' show Platform;
 import 'package:ui_libraries/calendar/calendarro.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TimeSlotView extends StatelessWidget {
+class TimeSlotView extends StatefulWidget {
   const TimeSlotView();
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => TimeSlotView());
   }
 
   @override
-  Widget build(BuildContext context) {
-    DateTime selectDateTime = DateTime.now();
-    return new WillPopScope(
-      child: Scaffold(
-        backgroundColor: COLOR.BG_COLOR,
-        appBar: AppBar(
-          title:_customeHeaderBar(context),
-          centerTitle: true,
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-          backgroundColor: COLOR.BG_COLOR,
-          automaticallyImplyLeading: false,
-//          actions: [
-//            IconButton(
-//              icon: Image.asset(IMAGES.HOME_NOTI_OFF, width: 44, height: 40,),
-//              onPressed: () {
-//
-//              },
-//            ),
-//          ],
-          leading: IconButton(
-            icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        body: BlocProvider(
-          create: (context) => APIConnect(context)..add(TimeSheetList(selectDateTime)),
-          child: TimeSlotUI(),
-        )
-      ),
-      onWillPop: () async {
-        return false;
-      },
-    );
-  }
-
-  _customeHeaderBar(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
-        ),
-      ],
-    );
-  }
-}
-
-class TimeSlotUI extends StatefulWidget {
-  const TimeSlotUI();
-  @override
   TimeSlotUIState createState() => TimeSlotUIState();
 }
 
-class TimeSlotUIState extends State<TimeSlotUI>{
+class TimeSlotUIState extends State<TimeSlotView>{
 
   bool _isLoading = false;
   List<String> timeSlots;
@@ -87,10 +34,12 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   String cancelIdTimeSheet = "";
 
   TimeSlotUIState();
+  APIConnect apiConnect;
 
   @override
   void initState() {
     super.initState();
+    apiConnect = APIConnect(context);
     timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
     Future.delayed(Duration.zero, () {
       setState(() {
@@ -310,165 +259,193 @@ class TimeSlotUIState extends State<TimeSlotUI>{
   @override
   Widget build(BuildContext context) {
     /// Example Calendar Carousel without header and custom prev & next button
-    return BlocListener<APIConnect, ApiState>(
-      listener: (context, state){
-        if (state.result is StateInit) {
-          setState(() {
-            _isLoading = false;
-          });
-        }else if (state.result is LoadingState) {
-//          setState(() {
-//            if(timeSheetList.length == 0) {
-//              _isLoading = true;
-//            }else{
-//              _isLoading = false;
-//            }
-//          });
-        }else if (state.result is SuccessState) {
-          SuccessState result = state.result;
-          if(result.msg == "Cancel"){
-            TimeSheet ts = timeSheetList.firstWhere((element) => element.id == cancelIdTimeSheet);
-            DateFormat formatterAPI = VALUES.FORMAT_DATE_yyyy_mm_dd;
-            String date = formatterAPI.format(_selectDate);
-            StorageUtil.removeTimeSheetToList(date, cancelIdTimeSheet);
-          }
-          setState(() {
-            _isLoading = false;
-            indexSelected = -1;
-            cancelIdTimeSheet = "";
-            if(result.msg == "Cancel") {
-              timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
-            }
-          });
-
-        }else if (state.result is ParseJsonToObject) {
-          setState(() {
-            _isLoading = false;
-          });
-
-          setState(() {
-            indexSelected = -1;
-            timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
-          });
-        }
-        else {
-          setState(() {
-            _isLoading = false;
-            indexSelected = -1;
-            cancelIdTimeSheet = "";
-          });
-          ErrorState error = state.result;
-          if(error.msg == "Cancel"){
-            _handleClickMe(STRINGS.ERROR_TITLE, "Time can't' cancel" , "Close", "", null);
-          }else if(error.msg == "Set"){
-            _handleClickMe(STRINGS.ERROR_TITLE, "Time can't' set", "Close", "", null);
-          }else{
-            _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "", null);
-          }
-        }
-      },
-      child: LoadingOverlay(
-//        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                height: 1.0,
-                color: COLOR.COLOR_D8D8D8,
-              ),
-              Container(
-                color: const Color(0xfff8f8f8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 15.0,
-                        bottom: 15.0,
-                        left: 15.0,
-                      ),
-                      child: new Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Text(
-                                  '${_currentMonth[0].toUpperCase()}${_currentMonth.substring(1)}',
-                                  style: const TextStyle(
-                                      color:  const Color(0xff4B5B53),
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: "Montserrat",
-                                      fontStyle:  FontStyle.normal,
-                                      fontSize: 18.0
-                                  )
-                              )),
-                          GestureDetector(onTap: ()=>
-                          {
-                            setState(() {
-                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
-                              _currentMonth = formatMonth.format(_targetDateTime);
-                              _currentDate = _targetDateTime;
-                              nextButton = IMAGES.CALENDAR_NEXT;
-                            }),
-
-                            Timer(Duration(milliseconds: 200),(){
-                              setState(() {
-                                nextButton = IMAGES.CALENDAR_NEXT_UN;
-                              });
-                            })
-                          },
-                            child: Container(
-                              width: 52,
-                              height: 50,
-                              child: Image.asset(nextButton, width: 52.0, height: 50.0,),
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                          GestureDetector(onTap: ()=>
-                          {
-                            setState(() {
-                              _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
-                              _currentMonth = formatMonth.format(_targetDateTime);
-                              _currentDate = _targetDateTime;
-                              backButton = IMAGES.CALENDAR_BACK;
-                            }),
-
-                            Timer(Duration(milliseconds: 200),(){
-                              setState(() {
-                                backButton = IMAGES.CALENDAR_BACK_UN;
-                              });
-                            })
-                          },
-                            child: Container(
-                              width: 52,
-                              height: 50,
-                              child: Image.asset(backButton, width: 52.0, height: 50.0,),
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: _calendar(),//_calendarField(),
-                    ),
-                    SizedBox(height: 10,)
-                  ],
-                ),
-              ),
-              SizedBox(height: 10,),
-              _statusField(),
-              SizedBox(height: 0,),
-              Expanded(child:_timelineField()),//
-            ],
+    return new WillPopScope(
+      child: Scaffold(
+          backgroundColor: COLOR.BG_COLOR,
+          appBar: AppBar(
+            title:_customeHeaderBar(context),
+            centerTitle: true,
+            bottomOpacity: 0.0,
+            elevation: 0.0,
+            backgroundColor: COLOR.BG_COLOR,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: Image.asset(IMAGES.BACK_ICON, width: 26, height: 20,),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ),
+          body: BlocProvider(
+            create: (context) => apiConnect..add(TimeSheetList(DateTime.now())),
+            child: BlocListener<APIConnect, ApiState>(
+                listener: (context, state){
+                  if (state.result is StateInit) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }else if (state.result is SuccessState) {
+                    SuccessState result = state.result;
+                    if(result.msg == "Cancel"){
+                      TimeSheet ts = timeSheetList.firstWhere((element) => element.id == cancelIdTimeSheet);
+                      DateFormat formatterAPI = VALUES.FORMAT_DATE_yyyy_mm_dd;
+                      String date = formatterAPI.format(_selectDate);
+                      StorageUtil.removeTimeSheetToList(date, cancelIdTimeSheet);
+                    }
+                    setState(() {
+                      _isLoading = false;
+                      indexSelected = -1;
+                      cancelIdTimeSheet = "";
+                      if(result.msg == "Cancel") {
+                        timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
+                      }
+                    });
+
+                  }else if (state.result is ParseJsonToObject) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+
+                    setState(() {
+                      indexSelected = -1;
+                      timeSheetList = StorageUtil.getTimeSheetList(DateFormat("yyyy-MM-dd").format(_selectDate));
+                    });
+                  }
+                  else {
+                    setState(() {
+                      _isLoading = false;
+                      indexSelected = -1;
+                      cancelIdTimeSheet = "";
+                    });
+                    ErrorState error = state.result;
+                    if(error.msg == "Cancel"){
+                      _handleClickMe(STRINGS.ERROR_TITLE, "Time can't' cancel" , "Close", "", null);
+                    }else if(error.msg == "Set"){
+                      _handleClickMe(STRINGS.ERROR_TITLE, "Time can't' set", "Close", "", null);
+                    }else{
+                      _handleClickMe(STRINGS.ERROR_TITLE, error.msg, "Close", "", null);
+                    }
+                  }
+                },
+                child: LoadingOverlay(
+//        child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 1.0,
+                        color: COLOR.COLOR_D8D8D8,
+                      ),
+                      Container(
+                        color: const Color(0xfff8f8f8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 15.0,
+                                bottom: 15.0,
+                                left: 15.0,
+                              ),
+                              child: new Row(
+                                children: <Widget>[
+                                  Expanded(
+                                      child: Text(
+                                          '${_currentMonth[0].toUpperCase()}${_currentMonth.substring(1)}',
+                                          style: const TextStyle(
+                                              color:  const Color(0xff4B5B53),
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: "Montserrat",
+                                              fontStyle:  FontStyle.normal,
+                                              fontSize: 18.0
+                                          )
+                                      )),
+                                  GestureDetector(onTap: ()=>
+                                  {
+                                    setState(() {
+                                      _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month -1);
+                                      _currentMonth = formatMonth.format(_targetDateTime);
+                                      _currentDate = _targetDateTime;
+                                      nextButton = IMAGES.CALENDAR_NEXT;
+                                    }),
+
+                                    Timer(Duration(milliseconds: 200),(){
+                                      setState(() {
+                                        nextButton = IMAGES.CALENDAR_NEXT_UN;
+                                      });
+                                    })
+                                  },
+                                    child: Container(
+                                      width: 52,
+                                      height: 50,
+                                      child: Image.asset(nextButton, width: 52.0, height: 50.0,),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  GestureDetector(onTap: ()=>
+                                  {
+                                    setState(() {
+                                      _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month +1);
+                                      _currentMonth = formatMonth.format(_targetDateTime);
+                                      _currentDate = _targetDateTime;
+                                      backButton = IMAGES.CALENDAR_BACK;
+                                    }),
+
+                                    Timer(Duration(milliseconds: 200),(){
+                                      setState(() {
+                                        backButton = IMAGES.CALENDAR_BACK_UN;
+                                      });
+                                    })
+                                  },
+                                    child: Container(
+                                      width: 52,
+                                      height: 50,
+                                      child: Image.asset(backButton, width: 52.0, height: 50.0,),
+                                    ),
+                                  ),
+                                  SizedBox(width: 15,),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 15.0),
+                              child: _calendar(),//_calendarField(),
+                            ),
+                            SizedBox(height: 10,)
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      _statusField(),
+                      SizedBox(height: 0,),
+                      Expanded(child:_timelineField()),//
+                    ],
+                  ),
 //        ),
-        isLoading: _isLoading,
-        // demo of some additional parameters
-        opacity: 0.2,
-        progressIndicator: CircularProgressIndicator(),
-      )
+                  isLoading: _isLoading,
+                  // demo of some additional parameters
+                  opacity: 0.2,
+                  progressIndicator: CircularProgressIndicator(),
+                )
+            ),
+          )
+      ),
+      onWillPop: () async {
+        return false;
+      },
+    );
+  }
+
+  _customeHeaderBar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(
+          child: Image.asset(IMAGES.HOME_LOGO, width: 100, height: 18,),
+        ),
+      ],
     );
   }
 
